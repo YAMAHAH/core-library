@@ -1,0 +1,30 @@
+h2 {
+  color: skyblue;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 250%; }
+
+h3 {
+  color: #369;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 150%; }
+
+h1 {
+  color: #369;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 250%; }
+html {
+  height: 100%;
+  width: 100%; }
+
+body {
+  margin: 0px;
+  height: 100%;
+  width: 100%; }
+
+xyz-desktop {
+  display: flex;
+  flex: 1; }
+
+home {
+  flex: 1 0 auto;
+  overflow: scroll; }

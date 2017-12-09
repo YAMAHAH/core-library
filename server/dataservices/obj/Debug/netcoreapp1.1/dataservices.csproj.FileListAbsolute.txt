@@ -1,0 +1,12 @@
+D:\WebApp\server\dataservices\bin\Debug\netcoreapp1.1\appsettings.json
+D:\WebApp\server\dataservices\bin\Debug\netcoreapp1.1\dataservices.deps.json
+D:\WebApp\server\dataservices\bin\Debug\netcoreapp1.1\dataservices.runtimeconfig.json
+D:\WebApp\server\dataservices\bin\Debug\netcoreapp1.1\dataservices.runtimeconfig.dev.json
+D:\WebApp\server\dataservices\bin\Debug\netcoreapp1.1\dataservices.dll
+D:\WebApp\server\dataservices\bin\Debug\netcoreapp1.1\dataservices.pdb
+D:\WebApp\server\dataservices\obj\Debug\netcoreapp1.1\dataservices.csproj.CoreCompileInputs.cache
+D:\WebApp\server\dataservices\obj\Debug\netcoreapp1.1\dataservices.AssemblyInfo.cs
+D:\WebApp\server\dataservices\obj\Debug\netcoreapp1.1\dataservices.dll
+D:\WebApp\server\dataservices\obj\Debug\netcoreapp1.1\dataservices.pdb
+D:\WebApp\server\dataservices\obj\Debug\netcoreapp1.1\dataservices.AssemblyInfoInputs.cache
+D:\WebApp\server\dataservices\obj\Debug\netcoreapp1.1\dataservices.csprojResolveAssemblyReference.cache

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:5000/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Angular QuickStart</title>
+    <!--<base href="/">--><base href=".">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./Angular QuickStart_files/styles.css">
+
+<link rel="shortcut icon" href="http://localhost:5000/favicon.ico"><link href="./Angular QuickStart_files/styles.css" rel="stylesheet"><style>my-app[_ngcontent-mbk-3] {
+    height: 100%;
+    width: 100%;
+}</style><style>.pageload-overlay[_ngcontent-mbk-0] {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+}
+
+.pageload-overlay.show[_ngcontent-mbk-0] {
+    visibility: visible;
+    opacity: 1;
+}
+
+.pageload-overlay[_ngcontent-mbk-0]   svg[_ngcontent-mbk-0] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.pageload-overlay[_ngcontent-mbk-0]   svg[_ngcontent-mbk-0]   path[_ngcontent-mbk-0] {
+    fill:#82E0E0 ;
+    opacity: 1;
+}
+
+
+.pageload-overlay[_ngcontent-mbk-0]::after, .pageload-overlay[_ngcontent-mbk-0]::before {
+    content: '';
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border-radius: 50%;
+    visibility: hidden;
+    opacity: 0;
+    z-index: 10000;
+    -webkit-transition: opacity 0.15s, visibility 0s 0.15s;
+    transition: opacity 0.15s, visibility 0s 0.15s;
+}
+
+.pageload-overlay[_ngcontent-mbk-0]::after {
+    background: #6cc88a;
+    -webkit-transform: translateX(-20px);
+    transform: translateX(-20px);
+    -webkit-animation: moveRight 0.6s linear infinite alternate;
+    animation: moveRight 0.6s linear infinite alternate;
+}
+
+.pageload-overlay[_ngcontent-mbk-0]::before {
+    background: #4fc3f7;
+    -webkit-transform: translateX(20px);
+    transform: translateX(20px);
+    -webkit-animation: moveLeft 0.6s linear infinite alternate;
+    animation: moveLeft 0.6s linear infinite alternate;
+}
+
+@-webkit-keyframes moveRight {
+    to { -webkit-transform: translateX(20px); }
+}
+
+@keyframes moveRight {
+    to { transform: translateX(20px); }
+}
+
+@-webkit-keyframes moveLeft {
+    to { -webkit-transform: translateX(-20px); }
+}
+
+@keyframes moveLeft {
+    to { transform: translateX(-20px); }
+}
+
+.pageloading-loading.pageload-overlay[_ngcontent-mbk-0]::after, .pageloading-loading.pageload-overlay[_ngcontent-mbk-0]::before {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: opacity 0.3s;
+    transition: opacity 0.3s;
+}
+
+circle[_ngcontent-mbk-0] {
+    -webkit-transition: stroke-dasharray .25s;
+    transition: stroke-dasharray .25s;
+}
+
+
+
+.svg-wrapper[_ngcontent-mbk-0] {
+  background: #333;
+  height: 60px;
+  margin: 0 auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 320px;
+}
+
+.shape[_ngcontent-mbk-0] {
+  fill: transparent;
+  stroke-dasharray: 140 540;
+  stroke-dashoffset: -474;
+  stroke-width: 8px;
+  stroke: #19f6e8;
+}
+
+.text[_ngcontent-mbk-0] {
+  color: #fff;
+  font-family: 'Roboto Condensed';
+  font-size: 22px;
+  letter-spacing: 8px;
+  line-height: 32px;
+  position: relative;
+  top: -48px;
+  text-align: center;
+}
+
+@keyframes draw {
+  0% {
+    stroke-dasharray: 140 540;
+    stroke-dashoffset: -474;
+    stroke-width: 8px;
+  }
+  100% {
+    stroke-dasharray: 760;
+    stroke-dashoffset: 0;
+    stroke-width: 2px;
+  }
+}
+.svg-wrapper[_ngcontent-mbk-0]:hover   .shape[_ngcontent-mbk-0] {
+  -webkit-animation: 0.5s draw linear forwards;
+  animation: 0.5s draw linear forwards;
+}</style><script type="text/javascript" charset="utf-8" async="" src="./Angular QuickStart_files/0.chunk.js"></script></head>
+
+<body>
+    <my-app ng-version="4.0.0-beta.0" _nghost-mbk-3="">
+    <pageloading _ngcontent-mbk-3="" _nghost-mbk-0=""><div _ngcontent-mbk-0="" id="pageloader" ng-reflect-ng-class="[object Object]" class="pageload-overlay">
+    <svg _ngcontent-mbk-0="" height="100%" id="paper" preserveAspectRatio="none" viewBox="0 0 80 60" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <path _ngcontent-mbk-0=""></path>
+    </svg>
+</div></pageloading>
+    <router-outlet _ngcontent-mbk-3=""></router-outlet>
+  </my-app>
+    <!--<script type="text/javascript" src="manifest.bundle.js"></script>
+    <script type="text/javascript" src="vendor.bundle.js"></script>
+
+    <script type="text/javascript" src="polyfills.bundle.js"></script>
+    <script type="text/javascript" src="app.bundle.js"></script>-->
+
+    <!--<script src="http://localhost:9000/webpack-dev-server.js"></script>-->
+<script type="text/javascript" src="./Angular QuickStart_files/amanifest.bundle.js"></script><script type="text/javascript" src="./Angular QuickStart_files/bvendor.bundle.js"></script><script type="text/javascript" src="./Angular QuickStart_files/cpolyfills.bundle.js"></script><script type="text/javascript" src="./Angular QuickStart_files/dapp.bundle.js"></script>
+
+</body></html>

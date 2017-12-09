@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "apiservices", "apiservices.csproj", "{8EA6D06B-989C-4D7B-BA30-E4DA3B630F36}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dataservices", "..\dataservices\dataservices.csproj", "{2725F55A-7393-4407-A480-021033D43C07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8EA6D06B-989C-4D7B-BA30-E4DA3B630F36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EA6D06B-989C-4D7B-BA30-E4DA3B630F36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EA6D06B-989C-4D7B-BA30-E4DA3B630F36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EA6D06B-989C-4D7B-BA30-E4DA3B630F36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2725F55A-7393-4407-A480-021033D43C07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2725F55A-7393-4407-A480-021033D43C07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2725F55A-7393-4407-A480-021033D43C07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2725F55A-7393-4407-A480-021033D43C07}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A18ECED3-CE58-488D-B4D5-B882DEA6B6A4}
+	EndGlobalSection
+EndGlobal
