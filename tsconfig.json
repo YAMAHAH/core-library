@@ -1,19 +1,55 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "outDir": "./dist/out-tsc",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
-    ]
-  }
+    "compileOnSave": false,
+    "compilerOptions": {
+        "outDir": "./dist/out-tsc",
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "es5",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "lib": [
+            "es2017",
+            "dom"
+        ],
+        "plugins": [
+            { "name": "@angular/language-service" }
+        ],
+        "baseUrl": "./",
+        "paths": {
+            "@framework-base/*": [
+                "src/app/framework-base/*"
+            ],
+            "@framework-common/*": [
+                "src/app/common/*"
+            ],
+            "@framework-components/*": [
+                "src/app/components/*"
+            ],
+            "@framework-dynamic-forms/*": [
+                "src/app/dynamic-form/*"
+            ],
+            "@framework-services/*": [
+                "src/app/services/*"
+            ],
+            "@framework-models/*": [
+                "src/app/Models/*"
+            ],
+            "@framework-actions/*": [
+                "src/app/actions/*"
+            ],
+            "@framework-business-modules/*": [
+                "src/app/business-modules/*"
+            ],
+            "@assets/*": [
+                "src/assets/*"
+            ],
+            "@untils/*": [
+                "src/app/untils/*"
+            ]
+        }
+    }
 }

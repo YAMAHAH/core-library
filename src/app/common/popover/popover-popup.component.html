@@ -1,0 +1,9 @@
+<div class="arrow"></div>
+<h3 class="popover-title" *ngIf="title">
+    <span *ngIf="!isTemplateRef" [innerHTML]="title"></span>
+    <ng-template *ngIf="isTemplateRef" [ngTemplateOutlet]="title" [ngTemplateOutletContext]="{ $implicit: context }"></ng-template>
+</h3>
+<div class="popover-content">
+    <span *ngIf="!contentIsTemplateRef" [innerHTML]="content"></span>
+    <ng-template *ngIf="contentIsTemplateRef" [ngTemplateOutlet]="content" [ngTemplateOutletContext]="{ $implicit: context }"></ng-template>
+</div>

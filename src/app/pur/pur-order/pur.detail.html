@@ -1,0 +1,192 @@
+<a>Inbox <x-badge text="87"></x-badge></a>
+<p>{{pageModel.key}}</p>
+<label>pono</label>
+<input class="form-control" [(ngModel)]="purOrder.pono">
+<label>ptnno</label>
+<input class="form-control" [(ngModel)]="purOrder.ptnno">
+<!--<section>
+    <h4>Auto disappear:</h4>
+    <div class="checkbox">
+        <label>
+        <input type="checkbox" [(ngModel)]="autoDisappear" (ngModelChange)="closed = false"/>Auto disappear after 2s?
+      </label>
+    </div>
+
+    <x-alert-box (click)="clickAlertBox(alert)" type="danger" [closable]="true" (close)="closeAlertBox()" *ngIf="!closed" [disappearTime]="autoDisappear? 2*1000: 0">
+        <strong>Oh snap!</strong> Change a few things up and try submitting again.
+    </x-alert-box>
+</section>
+<section>
+    <h4>Success:</h4>
+    <x-alert-box #alert (click)="clickAlertBox(alert)" type="success">
+        <strong>Well done!</strong> You successfully read this important alert message.
+    </x-alert-box>
+</section>
+<pre>{{formModel?.resolve | json}}</pre>
+<pre>{{context | json}}</pre>
+<pre> {{ 1234 | currency:'CNY':true}}</pre>-->
+
+<!-- <x-accordion-menu></x-accordion-menu> -->
+<!-- <div class="app">
+    <gx-dynamic-form [config]="config" #form="gxDynamicForm" (submit)="submit($event)"> </gx-dynamic-form>
+    {{ form.valid }} {{ form.value | json }}
+</div> -->
+
+<div class="app" gxBorderPrimary gxBorder gxBorderTop0 gxBorderInfo style="overflow: auto;padding:0.5rem">
+    <div>
+        <form>
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="First name">
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Last name">
+                </div>
+            </div>
+        </form>
+        <form>
+            <div class="form-row">
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="First name">
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Last name">
+                </div>
+            </div>
+        </form>
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="inputEmail4">Email</label>
+                    <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="inputPassword4">Password</label>
+                    <input type="password" class="form-control" id="inputPassword4" placeholder="Password">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputAddress">Address</label>
+                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+            </div>
+            <div class="form-group">
+                <label for="inputAddress2">Address 2</label>
+                <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="inputCity">City</label>
+                    <input type="text" class="form-control" id="inputCity">
+                </div>
+                <div class="form-group col-md-8">
+                    <label for="inputState">State</label>
+                    <select id="inputState" class="form-control">
+                              <option selected>Choose...</option>
+                              <option>...</option>
+                            </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputZip">Zip</label>
+                    <input type="text" class="form-control" id="inputZip">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <label class="form-check-label">
+                              <input class="form-check-input" type="checkbox"> Check me out
+                            </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+        <form class="form-inline">
+            <label class="sr-only" for="inlineFormInputName2">Name</label>
+            <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="inlineFormInputName2" placeholder="Jane Doe">
+
+            <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
+            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="input-group-addon">@</div>
+                <input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Username">
+            </div>
+
+            <div class="form-check mb-2 mr-sm-2 mb-sm-0">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox"> Remember me
+                  </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <!-- <gx-dynamic-form-item [config]="config2" #form2="gxDynamicFormItem"> </gx-dynamic-form-item> -->
+    <!-- <gx-dynamic-form-container [config]="config2" #form3="gxDynamicFormContainer"></gx-dynamic-form-container>
+    {{ form3?.valid }} {{ form3?.value | json }}placeholder:'输入EMAIL地址' -->
+    <gx-form-builder style="padding:30px" #formBuilder [config]="[]" (submit)='submit($event)'>
+        <gx-form-item [itemConfig]="itemConfig"></gx-form-item>
+        <gx-form-item itemType="input" [editorOptions]="{placeholder:'Enter you name25'}" label="Full Name25" dataField="name25">
+            <gx-form-validation-rule type="required" message="必填项"></gx-form-validation-rule>
+        </gx-form-item>
+        <gx-form-item controlType="group" objectId="group9820000" label="测试组-A" dataField="group13" itemType="group">
+            <gx-form-item itemType="input" objectId="input9820000" [editorOptions]="{placeholder:'Enter you name26'}" label="Full Name26" dataField="name26">
+                <gx-form-validation-rule type="required" message="名称必填"></gx-form-validation-rule>
+                <gx-form-validation-rule type="maxLength" [max]='10' message="名称不能超过10个字符"></gx-form-validation-rule>
+            </gx-form-item>
+            <gx-form-item [itemConfig]="{
+                objectId:'select9810000',
+                editorType: 'select',
+                label: 'Favourite Food27',
+                name: 'food27',
+                options: ['Pizza', 'Hot Dogs', 'Knakworstje', 'Coffee'],
+                placeholder: 'Select an option27',
+                value: 'Knakworstje'
+            }"></gx-form-item>
+        </gx-form-item>
+        <gx-form-item controlType="array" label="测试组-B" dataField="array15" itemType="group">
+
+            <gx-form-item-flex-layout childItemStyle="color:blue;" itemStyle="color:red;" itemClass="gx-flex-layout-custom" direction="row" wrap='wrap'></gx-form-item-flex-layout>
+
+            <gx-form-item itemType="input" [objectId]="'input9938293434'" [editorOptions]="{placeholder:'Enter you name29'}" label="Full Name29" dataField="name29">
+                <gx-form-item-flex-item fxFill flex="0 0 50%"></gx-form-item-flex-item>
+            </gx-form-item>
+            <gx-form-item itemType="email" hintLabel="Max 10 characters" hideRequiredMarker=false floatPlaceholder="auto" [objectId]="'inputemail9938293434'" [editorOptions]="{required:true}" label="Full Name30" dataField="email30">
+                <gx-form-validation-rule type="required" message="email地址必填"></gx-form-validation-rule>
+                <gx-form-validation-rule type="email" message="Email地址格式不对"></gx-form-validation-rule>
+                <gx-form-item-placeholder>
+                    <i class="fa fa-envelope-o fa-fw"></i><b> 输入</b> <i> Email地址</i>
+                </gx-form-item-placeholder>
+                <gx-form-item-hint align='end'>
+                    <i class="fa fa-envelope-o fa-fw"></i>右侧提示信息
+                </gx-form-item-hint>
+                <gx-form-item-suffix>
+                    <i class="fa fa-envelope-o fa-fw"></i>
+                </gx-form-item-suffix>
+                <gx-form-item-suffix>
+                    <i class="fa fa-envelope-o fa-fw"></i>
+                </gx-form-item-suffix>
+                <gx-form-item-prefix>
+                    <i class="fa fa-envelope-o fa-fw"></i>
+                    <mat-icon>home</mat-icon>
+                </gx-form-item-prefix>
+                <gx-form-item-flex-item flex="0 0 50%">
+                </gx-form-item-flex-item>
+                <gx-form-item-flex-layout childItemStyle="color:blue;" direction="row" wrap='wrap'></gx-form-item-flex-layout>
+            </gx-form-item>
+        </gx-form-item>
+    </gx-form-builder>
+    <div style="padding:25px">
+        <form-field-custom-control-example></form-field-custom-control-example>
+    </div>
+
+
+    <div>
+        <pre>{{formBuilder?.errorResults | json}}</pre>
+        <pre>{{ formBuilder?.value | json }}  </pre>
+    </div>
+
+</div>
+<p-footer>
+    <div class="modal-footer" style="display:flex;justify-content: center">
+        <button type="button" class="btn btn-primary" style="flex:0 0 80px" (click)="ok($event)">确定</button>
+        <button type="button" class="btn btn-warning" style="flex:0 0 80px" (click)="cancel($event)">取消</button>
+    </div>
+</p-footer>

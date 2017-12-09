@@ -1,0 +1,29 @@
+input {
+    background-color: red;
+}
+
+.bd-highlight {
+    background-color: rgba(86, 61, 124, .15);
+    border: 1px solid rgba(86, 61, 124, .15);
+}
+
+:host /deep/ {
+    gx-scroll {
+        width: 500px;
+        display: block;
+        border: 1px solid #1bd3d3;
+        padding: 2px;
+    }
+    .free-scroll-inner {
+        padding: 10px;
+    }
+    .custom-scroll-thumb {
+        background: #e059a8 !important;
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    .custom-scroll-track {
+        width: 2px !important;
+        left: 50% !important;
+        transform: translate(-50%, 0);
+    }
+}

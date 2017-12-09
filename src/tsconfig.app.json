@@ -1,13 +1,48 @@
 {
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../out-tsc/app",
-    "baseUrl": "./",
-    "module": "es2015",
-    "types": []
-  },
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
-  ]
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../out-tsc/app",
+        "baseUrl": "./",
+        "module": "es2015",
+        "types": [],
+        "plugins": [
+            { "name": "@angular/language-service" }
+        ],
+        "paths": {
+            "@framework-base/*": [
+                "../src/app/framework-base/*"
+            ],
+            "@framework-common/*": [
+                "../src/app/common/*"
+            ],
+            "@framework-components/*": [
+                "../src/app/components/*"
+            ],
+            "@framework-dynamic-forms/*": [
+                "../src/app/dynamic-form/*"
+            ],
+            "@framework-services/*": [
+                "../src/app/services/*"
+            ],
+            "@framework-models/*": [
+                "../src/app/Models/*"
+            ],
+            "@framework-actions/*": [
+                "../src/app/actions/*"
+            ],
+            "@framework-business-modules/*": [
+                "../src/app/business-modules/*"
+            ],
+            "@assets/*": [
+                "../src/assets/*"
+            ],
+            "@untils/*": [
+                "../src/app/untils/*"
+            ]
+        }
+    },
+    "exclude": [
+        "test.ts",
+        "**/*.spec.ts"
+    ]
 }

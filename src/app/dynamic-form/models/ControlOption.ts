@@ -1,0 +1,1 @@
+export type controlOption = { onlySelf?: boolean; emitEvent?: boolean; };

@@ -1,0 +1,39 @@
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+@function breakpoint-infix($name, $breakpoints: $grid-breakpoints) {
+    @return if($name=='default', "", "-#{$name}");
+}
+
+@mixin media-breakpoint-up($name, $breakpoints: $grid-breakpoints) {
+    $value: map-get($breakpoints, $name);
+    $value: if($name !='default', $value, null);
+    @if ($value) {
+        @media #{$value} {
+            @content;
+        }
+    }
+    @else {
+        @content;
+    }
+}
+
+@mixin make-container-max-widths($max-widths: $container-max-widths, $breakpoints: $grid-breakpoints) {
+    @each $breakpoint,
+    $container-max-width in $max-widths {
+        @include media-breakpoint-up($breakpoint, $breakpoints) {
+            @if(index($container-min-widths-keys, $breakpoint)) {
+                max-width: $container-max-width;
+            }
+            @else {
+                max-width: $container-max-width;
+            }
+        }
+    }
+}
+
+@import './custom-var.scss';
+@import "node_modules/bootstrap/scss/grid";
+@import "node_modules/bootstrap/scss/utilities";
+@import "node_modules/bootstrap/scss/forms";
+@import "node_modules/bootstrap/scss/modal";

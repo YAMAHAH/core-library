@@ -1,0 +1,307 @@
+<!-- <div class="flex-col-row flex-col-xs full-height" style=" margin: 0rem;padding: 0rem; width: 100%; height: 100%;">
+    <div #header class="flex-row-col" style=" margin:0px;flex: none; height: 5rem;line-height: 5rem;background-color:#f7629e">
+
+    </div>
+    <div #center class="flex-row-col flex-col-xs" style="margin:0px;padding:0px;">
+
+        <div #left class="flex-row-col" style="margin:0px;flex: 0 0 20rem; width: 20rem;min-width:0rem;max-width:20rem;padding: 0px; border-right: #3747a0 3px solid;
+            min-width: 0px;max-width: 20rem;background-color:#f5317f">
+            <div class="col-xs" style="padding:0px;flex:1 1 100%;">
+                <div class="box">left</div>
+            </div>
+        </div>
+
+        <div #main class="flex-row-col" style="margin:0rem;padding:0rem; flex-grow: 1; background-color: #feeff5;min-width: 30rem;">
+            <div class="flex-col-xs">
+                <ul>
+                    <p>{{pageModel?.title}}</p>
+                    <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
+                </ul>
+                <pre>{{pageModel?.resolve | json}}</pre>
+                <pre>{{context | json}}</pre>
+            </div>
+        </div>
+
+        <div #right class="flex-row-col" style="margin:0px;flex: 0 0 20rem;padding:0rem; width: 20rem;min-width:0rem;max-width:20rem;background-color:#dc277d">
+            <div class="flex-col-xs" style="padding:0rem;flex:1 1 100%;">
+                <div class="box">right</div>
+            </div>
+        </div>
+    </div>
+
+    <div #footer class="flex-row-col" style="margin:0rem;padding:0rem;flex: none; height: 5rem;line-height: 5rem;background-color:#fa90ba"></div>
+</div> -->
+<!-- <div fxLayout="column" fxFill style="margin: 0rem;padding: 0rem; width: 100%; height: 100%;">
+    <div #header fxItem="0 0 5rem" fxItemHeight="5rem" fxItemStyle=" margin:0px;line-height: 5rem;background-color:#f7629e">
+    </div>
+    <div #center fxLayout fxItem="fill" FxItemStyle="margin:0px;padding:0px;">
+        <div #left fxItem="0 0 15rem" fxItemStyle="margin:0px; width: 20rem;min-width:0rem;max-width:20rem;padding: 0px; border-right: #3747a0 3px solid;
+            min-width: 0px;max-width: 20rem;background-color:#f5317f">
+            <div class="col-xs" style="padding:0px;flex:1 1 100%;">
+                <div class="box">left</div>
+            </div>
+        </div>
+
+        <div #main fxLayout fxItemFill fxItem="fill" fxItemStyle="margin:0rem;padding:0rem; background-color: #feeff5;min-width: 30rem;">
+            <div fxItem="fill" fxLayout='column' fxItemHeight='100%'>
+                <div fxItem='none'>
+
+                </div>
+                <div fxLayout="column" fxItem='auto' fxItemFill style="height: 100%; overflow: auto;"> -->
+<!-- <div fxLayout="row" fxItem="fill" fxAlignMain='flex-start' fxAlignCross='center' height="30px" fxWidth="80px" fxHeight="30px"
+                        fxStyle="border:1px solid blue; background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">
+                        <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第一列</div>
+                        </div>
+                        <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第二列</div>
+                        </div>
+                        <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第三列</div>
+                        </div>
+                        <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第四列</div>
+                        </div>
+                        <div fxLayout fxItem="fill" fxItemHeight="30px" fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第五列</div>
+                        </div>
+                    </div> -->
+<!-- <div #wrapper fxLayout="column" style=" background: skyblue;" fxItem="fill" fxItemFill fxItemStyle="border: 1px solid blue;">
+                        <div #headerWrapper fxLayout fxAlignCross='center' fxHeight='55px' fxItem="none" fxStyle="border-bottom: 1px solid blue;">
+                            <div #headerBrand fxItem='none' fxItemWidth='100px'>
+                                <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                                    <div fxItem>HeaderBrand</div>
+                                </div>
+                            </div>
+                            <div #headerTitle fxItem='fill'>
+                                <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                                    <div fxItem>HeaderTitle</div>
+                                </div>
+                            </div>
+                            <div #headerSearch fxItem='none' fxItemWidth='200px'>
+                                <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                                    <div fxItem>HeaderSearch</div>
+                                </div>
+                            </div>
+                            <div #headerAccount fxItem='none' fxItemWidth='200px'>
+                                <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                                    <div fxItem>HeaderAccout</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div #bodyWrapper fxLayout fxItem='fill' fxItemStyle="border-bottom: 1px solid blue;overflow: auto;">
+                            <div #panelWrapper fxLayout='column' fxItem='none' fxItemWidth='200px' fxItemStyle="border-right: 1px solid blue;">
+                                <div #panelTitlebar fxItem='0 0 35px' fxItemFill fxItemStyle='text-align:left;border-bottom: 1px solid blue;'>panelTitlebar</div>
+                                <div #panelBody fxLayout fxItem='fill' fxItemFill>
+                                    <div #panelNav fxItem='none' fxItemWidth='65px' fxItemStyle="border-right: 1px solid blue;">panelNav</div>
+                                    <div #panelContent fxItemFill fxItem='fill'>PanelContent</div>
+                                </div>
+                            </div>
+                            <div #mainWrapper fxLayout='column' fxFill fxItem='fill'>
+                                <div #mainNavbar fxItem='0 0 35px' fxItemHeight='35px' fxItemStyle="border-bottom: 1px solid blue;">mainNavbar</div>
+                                <div #main fxItem='fill'>
+                                    <ul>
+                                        <p>{{pageModel?.title}}</p>
+                                        <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
+                                    </ul>
+                                    <pre>{{pageModel?.resolve | json}}</pre>
+                                    <pre>{{context | json}}</pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div #footerWrapper fxLayout fxAlignCross='center' fxItem="none" fxItemStyle="max-height: 55px;">
+                            <div #footerLeft fxItem='fill'>footerLeft</div>
+                            <div #footerRight fxItem='fill'>footerRight</div>
+                        </div>
+                    </div> -->
+<!-- <div fxLayout="row" fxItem="fill" fxItemFill>Col-3</div>
+                    <div fxLayout="row" fxItem="fill" fxItemFill>Col-4</div> -->
+<!-- </div>
+            </div>
+        </div>
+
+        <div #right fxItem="0 0 15rem " fxItemStyle="margin:0px;padding:0rem; width: 20rem;min-width:0rem;max-width:20rem;background-color:#dc277d ">
+            <div class="flex-col-xs " style="padding:0rem;flex:1 1 100%; ">
+                <div class="box ">right</div>
+            </div>
+        </div>
+    </div>
+    <div #footer fxItem="0 0 5rem " fxItemStyle="margin:0rem;padding:0rem;line-height: 5rem;background-color:#fa90ba "></div>
+</div> -->
+<!-- <div #wrapper fxLayout="column" style="margin: 0rem;padding: 0rem; width: 100%; height: 100%;border: 1px solid blue;">
+    <div #headerWrapper fxLayout fxAlignCross='center' fxHeight='55px' fxItem="none" fxStyle="border-bottom: 1px solid blue;">
+        <div #headerBrand fxItem='none' fxItemWidth='100px'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderBrand</div>
+            </div>
+        </div>
+        <div #headerTitle fxItem='fill'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderTitle</div>
+            </div>
+        </div>
+        <div #headerSearch fxItem='none' fxItemWidth='200px'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderSearch</div>
+            </div>
+        </div>
+        <div #headerAccount fxItem='none' fxItemWidth='200px'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderAccout</div>
+            </div>
+        </div>
+    </div>
+    <div #bodyWrapper fxLayout fxItem='fill' fxItemStyle="border-bottom: 1px solid blue;overflow: auto;">
+        <div #panelWrapper fxLayout='column' fxItem='none' fxItemWidth='200px' fxItemStyle="border-right: 1px solid blue;">
+            <div #panelTitlebar fxItem='0 0 35px' fxItemFill fxItemStyle='text-align:left;border-bottom: 1px solid blue;'>panelTitlebar</div>
+            <div #panelBody fxLayout fxItem='fill' fxItemFill>
+                <div #panelNav fxItem='none' fxItemWidth='65px' fxItemStyle="border-right: 1px solid blue;">panelNav</div>
+                <div #panelContent fxItemFill fxItem='fill'>PanelContent</div>
+            </div>
+        </div>
+        <div #mainWrapper fxLayout='column' fxFill fxItem='fill'>
+            <div #mainNavbar fxItem='0 0 35px' fxItemHeight='35px' fxItemStyle="border-bottom: 1px solid blue;">mainNavbar</div>
+            <div #main fxItem='fill' fxItemStyle="overflow:auto;">
+                <ul>
+                    <p>{{pageModel?.title}}</p>
+                    <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
+                </ul>
+                <pre>{{pageModel?.resolve | json}}</pre>
+                <pre>{{context | json}}</pre>
+            </div>
+        </div>
+    </div>
+    <div #footerWrapper fxLayout fxAlignCross='center' fxItem="none" fxItemStyle="max-height: 55px;">
+        <div #footerLeft fxItem='fill'>footerLeft</div>
+        <div #footerRight fxItem='fill'>footerRight</div>
+    </div>
+</div> -->
+
+<div #wrapper fxLayout="column" style="margin: 0rem;padding: 0rem; width: 100%; height: 100%;border: 1px solid blue;">
+    <div #toolbarWrapper fxLayout fxAlignCross='center' fxGap="0px 0px 0px 5px" fxHeight='36px' fxItem="none" fxItemStyle="border-bottom: 1px solid blue;">
+
+        <div #headerBrand fxItem='none'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>Action-A</div>
+            </div>
+        </div>
+
+        <div fxItem='none' fxItemWidth='1px' [fxItemGap]="{left:'5px'}" fxItemStyle="margin: 0px 5px 0px 5px;background: #c6c6c6"></div>
+
+        <div #headerBrand fxItem='none'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem><a>Action-B</a></div>
+            </div>
+        </div>
+
+        <div fxItem='none' fxItemWidth='1px' fxItemGap="0px 0px 0px 5px" fxItemStyle="margin: 0px 5px 0px 5px;background: #c6c6c6"></div>
+
+        <div #headerBrand fxItem='none'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>Action-C</div>
+            </div>
+        </div>
+    </div>
+    <div #headerWrapper fxLayout fxAlignCross='center' fxItem="1 1 30%" fxStyle="border-bottom: 1px solid blue;">
+        <div #headerBrand fxItem='none'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderBrand: <input></div>
+            </div>
+        </div>
+        <div #headerTitle fxItem='fill'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderTitle: <input></div>
+            </div>
+        </div>
+        <div #headerSearch fxItem='none'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderSearch: <input></div>
+            </div>
+        </div>
+        <div #headerAccount fxItem='none'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderAccout: <input></div>
+            </div>
+        </div>
+    </div>
+    <div #bodyWrapper fxLayout fxItem='1 1 50%' fxItemStyle="border-bottom: 1px solid blue;overflow: auto;">
+        <div #mainWrapper fxLayout='column' fxFill fxItem='fill'>
+            <div #main fxItem='fill' fxItemStyle="overflow:auto;">
+                <ul>
+                    <p>{{pageModel?.title}}</p>
+                    <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
+                </ul>
+                <pre>{{pageModel?.resolve | json}}</pre>
+                <pre>{{context | json}}</pre>
+            </div>
+            <gx-scroll [options]="{trackClass: 'custom-scroll-track', thumbClass: 'custom-scroll-thumb', alwaysVisible: false}">
+                <img src="assets/img/win10.jpg" style="float:left; width:200px; margin:10px 10px 10px 0" alt="Cool image" title="Cool image">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rhoncus, felis interdum condimentum consectetur, nisl libero elementum eros, vehicula congue lacus eros non diam. Cum sociis natoque penatibus et magnis dis parturient montes,
+                    nascetur ridiculus mus. Vivamus mauris lorem, lacinia id tempus non, imperdiet et leo. Cras sit amet erat sit amet lacus egestas placerat. Aenean ultricies ultrices mauris ac congue. In vel tortor vel velit tristique tempus ac id nisi.
+                    Proin quis lorem velit. Nunc dui dui, blandit a ullamcorper vitae, congue fringilla lectus. Aliquam ultricies malesuada feugiat. Vestibulum placerat turpis et eros lobortis vel semper sapien pulvinar.</p>
+                <p>Pellentesque rhoncus aliquet porta. Sed vel magna eu turpis pharetra consequat ut vitae lectus. In molestie sollicitudin mi sit amet convallis. Aliquam erat volutpat. Nullam feugiat placerat ipsum eget malesuada. Nulla facilisis nunc non
+                    dolor vehicula pretium. Sed dui magna, sodales id pharetra non, ullamcorper eu sapien. Mauris ac consectetur leo. Mauris consequat, lectus ut bibendum pulvinar, leo magna feugiat enim, eu commodo lacus sem vel ante. Sed tempus metus
+                    eget leo mollis vulputate. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+                <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed pulvinar rhoncus quam, vel semper tellus viverra id. Nulla rutrum porttitor odio, a rutrum purus gravida non. Etiam ac purus augue, eget vestibulum
+                    purus. Aenean venenatis ullamcorper augue, non consequat elit tempor sed. Donec velit sapien, volutpat sed ultricies egestas, semper a ante. Fusce dapibus, quam eget auctor suscipit, nibh leo posuere ante, at auctor nisi lacus in sem.
+                    Morbi interdum consectetur euismod. Cras accumsan est lacus. Nulla eleifend, eros vel consequat commodo, arcu nunc malesuada nunc, quis sagittis felis sem ac turpis.</p>
+                <p>Nulla rhoncus elementum convallis. Mauris condimentum aliquet egestas. Ut iaculis nisi eget tellus accumsan venenatis. Maecenas imperdiet aliquam porta. Aenean ultrices dolor sed quam laoreet varius. Curabitur condimentum blandit erat,
+                    quis accumsan eros interdum vitae. Curabitur ligula arcu, sollicitudin vitae iaculis sed, blandit sit amet enim. Morbi ullamcorper, metus vel mollis tristique, arcu turpis malesuada nisi, at dignissim lorem odio a orci. Proin ultrices,
+                    ipsum ut vestibulum interdum, libero felis auctor mi, vitae convallis nisl justo ac tellus. Integer nec lacinia turpis. Etiam massa nisl, rhoncus quis rutrum in, pretium eu leo. Proin a velit ut nulla laoreet vestibulum. Curabitur
+                    eu elit vitae felis auctor tincidunt. Curabitur tincidunt, metus sed sollicitudin cursus, quam elit commodo erat, ut tempor erat sapien vitae velit. Morbi nec viverra erat.</p>
+                <p>Nullam scelerisque facilisis pretium. Vivamus lectus leo, commodo ac sagittis ac, dictum a mi. Donec quis massa ut libero malesuada commodo in et risus. Fusce nunc dolor, aliquet vel rutrum in, molestie sit amet massa. Aliquam suscipit,
+                    justo a commodo condimentum, enim sapien fringilla ante, sed lobortis orci lectus in ante. Donec vel interdum est. Donec placerat cursus lacus, eu ultricies nisl tincidunt a. Fusce libero risus, sagittis eleifend iaculis aliquet, condimentum
+                    vitae diam. Suspendisse potenti. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin leo purus, sodales a venenatis luctus, faucibus ac enim. Sed id metus ac sem lobortis pretium. Mauris
+                    faucibus tempor scelerisque. Nunc vulputate interdum tortor, non tincidunt dui condimentum eget. Aenean in porttitor velit. Nam accumsan rhoncus risus id consectetur.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rhoncus, felis interdum condimentum consectetur, nisl libero elementum eros, vehicula congue lacus eros non diam. Cum sociis natoque penatibus et magnis dis parturient montes,
+                    nascetur ridiculus mus. Vivamus mauris lorem, lacinia id tempus non, imperdiet et leo. Cras sit amet erat sit amet lacus egestas placerat. Aenean ultricies ultrices mauris ac congue. In vel tortor vel velit tristique tempus ac id nisi.
+                    Proin quis lorem velit. Nunc dui dui, blandit a ullamcorper vitae, congue fringilla lectus. Aliquam ultricies malesuada feugiat. Vestibulum placerat turpis et eros lobortis vel semper sapien pulvinar.</p>
+                <p>Pellentesque rhoncus aliquet porta. Sed vel magna eu turpis pharetra consequat ut vitae lectus. In molestie sollicitudin mi sit amet convallis. Aliquam erat volutpat. Nullam feugiat placerat ipsum eget malesuada. Nulla facilisis nunc non
+                    dolor vehicula pretium. Sed dui magna, sodales id pharetra non, ullamcorper eu sapien. Mauris ac consectetur leo. Mauris consequat, lectus ut bibendum pulvinar, leo magna feugiat enim, eu commodo lacus sem vel ante. Sed tempus metus
+                    eget leo mollis vulputate. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+                <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed pulvinar rhoncus quam, vel semper tellus viverra id. Nulla rutrum porttitor odio, a rutrum purus gravida non. Etiam ac purus augue, eget vestibulum
+                    purus. Aenean venenatis ullamcorper augue, non consequat elit tempor sed. Donec velit sapien, volutpat sed ultricies egestas, semper a ante. Fusce dapibus, quam eget auctor suscipit, nibh leo posuere ante, at auctor nisi lacus in sem.
+                    Morbi interdum consectetur euismod. Cras accumsan est lacus. Nulla eleifend, eros vel consequat commodo, arcu nunc malesuada nunc, quis sagittis felis sem ac turpis.</p>
+                <p>Nulla rhoncus elementum convallis. Mauris condimentum aliquet egestas. Ut iaculis nisi eget tellus accumsan venenatis. Maecenas imperdiet aliquam porta. Aenean ultrices dolor sed quam laoreet varius. Curabitur condimentum blandit erat,
+                    quis accumsan eros interdum vitae. Curabitur ligula arcu, sollicitudin vitae iaculis sed, blandit sit amet enim. Morbi ullamcorper, metus vel mollis tristique, arcu turpis malesuada nisi, at dignissim lorem odio a orci. Proin ultrices,
+                    ipsum ut vestibulum interdum, libero felis auctor mi, vitae convallis nisl justo ac tellus. Integer nec lacinia turpis. Etiam massa nisl, rhoncus quis rutrum in, pretium eu leo. Proin a velit ut nulla laoreet vestibulum. Curabitur
+                    eu elit vitae felis auctor tincidunt. Curabitur tincidunt, metus sed sollicitudin cursus, quam elit commodo erat, ut tempor erat sapien vitae velit. Morbi nec viverra erat.</p>
+                <p>Nullam scelerisque facilisis pretium. Vivamus lectus leo, commodo ac sagittis ac, dictum a mi. Donec quis massa ut libero malesuada commodo in et risus. Fusce nunc dolor, aliquet vel rutrum in, molestie sit amet massa. Aliquam suscipit,
+                    justo a commodo condimentum, enim sapien fringilla ante, sed lobortis orci lectus in ante. Donec vel interdum est. Donec placerat cursus lacus, eu ultricies nisl tincidunt a. Fusce libero risus, sagittis eleifend iaculis aliquet, condimentum
+                    vitae diam. Suspendisse potenti. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin leo purus, sodales a venenatis luctus, faucibus ac enim. Sed id metus ac sem lobortis pretium. Mauris
+                    faucibus tempor scelerisque. Nunc vulputate interdum tortor, non tincidunt dui condimentum eget. Aenean in porttitor velit. Nam accumsan rhoncus risus id consectetur.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rhoncus, felis interdum condimentum consectetur, nisl libero elementum eros, vehicula congue lacus eros non diam. Cum sociis natoque penatibus et magnis dis parturient montes,
+                    nascetur ridiculus mus. Vivamus mauris lorem, lacinia id tempus non, imperdiet et leo. Cras sit amet erat sit amet lacus egestas placerat. Aenean ultricies ultrices mauris ac congue. In vel tortor vel velit tristique tempus ac id nisi.
+                    Proin quis lorem velit. Nunc dui dui, blandit a ullamcorper vitae, congue fringilla lectus. Aliquam ultricies malesuada feugiat. Vestibulum placerat turpis et eros lobortis vel semper sapien pulvinar.</p>
+                <p>Pellentesque rhoncus aliquet porta. Sed vel magna eu turpis pharetra consequat ut vitae lectus. In molestie sollicitudin mi sit amet convallis. Aliquam erat volutpat. Nullam feugiat placerat ipsum eget malesuada. Nulla facilisis nunc non
+                    dolor vehicula pretium. Sed dui magna, sodales id pharetra non, ullamcorper eu sapien. Mauris ac consectetur leo. Mauris consequat, lectus ut bibendum pulvinar, leo magna feugiat enim, eu commodo lacus sem vel ante. Sed tempus metus
+                    eget leo mollis vulputate. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+                <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed pulvinar rhoncus quam, vel semper tellus viverra id. Nulla rutrum porttitor odio, a rutrum purus gravida non. Etiam ac purus augue, eget vestibulum
+                    purus. Aenean venenatis ullamcorper augue, non consequat elit tempor sed. Donec velit sapien, volutpat sed ultricies egestas, semper a ante. Fusce dapibus, quam eget auctor suscipit, nibh leo posuere ante, at auctor nisi lacus in sem.
+                    Morbi interdum consectetur euismod. Cras accumsan est lacus. Nulla eleifend, eros vel consequat commodo, arcu nunc malesuada nunc, quis sagittis felis sem ac turpis.</p>
+                <p>Nulla rhoncus elementum convallis. Mauris condimentum aliquet egestas. Ut iaculis nisi eget tellus accumsan venenatis. Maecenas imperdiet aliquam porta. Aenean ultrices dolor sed quam laoreet varius. Curabitur condimentum blandit erat,
+                    quis accumsan eros interdum vitae. Curabitur ligula arcu, sollicitudin vitae iaculis sed, blandit sit amet enim. Morbi ullamcorper, metus vel mollis tristique, arcu turpis malesuada nisi, at dignissim lorem odio a orci. Proin ultrices,
+                    ipsum ut vestibulum interdum, libero felis auctor mi, vitae convallis nisl justo ac tellus. Integer nec lacinia turpis. Etiam massa nisl, rhoncus quis rutrum in, pretium eu leo. Proin a velit ut nulla laoreet vestibulum. Curabitur
+                    eu elit vitae felis auctor tincidunt. Curabitur tincidunt, metus sed sollicitudin cursus, quam elit commodo erat, ut tempor erat sapien vitae velit. Morbi nec viverra erat.</p>
+                <p>Nullam scelerisque facilisis pretium. Vivamus lectus leo, commodo ac sagittis ac, dictum a mi. Donec quis massa ut libero malesuada commodo in et risus. Fusce nunc dolor, aliquet vel rutrum in, molestie sit amet massa. Aliquam suscipit,
+                    justo a commodo condimentum, enim sapien fringilla ante, sed lobortis orci lectus in ante. Donec vel interdum est. Donec placerat cursus lacus, eu ultricies nisl tincidunt a. Fusce libero risus, sagittis eleifend iaculis aliquet, condimentum
+                    vitae diam. Suspendisse potenti. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin leo purus, sodales a venenatis luctus, faucibus ac enim. Sed id metus ac sem lobortis pretium. Mauris
+                    faucibus tempor scelerisque. Nunc vulputate interdum tortor, non tincidunt dui condimentum eget. Aenean in porttitor velit. Nam accumsan rhoncus risus id consectetur.</p>
+            </gx-scroll>
+        </div>
+    </div>
+    <div #footerWrapper fxLayout fxAlignCross='center' fxItem="none" fxItemHeight="48px">
+        <div #footerLeft fxItem='fill' fxLayout fxAlignMain="space-evenly" fxAlignCross="center" fxStyle="cursor: pointer;" fxHeight="36px">
+            <span fxItem><a>报批</a></span>
+            <span fxItem><a>审批</a></span>
+            <span fxItem><a>审核</a></span>
+        </div>
+        <div #footerRight fxItem='fill' fxLayout fxAlignMain='flex-end' fxAlignCross="center" fxMinHeight="36px">
+            <button fxItem>联络函</button>
+            <button fxItem>数据更新</button>
+            <button fxItem>账务挂账</button>
+            <button fxItem>订单导入</button>
+            <button fxItem>红字冲单</button>
+        </div>
+    </div>
+</div>
