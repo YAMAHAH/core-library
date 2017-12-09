@@ -15586,11 +15586,11 @@
       "hideWarningsAndErrors": true
     },
     "restore": {
-      "projectUniqueName": "D:\\WebApp\\server\\dataservices\\dataservices.csproj",
+      "projectUniqueName": "D:\\WebApp\\client\\core-library\\server\\dataservices\\dataservices.csproj",
       "projectName": "dataservices",
-      "projectPath": "D:\\WebApp\\server\\dataservices\\dataservices.csproj",
+      "projectPath": "D:\\WebApp\\client\\core-library\\server\\dataservices\\dataservices.csproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "D:\\WebApp\\server\\dataservices\\obj\\",
+      "outputPath": "D:\\WebApp\\client\\core-library\\server\\dataservices\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
