@@ -68,6 +68,11 @@ import { PurchaseModuleType } from '@framework-actions/purchase-order-module/Pur
     exportAs: 'x-sale',
     templateUrl: 'sale.component.html',
     styleUrls: ['sale.component.css'],
+    host: {
+        '[class.flex-column-container-item]': 'true',
+        '[class.el-hide]': '!visible',
+        '[class.el-flex-show]': 'visible'
+    },
     providers: [provideParent(SaleComponent, ComponentFactoryConatiner)],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

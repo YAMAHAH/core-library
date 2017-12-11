@@ -79,6 +79,9 @@ export class ComponentOutlet implements OnChanges, OnDestroy {
 
     constructor(private _viewContainerRef: ViewContainerRef) { }
 
+    events = new Map<string, string>();
+    eventSubscribeds = [];
+    props = new Map<string, string>();
     ngOnChanges(changes: SimpleChanges) {
         if (this._componentRef) {
             this._viewContainerRef.remove(this._viewContainerRef.indexOf(this._componentRef.hostView));
@@ -104,6 +107,9 @@ export class ComponentOutlet implements OnChanges, OnDestroy {
             let componentFactory =
                 injector.get(ComponentFactoryResolver).resolveComponentFactory(this.gxComponentOutlet);
 
+            componentFactory.outputs.map(e => this.events.set(e.templateName, e.propName));
+            componentFactory.inputs.map(e => this.props.set(e.templateName, e.propName));
+
             this._componentRef = this._viewContainerRef.createComponent(
                 componentFactory, this._viewContainerRef.length, injector, this.gxComponentOutletContent);
 
@@ -122,12 +128,38 @@ export class ComponentOutlet implements OnChanges, OnDestroy {
                 Object.assign(parseObject.componentRef.instance, parseObject);
                 this._viewContainerRef.insert((parseObject.componentRef as ComponentRef<any>).hostView);
             }
+            let compOptions = parseObject.options;
+            let compInstance = this._componentRef.instance;
+            if (compOptions) {
+                for (const key in compOptions) {
+                    if (compOptions.hasOwnProperty(key)) {
+                        const val = compOptions[key];
+                        if (this.events.has(key)) {
+                            let event = compInstance[this.events.get(key)];
+                            event && event.subscribe(val);
+                            this.eventSubscribeds.push(event);
+                        }
+                        else if (this.props.has(key)) {
+                            compInstance[this.props.get(key)] = val;
+                        }
+                    }
+                }
+            }
+            ["componentOptions"].forEach((item) => {
+                delete parseObject[item];
+            });
             Object.assign(this._componentRef.instance, parseObject);
         }
     }
     ngOnDestroy() {
         if (this._moduleRef) this._moduleRef.destroy();
+        /**事件注销处理 */
+        if (this._componentRef) {
+            this.eventSubscribeds.forEach(e => {
+                e.unsubscribe();
+            });
+            this._componentRef.destroy();
+        }
     }
-
 
 }

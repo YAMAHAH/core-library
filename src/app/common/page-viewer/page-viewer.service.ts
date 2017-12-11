@@ -19,11 +19,11 @@ export class PageViewerService {
             throw new Error('Should setup ViewContainerRef on modal options or config service!');
         }
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(PageViewer);
-
         const injector: Injector = options.injector || rootContainer.parentInjector;
 
         const pageViewerRef = rootContainer.createComponent(componentFactory, rootContainer.length, injector);
         this.instances.push(pageViewerRef);
+
         if (options.pageModel) {
             if (options.isForceAppend) {
                 options.pageModel.views = {
@@ -57,7 +57,7 @@ export class PageViewerService {
         let myOptions = options;
         ["rootContainer", "injector", "resolve"].forEach((item) => {
             delete myOptions[item];
-        })
+        });
         Object.assign(instance, myOptions);
 
         const dismissResult = instance.modalResult

@@ -4,6 +4,7 @@ import { IModuleType } from './IComponentFactoryType';
 import { ActivatedRoute } from '@angular/router';
 import { FormOptions } from '@framework-components/form/FormOptions';
 import { PageViewerOptions } from '@framework-common/page-viewer/page-viewer.options';
+import { PageTypeEnum } from '../PageTypeEnum';
 
 export interface IComponentBase {
     /**
@@ -18,6 +19,8 @@ export interface IComponentBase {
      * 设置关联容器
      */
     setOtherParent(godFather: IPageModel): IPageModel;
+    /**创建表单模型 */
+    createBillModel(type: PageTypeEnum, key: string, title: string, billDataContext: any);
     /**
      * 显示弹窗
      */

@@ -3,7 +3,7 @@ import {
     OnDestroy, Input, Output, EventEmitter,
     ContentChild, ViewChild, trigger, state, style,
     transition, animate, Type, OnChanges, SimpleChanges,
-    ComponentRef, Renderer2
+    ComponentRef, Renderer2, TemplateRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header, UISharedModule } from '@framework-common/shared/shared';
@@ -194,6 +194,8 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
     });
     @Input() closeAfterCallBackFn: Function = null;
     @Input() componentRef: ComponentRef<any>;
+    @Input() templateRef: TemplateRef<any>;
+    @Input() templateContext: any;
     @Input() ngComponentOutlet: Type<any>;
 
     @Input() isForceAppend: boolean = false;
@@ -202,7 +204,8 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         return {
             parent: this,
             modalResult: this._modalResult,
-            get context() { return self.context; }
+            get context() { return self.context; },
+            componentOptions: this.formModel && this.formModel.options
         };
     }
 

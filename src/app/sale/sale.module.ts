@@ -34,6 +34,8 @@ import { AppGlobalService } from '@framework-services/AppGlobalService';
 import { AbstractModuleBase } from '@framework-base/module/AbstractModuleBase';
 import { NavTreeViewModule } from '@framework-components/nav-tree-view/nav-tree-view.module';
 import { SaleModuleType } from '@framework-actions/sales-order-module/SalesModuleType';
+import { SaleListComponent } from './sale.list.component';
+import { SaleDetailComponent } from './sale.detail.component';
 
 export const saleRouteConfig: Routes = [
     {
@@ -72,7 +74,9 @@ export const saleRouteConfig: Routes = [
         DateColumnBodyComponent,
         CellEditorComponent,
         ModalTestComponent,
-        PanelTestComponent
+        PanelTestComponent,
+        SaleListComponent,
+        SaleDetailComponent
     ],
     exports: [
         SaleComponent,
@@ -86,7 +90,9 @@ export const saleRouteConfig: Routes = [
         SaleComponent,
         ColumnBodyComponent,
         DateColumnBodyComponent,
-        CellEditorComponent
+        CellEditorComponent,
+        SaleListComponent,
+        SaleDetailComponent
     ],
     providers: [
         // ...getClassProviders([TenantManageTemplate, TenantManageTemplate2]),

@@ -78,7 +78,7 @@ export class PurListComponent extends ComponentBase implements OnInit {
             if (this.pageModel.componentRef) {
                 let factoryRef = await this.globalService.GetOrCreateComponentFactory(PurchaseModuleType);
                 if (factoryRef) {
-                    detail.showType = ShowTypeEnum.tab;
+                    detail.showType = ShowTypeEnum.showForm;
                     let ins = factoryRef.getComponentRef(PurDetailComponent, detail).instance;
                     ins.context = detail.resolve; //{ data: 'Context:手工创建组件,传递参数,显示窗体' };
 
@@ -89,10 +89,10 @@ export class PurListComponent extends ComponentBase implements OnInit {
         }
         //setcurrent
         this.pageModel.componentFactoryRef.setCurrent(detail);
-        this.createBill(item);
+        this.createBillModel(item);
     }
 
-    createBill(item: any) {
+    createBillModel(item: any) {
         let detail: IPageModel = {
             formType: PageTypeEnum.detail,
             key: UUID.uuid(8, 10),

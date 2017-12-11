@@ -1,0 +1,28 @@
+<div #wrapper fxLayout="column" style="margin: 0rem;padding: 0rem; width: 100%; height: 100%;border: 1px solid blue;">
+    <div #toolbarWrapper fxLayout fxAlignCross='center' fxGap="0px 0px 0px 5px" fxHeight='36px' fxItem="none" fxItemStyle="border-bottom: 1px solid blue;">
+
+    </div>
+    <div #headerWrapper fxLayout fxAlignCross='center' fxItem="1 1 30%" fxStyle="border-bottom: 1px solid blue;">
+
+    </div>
+    <div #bodyWrapper fxLayout fxItem='1 1 50%' fxItemStyle="border-bottom: 1px solid blue;overflow: auto;">
+        <div #mainWrapper fxLayout='column' fxFill fxItem='fill'>
+            <div #main fxItem='fill' fxItemStyle="overflow:auto;">
+                <ul>
+                    <p>{{pageModel?.title}}</p>
+                    <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
+                </ul>
+                <pre>{{pageModel?.resolve | json}}</pre>
+                <pre>{{context | json}}</pre>
+            </div>
+        </div>
+    </div>
+    <div #footerWrapper fxLayout fxAlignCross='center' fxItem="none" fxItemHeight="48px">
+        <div #footerLeft fxItem='fill' fxLayout fxAlignMain="space-evenly" fxAlignCross="center" fxStyle="cursor: pointer;" fxHeight="36px">
+
+        </div>
+        <div #footerRight fxItem='fill' fxLayout fxAlignMain='flex-end' fxAlignCross="center" fxMinHeight="36px">
+
+        </div>
+    </div>
+</div>

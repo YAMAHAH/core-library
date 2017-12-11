@@ -1,5 +1,5 @@
-<div style="display:flex;flex:1 0 100%;height:100%">
-    <gx-nav-tree-view (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></gx-nav-tree-view>
+<!-- <div style="display:flex;flex:1 0 100%;height:100%">
+  <gx-nav-tree-view (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></gx-nav-tree-view>
     <div style="display:flex;flex:1;flex-direction: column; width:100%">
         <div [ngClass]="getClass(pageModel)" style="display:flex;flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2">
             <div>
@@ -155,5 +155,15 @@
         <div *gxHostContainer></div>
 
     </div>
+</div> -->
+
+<div fxLayout="row" style="height:100%;flex:1 0 100%">
+    <gx-nav-tree-view fxItem='none' fxItemOrder=2 (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></gx-nav-tree-view>
+    <div fxLayout='column' fxItem="fill" fxItemFill>
+        <ng-container *ngFor="let grp of modelGroups">
+            <gx-sale-list *ngFor="let list of listModels(grp)" [pageModel]="list"></gx-sale-list>
+            <gx-sale-detail *ngFor="let item of editModels(grp)" [pageModel]="item"></gx-sale-detail>
+        </ng-container>
+        <ng-template gxHostContainer></ng-template>
+    </div>
 </div>
-<!-- *gxHostContainer <x-iframe #pdfReport style="display:flex;flex:1 0 100%;width:100% "></x-iframe>-->

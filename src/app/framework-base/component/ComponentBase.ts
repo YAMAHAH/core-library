@@ -15,6 +15,8 @@ import { PageViewerOptions } from '@framework-common/page-viewer/page-viewer.opt
 import { ComponentFactoryConatiner } from './ComponentFactoryConatiner';
 import { providers } from '../../common/toasty/index';
 import { ShowTypeEnum } from '@framework-base/component/ShowTypeEnum';
+import { PageTypeEnum } from '@framework-base/component/PageTypeEnum';
+import { UUID } from '@untils/uuid';
 
 export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase {
     _visible: boolean = true;
@@ -59,6 +61,32 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
             }
         }
         return this.pageModel;
+    }
+    createBillModel(type: PageTypeEnum, key: string, title: string, billDataContext: any) {
+        let billModel: IPageModel = {
+            formType: type,
+            key: key,
+            title: title,
+            active: false,
+            tag: null,
+            childs: [],
+            componentFactoryRef: this.pageModel.componentFactoryRef,
+            parent: this.pageModel.parent,
+            showType: this.globalService.showType || ShowTypeEnum.showForm,
+            resolve: this.globalService.handleResolve({ data: billDataContext }),
+        };
+        this.pageModel.parent.childs.push(billModel);
+
+        let ndKey = UUID.uuid(8, 10);
+        let nd = new NavTreeNode(ndKey, ndKey, '/path', 'param', 0);
+        nd.tag = billModel;
+        billModel.tag = nd;
+
+        let node = this.pageModel.tag as NavTreeNode;
+        if (node && node.parent) {
+            node.parent.addNode(nd);
+        }
+        this.pageModel.componentFactoryRef.setCurrent(billModel);
     }
     show(modalOptions?: FormOptions) {
         if (this.pageModel) {

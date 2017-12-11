@@ -36,7 +36,14 @@ export const pcRootRouterConfig: Routes = [
         component: IndexComponent,
         loadChildren: '../../sale/sale.module#SaleModule',
         outlet: "sale",
-        data: { title: '销售模块', preload: false }
+        data: { title: '销售订单模块', preload: false }
+    },
+    {
+        path: 'salesQuery',
+        component: IndexComponent,
+        loadChildren: '../../sale/sale-query/sale-query.module#SaleQueryModule',
+        outlet: "salesQuery",
+        data: { title: '销售订单查询模块', preload: false }
     },
     {
         path: 'purOrder',
@@ -45,6 +52,14 @@ export const pcRootRouterConfig: Routes = [
         loadChildren: "../../pur/pur-order/pur-order.module#PurOrderModule",
         data: { title: '采购模块', preload: false }
     },
+    {
+        path: 'purOrderQuery',
+        component: IndexComponent,
+        outlet: 'purOrderQuery',
+        loadChildren: "../../pur/pur-order-query/purchase-order-query.module#PurchaseOrderQueryModule",
+        data: { title: '采购订单查询模块', preload: false }
+    },
+
     {
         path: 'footer',
         component: IndexComponent,

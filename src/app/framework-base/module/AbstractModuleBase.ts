@@ -24,10 +24,32 @@ export abstract class AbstractModuleBase {
             throw new Error('Should setup ViewContainerRef on modal options or config service!');
         }
         const componentFactory = this.getComponentFactory(componentType);
+        let events = new Map<string, string>();
+        let props = new Map<string, string>();
+        componentFactory.outputs.map(e => events.set(e.templateName, e.propName));
+        componentFactory.inputs.map(e => props.set(e.templateName, e.propName));
         const injector: Injector = rootContainer.parentInjector;
 
         const componentRef = rootContainer.createComponent(componentFactory, rootContainer.length, injector);
         let compInstance = componentRef.instance;
+
+        if (formModel) {
+            let compOptions = formModel.options;
+            if (compOptions) {
+                for (const key in compOptions) {
+                    if (compOptions.hasOwnProperty(key)) {
+                        const val = compOptions[key];
+                        if (events.has(key)) {
+                            let event = compInstance[events.get(key)];
+                            event && event.subscribe(val);
+                        }
+                        else if (props.has(key)) {
+                            compInstance[props.get(key)] = val;
+                        }
+                    }
+                }
+            }
+        }
         let newFormModel: IPageModel = formModel ? formModel : { title: '', active: true };
         compInstance.pageModel = newFormModel;
         newFormModel.componentRef = componentRef;

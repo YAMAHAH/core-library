@@ -3,6 +3,6 @@
         <ng-container *gxComponentOutlet="comp;context: compctx"></ng-container>
     </ng-container>
     <ng-template *gxHostContainer=" !!!isForceAppend && pageModel && pageModel.componentRef? pageModel.componentRef :componentRef;context:compctx"></ng-template>
+    <ng-container *ngTemplateOutlet="templateRef; context: templateContext"></ng-container>
     <ng-content></ng-content>
 </div>
-<!-- [style.display]="visible ? 'block' : 'none'" -->

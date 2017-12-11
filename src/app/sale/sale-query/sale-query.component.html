@@ -1,0 +1,9 @@
+<div fxLayout="row" style="height:100%;flex:1 0 100%">
+    <gx-nav-tree-view fxItem='none' fxItemOrder=2 (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></gx-nav-tree-view>
+    <div fxLayout='column' fxItem="fill" fxItemFill>
+        <ng-container *ngFor="let grp of modelGroups">
+            <gx-sale-query-list *ngFor="let list of listModels(grp)" [pageModel]="list"></gx-sale-query-list>
+        </ng-container>
+        <ng-template gxHostContainer></ng-template>
+    </div>
+</div>

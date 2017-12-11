@@ -632,6 +632,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         this.templateObjectMap.set(objectIdKey, tempObject);
         return tempObject;
     }
+
     getComponentRef<T extends IComponentBase>(componentType: Type<T>, formModel?: IPageModel): ComponentRef<T> {
         const rootContainer = this.viewContainerRef ||
             this.globalService.navTabManager.hostFactoryContainer.viewContainerRef;
@@ -639,10 +640,34 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             throw new Error('Should setup ViewContainerRef on modal options or config service!');
         }
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(componentType);
+        let events = new Map<string, string>();
+        let props = new Map<string, string>();
+        componentFactory.outputs.map(e => events.set(e.templateName, e.propName));
+        componentFactory.inputs.map(e => props.set(e.templateName, e.propName));
+
         const injector: Injector = rootContainer.parentInjector;
 
         const componentRef = rootContainer.createComponent(componentFactory, rootContainer.length, injector);
         let componentInstance = componentRef.instance;
+
+        if (formModel) {
+            let compOptions = formModel.options;
+            if (compOptions) {
+                for (const key in compOptions) {
+                    if (compOptions.hasOwnProperty(key)) {
+                        const val = compOptions[key];
+                        if (events.has(key)) {
+                            let event = componentInstance[events.get(key)];
+                            event && event.subscribe(val);
+                        }
+                        else if (props.has(key)) {
+                            componentInstance[props.get(key)] = val;
+                        }
+                    }
+                }
+            }
+        }
+
         let newFormModel = formModel ? formModel : this.createDefaultPageModel();
         componentInstance.pageModel = newFormModel;
         newFormModel.componentRef = componentRef;
@@ -748,5 +773,18 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     closeAfterFn: Function = () => {
         // this.appStore.taskManager.closeTaskGroup(() => this.pageModel.key);
     };
+    get modelGroups() {
+        return this.principalPageModels;
+    }
+    editModels(grp: IPageModel) {
+        return grp.childs.filter(child => child.formType === PageTypeEnum.detail);
+    }
+    listModels(grp: IPageModel) {
+        return grp.childs.filter(child => child.formType === PageTypeEnum.list);
+    }
+    queryModels(grp: IPageModel) {
+        return grp.childs.filter(child => child.formType === PageTypeEnum.query);
+    }
+
 }
 

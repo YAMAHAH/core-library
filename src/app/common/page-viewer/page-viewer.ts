@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, ViewChild, ComponentRef, Type, EventEmitter, AfterViewInit, OnDestroy, Renderer2, Output, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, ComponentRef, Type, EventEmitter, AfterViewInit, OnDestroy, Renderer2, Output, AfterViewChecked, OnChanges, SimpleChanges, TemplateRef } from '@angular/core';
 
 import { styleUntils } from '@untils/style';
 import { isFunction } from 'util';
@@ -32,10 +32,13 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
     @ViewChild('content') contentElementRef: ElementRef;
 
     @Input() context: any = {};
+    @Input() componentOptions = {};
 
     @Input() componentOutlets: Type<any>[] = [];
 
     @Input() componentRef: ComponentRef<any>;
+    @Input() templateRef: TemplateRef<any>;
+    @Input() templateContext: any;
     @Input() checkCloseBeforeFn: Function = async (event: any) => new Promise<any>(resolve => {
         event.cancel = true;
         return resolve(event);
@@ -54,12 +57,14 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
     @Output() visibleChange: EventEmitter<any> = new EventEmitter();
     _selectResult: any = { status: 'default', modalResult: null };
     _modalResult: EventEmitter<any> = new EventEmitter();
+
     compctx = () => {
         let self = this;
         return {
             parent: this,
             modalResult: this._modalResult,
-            get context() { return self.context; }
+            get context() { return self.context; },
+            componentOptions: this.pageModel && this.pageModel.options
         };
     }
 

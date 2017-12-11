@@ -51,7 +51,7 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
             title: '采购订单分组',
             active: true,
             componentFactoryRef: this,
-            showType: ShowTypeEnum.showForm,
+            showType: ShowTypeEnum.tab,
             childs: [],
             formType: PageTypeEnum.container
         };

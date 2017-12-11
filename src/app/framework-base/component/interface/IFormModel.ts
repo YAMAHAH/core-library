@@ -91,4 +91,8 @@ export interface IPageModel {
      * 数据提供解析
      */
     resolve?: any;
+    /**
+     * 组件属性和事件选项
+     */
+    options?: { [key: string]: any };
 }

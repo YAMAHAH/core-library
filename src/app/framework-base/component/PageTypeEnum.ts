@@ -8,7 +8,7 @@ export enum PageTypeEnum {
      */
     group = 1,
     /**
-     * 列表页/查询页
+     * 列表页
      */
     list = 2,
     /**
@@ -18,5 +18,9 @@ export enum PageTypeEnum {
     /**
      * 容器
      */
-    container = 4
+    container = 4,
+    /**
+     * 查询页
+     */
+    query = 5
 }
