@@ -27,7 +27,7 @@ import { IPageModel } from '@framework-base/component/interface/IFormModel';
 import { IComponentBase } from '@framework-base/component/interface/IComponentBase';
 import { IComponentType } from '@framework-base/component/interface/IComponentType';
 import { PurchaseModuleType } from '@framework-actions/purchase-order-module/PurchaseModuleType';
-import { PurchaseListComponentType, PurchaseEditComponentType } from '@framework-actions/purchase-order-module/PurchaseComponentType';
+import { PurchaseOrderListType, PurchaseOrderEditType } from '@framework-actions/purchase-order-module/PurchaseComponentType';
 
 @Component({
     selector: 'x-pur-order',
@@ -134,9 +134,9 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
     componentReducer<T extends IComponentBase>(componentType: Type<IComponentType>, pageModel?: IPageModel): ComponentRef<T> {
         let compType = new componentType();
         switch (true) {
-            case compType instanceof PurchaseListComponentType:
+            case compType instanceof PurchaseOrderListType:
                 return this.getComponentRef(PurListComponent, pageModel) as any;
-            case compType instanceof PurchaseEditComponentType:
+            case compType instanceof PurchaseOrderEditType:
                 return this.getComponentRef(PurDetailComponent, pageModel) as any;
             default:
                 break;

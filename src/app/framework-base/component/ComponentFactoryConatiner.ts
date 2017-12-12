@@ -286,19 +286,19 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         let dependModels: IPageModel[] = this.getDependentPageModels();
         //不存在于实体列表中
         let notExistInDepends = dependModels.notContains(pageModel);
-        if (notExistInDepends && this.current && !this.current.godFather && this.current.showType == ShowTypeEnum.tab) {
-            this.current.active = false;
-        } else if (notExistInDepends && this.current && this.current.pageViewerRef) {
-            this.current.active = false;
-            this.current.pageViewerRef.instance.visible = false;
-        } else if (notExistInDepends && this.current && this.current.views && this.current.views.current) {
-            if (this.current.views.pageViewerRef) {
-                this.current.views.current.active = false;
-                this.current.views.pageViewerRef.instance.visible = false;
-            }
+        if (notExistInDepends && this.current) {
+            if (!this.current.godFather && !pageModel.modalRef && this.current.showType == ShowTypeEnum.tab) {
+                this.current.active = false;
+            } else if (this.current.pageViewerRef) {
+                this.current.active = false;
+                this.current.pageViewerRef.instance.visible = false;
+            } else if (this.current.views && this.current.views.current) {
+                if (this.current.views.pageViewerRef) {
+                    this.current.views.current.active = false;
+                    this.current.views.pageViewerRef.instance.visible = false;
+                }
+            } else this.current.active = true;
         }
-        else if (this.current)
-            this.current.active = true;
 
         pageModel.active = true;
         this.current = pageModel;
@@ -402,10 +402,10 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             if (pageModels.isNotEmpty()) {
                 from(pageModels)
                     .pipe(flatMap(page => {
-                        if (tryGetValue(() => pageModel.modalRef.instance).hasValue)
-                            return fromPromise(pageModel.modalRef.instance.forceClose(null));
-                        else if (tryGetValue(() => pageModel.pageViewerRef.instance).hasValue) {
-                            return fromPromise(pageModel.pageViewerRef.instance.forceClose(null));
+                        if (tryGetValue(() => page.modalRef.instance).hasValue) //pageModel
+                            return fromPromise(page.modalRef.instance.forceClose(null));
+                        else if (tryGetValue(() => page.pageViewerRef.instance).hasValue) {
+                            return fromPromise(page.pageViewerRef.instance.forceClose(null));
                         }
                         else
                             return fromPromise(this.closePageHandler(page));
@@ -715,6 +715,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         //添加依赖页面
         this.addDependentPageModel(groupPageModel);
         this.setCurrent(groupPageModel);
+        console.log(pageList);
         return pageList;
     }
 
@@ -763,6 +764,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     async onItemCloseClick(navNode: NavTreeNode) {
         let formModel: IPageModel = navNode.tag;
         //根据model关闭,关闭前检查,等待关闭前处理函数
+        debugger;
         await this.closePage(formModel);
     }
 

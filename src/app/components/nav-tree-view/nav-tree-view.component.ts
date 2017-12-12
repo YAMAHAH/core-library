@@ -26,6 +26,7 @@ export class NavTreeViewComponent implements OnInit {
     }
 
     onItemCloseClick(navNode: NavTreeNode) {
+        console.log(navNode);
         this.itemCloseClick.next(navNode);
     }
 

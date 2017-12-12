@@ -40,7 +40,7 @@
     <div class="flex-row-col flex-col-xs middle-xs" style="height:1px;margin: 5px 0px 5px 0px;background: #c6c6c6">
     </div>
 
-    <div style="width:189px;height:auto;max-height:455px;overflow:auto;">
+    <div style="min-width:255px;max-width:255px;height:auto;max-height:455px;overflow:auto;">
         <ng-container *ngFor="let navItem of navTabModelOrders">
             <div (click)="onMenuItemClick($event,navItem)" [ngClass]="{'activeItem':navItem.active}" class="gx-menu-item flex-row-col flex-col-xs middle-xs">
                 <div *ngIf="navItem.key!='main'">

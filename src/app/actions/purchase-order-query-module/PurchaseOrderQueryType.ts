@@ -2,10 +2,17 @@ import { IModuleType } from '@framework-base/component/interface/IComponentFacto
 import { abstractModuleType } from '../actions-base';
 export class PurchaseOrderQueryModuleType extends abstractModuleType {
     static staticModuleKey = "PurchaseOrderQueryModule";
+    static staticFactoryKey = "purOrderQuery";
     constructor(options: IModuleType = {
-        factoryKey: 'purOrderQuery',
+        factoryKey: PurchaseOrderQueryModuleType.staticFactoryKey,
         moduleKey: PurchaseOrderQueryModuleType.staticModuleKey
     }) {
+        if (!options.moduleKey) {
+            options.moduleKey = PurchaseOrderQueryModuleType.staticModuleKey;
+        }
+        if (!options.factoryKey) {
+            options.factoryKey = PurchaseOrderQueryModuleType.staticFactoryKey;
+        }
         super(options);
     }
 }

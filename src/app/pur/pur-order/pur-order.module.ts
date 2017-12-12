@@ -19,9 +19,11 @@ import { PurchaseModuleType } from '@framework-actions/purchase-order-module/Pur
 import { IComponentBase } from '@framework-base/component/interface/IComponentBase';
 import { IPageModel } from '@framework-base/component/interface/IFormModel';
 import { IComponentType } from '@framework-base/component/interface/IComponentType';
-import { PurchaseListComponentType, PurchaseEditComponentType } from '@framework-actions/purchase-order-module/PurchaseComponentType';
+import { PurchaseOrderListType, PurchaseOrderEditType } from '@framework-actions/purchase-order-module/PurchaseComponentType';
 import { MatIconModule, MatFormFieldModule } from '@angular/material';
 import { ScrollModule } from '@framework-components/scroll/ScrollComponent';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { COMPONENTMODALTOKEN } from '@framework-base/component/ComponentInjectorToken';
 
 
 
@@ -42,7 +44,7 @@ export const purRouteConfig: Routes = [
         DynamicFormModule,
         MatIconModule,
         MatFormFieldModule,
-        ScrollModule 
+        ScrollModule
     ],
     declarations: [
         PurOrderComponent,
@@ -74,10 +76,26 @@ export class PurOrderModule extends AbstractModuleBase {
     componentReducer<T extends IComponentBase>(viewContainer: ViewContainerRef, componentType: Type<IComponentType>, pageModel?: IPageModel): ComponentRef<T> {
         let compType = new componentType();
         switch (true) {
-            case compType instanceof PurchaseListComponentType:
+            case compType instanceof PurchaseOrderListType:
                 return this.getComponentRef(viewContainer, PurListComponent, pageModel) as any;
-            case compType instanceof PurchaseEditComponentType:
+            case compType instanceof PurchaseOrderEditType:
                 return this.getComponentRef(viewContainer, PurDetailComponent, pageModel) as any;
+            default:
+                break;
+        }
+        return null;
+    }
+    componentPortalReducer<T extends IComponentBase>(componentType: Type<IComponentType>,
+        viewContainer: ViewContainerRef, pageModel?: IPageModel): ComponentPortal<T> {
+        let compType = new componentType();
+        let customTokens = new WeakMap<any, any>();
+        customTokens.set(COMPONENTMODALTOKEN, pageModel);
+        let injector = this.createCustomInjector(customTokens);
+        switch (true) {
+            case compType instanceof PurchaseOrderListType:
+                return this.createComponentPortal(PurListComponent, viewContainer, injector) as any;
+            case compType instanceof PurchaseOrderEditType:
+                return this.createComponentPortal(PurDetailComponent, viewContainer, injector) as any;
             default:
                 break;
         }

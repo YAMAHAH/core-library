@@ -33,7 +33,7 @@ import { TenantManageTemplate, TenantManageTemplate2 } from './TenantManageTempl
 import { AppGlobalService } from '@framework-services/AppGlobalService';
 import { AbstractModuleBase } from '@framework-base/module/AbstractModuleBase';
 import { NavTreeViewModule } from '@framework-components/nav-tree-view/nav-tree-view.module';
-import { SaleModuleType } from '@framework-actions/sales-order-module/SalesModuleType';
+import { SaleOrderModuleType } from '@framework-actions/sales-order-module/SalesModuleType';
 import { SaleListComponent } from './sale.list.component';
 import { SaleDetailComponent } from './sale.detail.component';
 
@@ -103,7 +103,7 @@ export const saleRouteConfig: Routes = [
 })
 export class SaleModule extends AbstractModuleBase {
     constructor(injector: Injector) {
-        super(injector, SaleModuleType.staticModuleKey);
+        super(injector, SaleOrderModuleType.staticModuleKey);
     }
 }
 

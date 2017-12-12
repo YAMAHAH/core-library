@@ -7,7 +7,7 @@ import { ComponentBase } from '@framework-base/component/ComponentBase';
 import { NavTreeNode } from '@framework-components/nav-tree-view/nav-tree-node';
 import { UUID } from '@untils/uuid';
 import { SaleDetailComponent } from './sale.detail.component';
-import { SaleModuleType } from '@framework-actions/sales-order-module/SalesModuleType';
+import { SaleOrderModuleType } from '@framework-actions/sales-order-module/SalesModuleType';
 
 @Component({
     selector: 'gx-sale-list',
@@ -57,7 +57,7 @@ export class SaleListComponent extends ComponentBase implements OnInit {
                 node.parent.addNode(nd);
             }
             if (this.pageModel.componentRef) {
-                let factoryRef = await this.globalService.GetOrCreateComponentFactory(SaleModuleType);
+                let factoryRef = await this.globalService.GetOrCreateComponentFactory(SaleOrderModuleType);
                 if (factoryRef) {
                     detail.showType = ShowTypeEnum.showForm;
                     let ins = factoryRef.getComponentRef(SaleDetailComponent, detail).instance;

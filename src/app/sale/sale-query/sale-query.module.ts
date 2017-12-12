@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { NavTreeViewModule } from '@framework-components/nav-tree-view/nav-tree-view.module';
 import { Routes, RouterModule } from '@angular/router';
 import { AbstractModuleBase } from '@framework-base/module/AbstractModuleBase';
-import { SaleQueryModuleType } from '@framework-actions/sales-query-module/SalesQueryModuleType';
+import { SaleOrderQueryModuleType } from '@framework-actions/sales-query-module/SalesQueryModuleType';
 
 export const salesQueryRouteConfig: Routes = [
     { path: "", component: SaleQueryComponent, data: { title: '销售订单明细查询' } }
@@ -35,7 +35,7 @@ export const salesQueryRouteConfig: Routes = [
 })
 export class SaleQueryModule extends AbstractModuleBase {
     constructor(injector: Injector) {
-        super(injector, SaleQueryModuleType.staticModuleKey);
+        super(injector, SaleOrderQueryModuleType.staticModuleKey);
     }
 }
 
@@ -46,4 +46,8 @@ export class SaleQueryModule extends AbstractModuleBase {
  * 4.增加模块列表组件(查询组件和列表组件同归为列表类型),继承ComponentBase抽象类
  * 5.配置模块,继承AbstractModuleBase,注册模块
  * 6.增加对外访问类,用于其它模块创建本模块组件
+ * 
+ * tabKey和pageModelKey值相同,tabKey初始化时可以没有值,tabKey自动生成唯一的值
+ * outlet/factoryKey值相同,如果不相同,在其它模块引用模块时会无法正常处理
+ * path,moduleKey,相互独立
  */

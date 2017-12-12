@@ -58,8 +58,8 @@ import { IComponentBase } from '@framework-base/component/interface/IComponentBa
 import { PageViewerOptions } from '@framework-common/page-viewer/page-viewer.options';
 import { provideParent } from '@untils/di-helper';
 import { Observable } from 'rxjs/Observable';
-import { SaleModuleType } from '@framework-actions/sales-order-module/SalesModuleType';
-import { PurchaseEditComponentType, PurchaseListComponentType } from '@framework-actions/purchase-order-module/PurchaseComponentType';
+import { SaleOrderModuleType } from '@framework-actions/sales-order-module/SalesModuleType';
+import { PurchaseOrderEditType, PurchaseOrderListType } from '@framework-actions/purchase-order-module/PurchaseComponentType';
 import { PurchaseModuleType } from '@framework-actions/purchase-order-module/PurchaseModuleType';
 
 @Component({
@@ -119,7 +119,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         @Inject(forwardRef(() => TenantManageTemplate)) @Optional() public td: TenantManageTemplate
 
     ) { //
-        super(injector, SaleModuleType.staticFactoryKey);
+        super(injector, SaleOrderModuleType.staticFactoryKey);
         // @Optional() @Inject(forwardRef(() => TenantManageTemplate)) public td: TenantManageTemplate
         // console.log(injector.get(TenantManageTemplate));
 
@@ -192,7 +192,7 @@ export class SaleComponent extends ComponentFactoryConatiner
                     this.pageModel.key = this.taskId = param;
                 }
                 this.componentFactoryDestroyFn = this.globalService
-                    .registerComponentFactoryRef(new SaleModuleType(
+                    .registerComponentFactoryRef(new SaleOrderModuleType(
                         { factoryKey: this.pageModel.key, componentFactoryRef: this }));
             }).unsubscribe();
     }
@@ -484,7 +484,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         this.globalService.observeModule(PurchaseModuleType.staticModuleKey, moduleRef => {
             if (moduleRef) {
                 let pageModel = moduleRef.componentFactoryContainerRef && moduleRef.componentFactoryContainerRef.createDefaultPageModel();
-                let compRef = moduleRef.createComponentRef(this.viewContainerRef, PurchaseEditComponentType, pageModel);
+                let compRef = moduleRef.createComponentRef(this.viewContainerRef, PurchaseOrderEditType, pageModel);
                 this.editCompRef = compRef;
                 let options = new FormOptions();
                 options.resolve = { data: '代码创建组件数据传递' };
@@ -500,7 +500,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         });
 
         if (factoryRef) {
-            let compRef = factoryRef.createComponentRef(PurchaseEditComponentType); //getComponentRef(PurDetailComponent);
+            let compRef = factoryRef.createComponentRef(PurchaseOrderEditType); //getComponentRef(PurDetailComponent);
             this.editCompRef = compRef;
             let options = new FormOptions();
             options.resolve = { data: '代码创建组件数据传递' };
@@ -516,7 +516,7 @@ export class SaleComponent extends ComponentFactoryConatiner
 
         let task: TaskQueue = new TaskQueue(() => {
             if (factoryRef) {
-                let compRef = factoryRef.createComponentRef(PurchaseListComponentType);
+                let compRef = factoryRef.createComponentRef(PurchaseOrderListType);
                 let options = new PageViewerOptions();
                 options.resolve = { data: '代码创建组件数据传递' };
                 options.rootContainer = this.pageViewerLocation.viewContainerRef;

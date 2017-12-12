@@ -32,23 +32,23 @@ export const pcRootRouterConfig: Routes = [
         component: MainComponent
     },
     {
-        path: 'sale',
+        path: 'saleOrderPath',
         component: IndexComponent,
         loadChildren: '../../sale/sale.module#SaleModule',
-        outlet: "sale",
+        outlet: "saleOrder",
         data: { title: '销售订单模块', preload: false }
     },
     {
-        path: 'salesQuery',
+        path: 'salesQuery1',
         component: IndexComponent,
         loadChildren: '../../sale/sale-query/sale-query.module#SaleQueryModule',
-        outlet: "salesQuery",
+        outlet: "salesQuery2",
         data: { title: '销售订单查询模块', preload: false }
     },
     {
         path: 'purOrder',
         component: IndexComponent,
-        outlet: 'pur',
+        outlet: 'pur5',
         loadChildren: "../../pur/pur-order/pur-order.module#PurOrderModule",
         data: { title: '采购模块', preload: false }
     },

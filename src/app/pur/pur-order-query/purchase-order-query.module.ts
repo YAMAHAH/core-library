@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { NavTreeViewModule } from '@framework-components/nav-tree-view/nav-tree-view.module';
 import { Routes, RouterModule } from '@angular/router';
 import { AbstractModuleBase } from '@framework-base/module/AbstractModuleBase';
-import { SaleQueryModuleType } from '@framework-actions/sales-query-module/SalesQueryModuleType';
+import { SaleOrderQueryModuleType } from '@framework-actions/sales-query-module/SalesQueryModuleType';
 import { PurchaseOrderQueryType, PurchaseOrderQueryModuleType } from '../../actions/purchase-order-query-module/PurchaseOrderQueryType';
 import { PurchaseOrderQueryComponent } from './pur-order-query.component';
 import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order-list.component';

@@ -2,7 +2,7 @@ import { Component, ComponentFactoryResolver, EventEmitter, ViewContainerRef } f
 import { Modal } from '../common/modal/modal.model';
 import { ModalService } from '../common/modal/modal.service';
 import { AppGlobalService } from '../services/AppGlobalService';
-import { SaleModuleType } from '@framework-actions/sales-order-module/SalesModuleType';
+import { SaleOrderModuleType } from '@framework-actions/sales-order-module/SalesModuleType';
 
 
 
@@ -25,7 +25,7 @@ export class ModalTestComponent implements Modal {
 
     async show() {
 
-        let factory = await this.appStore.GetOrCreateComponentFactory(SaleModuleType);
+        let factory = await this.appStore.GetOrCreateComponentFactory(SaleOrderModuleType);
         this.modalService.showModal<string>({
             component: ModalTestComponent,
             componentFactoryResolver: factory.componentFactoryResolver,

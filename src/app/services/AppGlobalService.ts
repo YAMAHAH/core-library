@@ -77,8 +77,10 @@ export class AppGlobalService {
         };
     }
 
-    observeModule(moduleType: string, subscribe?: (moduleRef: IModuleRef) => void, runOnce: boolean = true) {
-        let moduleLoad$ = this.getModuleObservable(moduleType);
+    async observeModule(moduleType: string | Type<IModuleType>, subscribe?: (moduleRef: IModuleRef) => void, runOnce: boolean = true) {
+        let moduleLoad$ = typeof moduleType === 'string' ?
+            this.getModuleObservable(moduleType) :
+            this.getModuleObservable((new moduleType()).moduleKey);
         let defaultFn = () => { };
         if (!moduleLoad$) return defaultFn;
         if (subscribe && runOnce) {
@@ -132,7 +134,9 @@ export class AppGlobalService {
     registerComponentFactoryRef(factoryComponentType: IModuleType) {
         if (!!!factoryComponentType || this.componentFactories.has(factoryComponentType.factoryKey)) return;
         this.componentFactories.set(factoryComponentType.factoryKey, factoryComponentType);
-        this.observeModule(factoryComponentType.moduleKey, modRef => { modRef.componentFactoryContainerRef = factoryComponentType.componentFactoryRef });
+        this.observeModule(factoryComponentType.moduleKey, modRef => {
+            modRef.componentFactoryContainerRef = factoryComponentType.componentFactoryRef;
+        });
         return () => this.unRegisterComponentFactoryRef(factoryComponentType);
     }
     unRegisterComponentFactoryRef(factoryComponentType: IModuleType) {
@@ -161,9 +165,9 @@ export class AppGlobalService {
 
     commandLinks: NavDesktopItem[] = [
         { title: "计划采购订单", favicon: "assets/img/home.png", path: "/pc/news", subsystem: "news" },
-        { key: 'pur', title: "采购订单", favicon: "/assets/img/save.png", path: "purOrder", outlet: "pur", subsystem: "news" },
-        { key: 'sale', title: "销售订单", favicon: "/assets/img/setting.png", path: "sale", outlet: "sale", subsystem: "news" },
-        { key: 'salesQuery', title: "销售订单明细查询", favicon: "assets/img/home.png", path: "salesQuery", outlet: 'salesQuery', subsystem: "news" },
+        { key: 'pur3', title: "采购订单", favicon: "/assets/img/save.png", path: "purOrder", outlet: "pur5", subsystem: "news" },
+        { key: 'saleKey', title: "销售订单", favicon: "/assets/img/setting.png", path: "saleOrderPath", outlet: "saleOrder", subsystem: "news" },
+        { key: 'salesQuery12', title: "销售订单明细查询", favicon: "assets/img/home.png", path: "salesQuery1", outlet: 'salesQuery2', subsystem: "news" },
         { title: "外协订单", favicon: "assets/img/save.png", path: "/pc/d3", subsystem: "news" },
         { key: 'purOrderQuery', title: "采购订单明细查询", favicon: "assets/img/setting.png", path: "purOrderQuery", outlet: 'purOrderQuery', subsystem: "news" },
         { title: "计划外协订单", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "news" },
@@ -193,6 +197,7 @@ export class AppGlobalService {
         { title: "产品资料", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "myapp" },
     ];
     private async createComponentFactory(factoryKey: string): Promise<IComponentFactoryContainer> {
+        console.log(factoryKey);
         let navItem = this.commandLinks.find(item => item.outlet === factoryKey);
         if (!navItem) return null;
         if (navItem.key.length < 8) {

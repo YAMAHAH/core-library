@@ -1,4 +1,4 @@
 import { ComponentTypeBase } from '../actions-base';
 
-export class SalesQueryComponentType extends ComponentTypeBase {
+export class SalesOrderQueryType extends ComponentTypeBase {
 }

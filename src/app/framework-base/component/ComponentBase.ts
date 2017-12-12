@@ -17,6 +17,7 @@ import { providers } from '../../common/toasty/index';
 import { ShowTypeEnum } from '@framework-base/component/ShowTypeEnum';
 import { PageTypeEnum } from '@framework-base/component/PageTypeEnum';
 import { UUID } from '@untils/uuid';
+import { COMPONENTMODALTOKEN } from '@framework-base/component/ComponentInjectorToken';
 
 export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase {
     _visible: boolean = true;
@@ -39,6 +40,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
     @Input() pageModel: IPageModel;
     setOtherParent(godFather: IPageModel): IPageModel {
         if (godFather) {
+            if (!godFather.childs) godFather.childs = [];
             godFather.childs.push(this.pageModel);
             this.pageModel.godFather = godFather;
             if (this.pageModel.tag) {
@@ -185,6 +187,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
     public componentFactoryResolver: ComponentFactoryResolver;
     public activeRouter: ActivatedRoute;
     public changeDetectorRef: ChangeDetectorRef;
+    public componentModal: IPageModel;
 
     constructor(protected injector: Injector, providers: any[] = []) {
         if (providers && providers.length > 0) {
@@ -197,6 +200,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
         this.componentFactoryResolver = this.injector.get(ComponentFactoryResolver);
         this.activeRouter = this.injector.get(ActivatedRoute);
         this.changeDetectorRef = this.injector.get(ChangeDetectorRef);
+        this.componentModal = this.injector.get(COMPONENTMODALTOKEN, { title: '', active: false });
     }
 }
 

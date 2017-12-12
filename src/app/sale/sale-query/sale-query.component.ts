@@ -1,13 +1,13 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Injector, ComponentRef, Type, Input } from '@angular/core';
 import { ComponentFactoryConatiner } from '@framework-base/component/ComponentFactoryConatiner';
-import { SaleQueryModuleType } from '@framework-actions/sales-query-module/SalesQueryModuleType';
+import { SaleOrderQueryModuleType } from '@framework-actions/sales-query-module/SalesQueryModuleType';
 import { ShowTypeEnum } from '@framework-base/component/ShowTypeEnum';
 import { PageTypeEnum } from '@framework-base/component/PageTypeEnum';
 import { map } from 'rxjs/operators';
 import { IComponentBase } from '@framework-base/component/interface/IComponentBase';
 import { IPageModel } from '@framework-base/component/interface/IFormModel';
 import { IComponentType } from '@framework-base/component/interface/IComponentType';
-import { SalesQueryComponentType } from '@framework-actions/sales-query-module/SalesQueryType';
+import { SalesOrderQueryType } from '@framework-actions/sales-query-module/SalesQueryType';
 import { SaleQueryListComponent } from './sale-query-list/sale-query-list.component';
 
 @Component({
@@ -50,7 +50,7 @@ export class SaleQueryComponent extends ComponentFactoryConatiner
                     this.pageModel.key = this.taskId = param;
                 }
                 this.componentFactoryDestroyFn = this.globalService
-                    .registerComponentFactoryRef(new SaleQueryModuleType(
+                    .registerComponentFactoryRef(new SaleOrderQueryModuleType(
                         {
                             factoryKey: this.pageModel.key,
                             componentFactoryRef: this
@@ -58,7 +58,7 @@ export class SaleQueryComponent extends ComponentFactoryConatiner
             }).unsubscribe();
     }
     constructor(protected injector: Injector) {
-        super(injector, SaleQueryModuleType.staticFactoryKey);
+        super(injector, SaleOrderQueryModuleType.staticFactoryKey);
         this.initContainer();
     }
 
@@ -74,7 +74,7 @@ export class SaleQueryComponent extends ComponentFactoryConatiner
     componentReducer<T extends IComponentBase>(componentType: Type<IComponentType>, pageModel?: IPageModel): ComponentRef<T> {
         let compType = new componentType();
         switch (true) {
-            case compType instanceof SalesQueryComponentType:
+            case compType instanceof SalesOrderQueryType:
                 return this.getComponentRef(SaleQueryListComponent, pageModel) as any;
             default:
                 break;

@@ -102,7 +102,9 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
     navTabModelOrders: NavTabModel[] = [this.homeTab];
 
     getNavTabModelOrderList() {
-        this.navTabModelOrders = this.navTabModels.sort((a, b) => a.order - b.order);
+        this.navTabModelOrders = this.navTabModels
+            .filter(t => !t.daemon)
+            .sort((a, b) => a.order - b.order);
         return this.navTabModelOrders;
     }
     get tabHeaders() {

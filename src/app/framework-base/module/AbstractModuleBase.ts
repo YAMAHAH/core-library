@@ -1,16 +1,17 @@
-import { Injector, ComponentFactoryResolver, ViewContainerRef, Type, InjectionToken, ComponentRef } from '@angular/core';
+import { Injector, ComponentFactoryResolver, ViewContainerRef, Type, InjectionToken, ComponentRef, TemplateRef } from '@angular/core';
 import { AppGlobalService } from '@framework-services/AppGlobalService';
 import { IComponentBase } from '@framework-base/component/interface/IComponentBase';
 import { IPageModel } from '@framework-base/component/interface/IFormModel';
 import { IAction } from '@framework-models/IAction';
 import { IComponentFactoryContainer } from '@framework-base/component/interface/IComponentFactoryContainer';
 import { IComponentType } from '@framework-base/component/interface/IComponentType';
+import { ComponentPortal, TemplatePortal, ComponentType, PortalInjector } from '@angular/cdk/portal';
 
 
 export abstract class AbstractModuleBase {
     protected compFactoryResolver: ComponentFactoryResolver;
     protected globalService: AppGlobalService;
-    constructor(private injector: Injector, moduleKey: string) {
+    constructor(protected injector: Injector, moduleKey: string) {
         this.globalService = this.injector.get(AppGlobalService);
         this.compFactoryResolver = this.injector.get(ComponentFactoryResolver);
         this.registryModule({ target: moduleKey, data: { state: this } }, false, true);
@@ -53,7 +54,6 @@ export abstract class AbstractModuleBase {
         let newFormModel: IPageModel = formModel ? formModel : { title: '', active: true };
         compInstance.pageModel = newFormModel;
         newFormModel.componentRef = componentRef;
-        console.log(newFormModel);
         return componentRef;
     }
     getComponentFactory<T extends IComponentBase>(componentType: Type<T>) {
@@ -81,6 +81,24 @@ export abstract class AbstractModuleBase {
         throw new Error("Method not implemented.");
     }
 
+    getTemplatePortal<T>(template: TemplateRef<T>, viewContainerRef: ViewContainerRef, context: T) {
+        return new TemplatePortal(template, viewContainerRef, context);
+    }
+    protected createComponentPortal<T>(component: ComponentType<T>, viewContainer: ViewContainerRef, injector: Injector) {
+        return new ComponentPortal(component, viewContainer, injector);
+    }
+    protected createCustomInjector(customTokens: WeakMap<any, any>) {
+        let injector = new PortalInjector(this.injector, customTokens);
+        return injector;
+    }
+    getComponentPortal<T>(componentType: Type<IComponentType>,
+        viewContainer: ViewContainerRef, pageModel?: IPageModel) {
+        return this.componentPortalReducer(componentType, viewContainer, pageModel);
+    }
+    componentPortalReducer<T extends IComponentBase>(componentType: Type<IComponentType>,
+        viewContainer: ViewContainerRef, pageModel?: IPageModel): ComponentPortal<T> {
+        throw new Error("Method not implemented.");
+    }
     protected registryModule(action: IAction, hasRetureValue: boolean = false, useBehaviorSubject: boolean = true) {
         this.globalService.dispatch(action, hasRetureValue, useBehaviorSubject);
     }
