@@ -185,7 +185,7 @@ export class DesktopComponent implements OnInit, AfterViewInit {
 
     private async openItem(event: any) {
         let navItem = event.item as NavDesktopItem;
-        if (navItem.key.length < 8) {
+        if (!navItem.key) {
             navItem.key = UUID.uuid(10, 10).toString();
         }
         let taskGrp: NavTabModel = {

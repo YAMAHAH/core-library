@@ -1,7 +1,7 @@
 import {
     Component, OnInit, Output, ViewChild, ViewChildren, QueryList, ElementRef,
     AfterViewInit, ViewEncapsulation, EventEmitter, ViewContainerRef,
-    ChangeDetectorRef, Renderer2, AfterViewChecked,
+    ChangeDetectorRef, Renderer2, AfterViewChecked
 } from '@angular/core';
 import { LoadScriptService } from '../../services/LoadScriptService';
 import { NavTabComponent } from './nav-tab.component';
@@ -32,7 +32,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { MenuItem } from '../../components/common/api';
 import { ContextMenu } from '../../components/contextmenu/contextmenu';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap, delay, delayWhen } from 'rxjs/operators';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { DoCheck } from '@angular/core/src/metadata/lifecycle_hooks';
 import { IPageModel } from '@framework-base/component/interface/IFormModel';
@@ -100,6 +100,12 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
     navTabModels: NavTabModel[] = [this.homeTab];
 
     navTabModelOrders: NavTabModel[] = [this.homeTab];
+    resetNavTabModelOrder() {
+        for (let index = 0; index < this.navTabModels.length; index++) {
+            this.navTabModels[index].order = index + 1;
+        }
+        this.getNavTabModelOrderList();
+    }
 
     getNavTabModelOrderList() {
         this.navTabModelOrders = this.navTabModels
@@ -108,7 +114,9 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
         return this.navTabModelOrders;
     }
     get tabHeaders() {
-        return this.navTabModels.filter(tab => !!!tab.daemon);
+        return this.navTabModels
+            .filter(tab => !!!tab.daemon)
+            .sort((a, b) => a.order - b.order);
     }
 
     selected: NavTabModel;
@@ -122,6 +130,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
         private renderer: Renderer2) {
         this.reducer();
         this.globalService.navTabManager = this;
+
 
     }
 
@@ -175,7 +184,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
 
     closeNavTabs() {
         this.navTabModels.forEach(taskGrp => {
-            this.removeNavTab(taskGrp);
+            setTimeout(() => this.removeNavTab(taskGrp), 15);
         });
     }
     closeNavTab(key: string | Function) {
@@ -230,6 +239,42 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
         this.selected = tab;
         this.selected.active = true;
         this.emit('activeTabChange', { tab });
+    }
+    onAddTab() {
+        let addTabModel = {
+            title: '新增订单-New',
+            favicon: '/assets/images/google-favicon.png',
+            outlet: 'sborder' + new Date().getTime(),
+            active: true
+        };
+
+        this.globalService.dispatch(this.appTabSetActions.addTabAction({
+            sender: this.appTabSetActions.key,
+            state: addTabModel
+        }));
+    }
+    async createNavTab(tab: NavTabModel) {
+        let factoryRef: IComponentFactoryContainer, formInstance;
+        if (this.hasNavTab(tab.key)) {
+
+            let curr = this.navTabModels.find(t => t.key == tab.key);
+            if (!tab.daemon) {
+                curr.daemon = false;
+                this.layoutTabs();
+            }
+            this.select(curr);
+            factoryRef = await this.globalService.GetOrCreateComponentFactory(tab.key);
+        } else {
+            await this.addTab(tab);
+            let routeConfig = {};
+            routeConfig[tab.outlet] = tab.path;
+
+            this.changeDetectorRef.detectChanges();
+            await this.routerService.navigateToOutlet(routeConfig, { taskId: tab.key }, this.activeRouter);
+            factoryRef = await this.globalService.GetOrCreateComponentFactory(tab.key);
+            this.isJustAdded = false;
+        }
+        return factoryRef;
     }
     ngOnInit() {
         this.select(this.navTabModels[0]);
@@ -297,41 +342,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
 
     }
 
-    onAddTab() {
-        let addTabModel = {
-            title: '新增订单-New',
-            favicon: '/assets/images/google-favicon.png',
-            outlet: 'sborder' + new Date().getTime(),
-            active: true
-        };
-        this.globalService.dispatch(this.appTabSetActions.addTabAction({
-            sender: this.appTabSetActions.key,
-            state: addTabModel
-        }));
-    }
-    async createNavTab(tab: NavTabModel) {
-        let factoryRef: IComponentFactoryContainer, formInstance;
-        if (this.hasNavTab(tab.key)) {
 
-            let curr = this.navTabModels.find(t => t.key == tab.key);
-            if (!tab.daemon) {
-                curr.daemon = false;
-                this.layoutTabs();
-            }
-            this.select(curr);
-            factoryRef = await this.globalService.GetOrCreateComponentFactory(tab.key);
-        } else {
-            await this.addTab(tab);
-            let routeConfig = {};
-            routeConfig[tab.outlet] = tab.path;
-
-            this.changeDetectorRef.detectChanges();
-            await this.routerService.navigateToOutlet(routeConfig, { taskId: tab.key }, this.activeRouter);
-            factoryRef = await this.globalService.GetOrCreateComponentFactory(tab.key);
-            this.isJustAdded = false;
-        }
-        return factoryRef;
-    }
 
     getContentClass(tabModel: NavTabModel) {
         return {
@@ -617,6 +628,8 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
             item.checked = false;
         });
         this.selectedItems = [];
+        console.log(this.navTabModelOrders);
+        console.log(this.navTabModels);
         this._popupMenuRef.toggle(event);
         // this.select(navTabModel);
         this.menuItemHandler();
@@ -651,8 +664,9 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
     closeSelected_MenuItemClick(event: Event) {
         event.stopPropagation();
         this._popupMenuRef.close();
-        for (var index = 0; index < this.selectedItems.length; index++) {
-            this.removeNavTab(this.selectedItems[index]);
+        let selectedItems = this.selectedItems
+        for (let index = 0; index < selectedItems.length; index++) {
+            setTimeout(() => this.removeNavTab(selectedItems[index]), 15);
         }
     }
     close_mouseoverHandler(event: Event) {
@@ -689,12 +703,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
         return state$;
     }
 
-    resetNavTabModelOrder() {
-        for (var index = 0; index < this.navTabModels.length; index++) {
-            this.navTabModels[index].order = index + 1;
-        }
-        this.getNavTabModelOrderList();
-    }
+
     navTabClosingMap: Map<string, string> = new Map<string, string>();
     async removeNavTab(tabModel: NavTabModel) {
         if (!!!tabModel) return;
@@ -705,7 +714,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
         }
         this.navTabClosingMap.set(tabModel.key, tabModel.key);
         let result = await this.closeNavTabChildPage(tabModel);
-        result.subscribe((res: { processFinish: boolean; result: boolean }) => {
+        result.subscribe(async (res: { processFinish: boolean; result: boolean }) => {
             if (res && res.processFinish) {
                 if (res.result) {
                     let enabledModels = this.tabHeaders;
@@ -723,7 +732,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
 
                         let r = {};
                         r[tabModel.outlet] = null;
-                        this.routerService.navigateToOutlet(r, null, this.activeRouter);
+                        await this.routerService.navigateToOutlet(r, null, this.activeRouter);
                         this.emit('tabRemove', { removeTabModel });
                         this.needConfigTab = true;
                     }

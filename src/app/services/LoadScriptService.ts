@@ -66,7 +66,8 @@ export class LoadScriptService {
         return this.load('/assets/js/lodash.min.js');
     }
     get loadBootstrapCSS() {
-        return Promise.resolve(true);// this.loadCSS("/assets/css/bootstrap.min.css");
+        return Promise.resolve(true);
+        // return this.loadCSS("/assets/css/bootstrap.min.css");
     }
     get loadFlexboxGridCSS() {
         return this.loadCSS("/assets/css/flexboxgrid.min.css");

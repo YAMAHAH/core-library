@@ -42,7 +42,7 @@ export const pcRootRouterConfig: Routes = [
         path: 'salesQuery1',
         component: IndexComponent,
         loadChildren: '../../sale/sale-query/sale-query.module#SaleQueryModule',
-        outlet: "salesQuery2",
+        outlet: "salesQuery",
         data: { title: '销售订单查询模块', preload: false }
     },
     {
@@ -55,7 +55,7 @@ export const pcRootRouterConfig: Routes = [
     {
         path: 'purOrderQuery',
         component: IndexComponent,
-        outlet: 'purOrderQuery',
+        outlet: 'purchaseOrderQuery',
         loadChildren: "../../pur/pur-order-query/purchase-order-query.module#PurchaseOrderQueryModule",
         data: { title: '采购订单查询模块', preload: false }
     },

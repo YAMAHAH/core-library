@@ -28,7 +28,11 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     BrowserAnimationsModule,
     HttpClientModule,
     LayoutModule,
-    RouterModule.forRoot(rootRouterConfig, { enableTracing: false, useHash: false, preloadingStrategy: SelectivePreloadingStrategy }),
+    RouterModule.forRoot(rootRouterConfig, {
+      enableTracing: false,
+      useHash: false,
+      preloadingStrategy: SelectivePreloadingStrategy
+    }),
     PageLoadingModule.forRoot(),
     XYZUIModule.forRoot(),
     ToastyModule.forRoot(),

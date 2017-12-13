@@ -3,6 +3,7 @@ import { ComponentBase } from '@framework-base/component/ComponentBase';
 import { PurchaseModuleType } from '@framework-actions/purchase-order-module/PurchaseModuleType';
 import { PurchaseOrderEditType } from '@framework-actions/purchase-order-module/PurchaseComponentType';
 import { FormOptions } from '@framework-components/form/FormOptions';
+import { tryGetValue } from '@untils/type-checker';
 
 @Component({
   selector: 'gx-sale-query-list',
@@ -34,7 +35,7 @@ export class SaleQueryListComponent extends ComponentBase implements OnInit {
     let factoryRef = await this.globalService.GetOrCreateComponentFactory(PurchaseModuleType);
     this.globalService.observeModule(PurchaseModuleType.staticModuleKey, async moduleRef => {
       if (moduleRef) {
-        let pageModel = moduleRef.componentFactoryContainerRef && moduleRef.componentFactoryContainerRef.createDefaultPageModel();
+        let pageModel = tryGetValue(() => moduleRef.componentFactoryContainerRef.createDefaultPageModel()).value;
         let compRef = moduleRef.createComponentRef(this.viewContainerRef, PurchaseOrderEditType, pageModel);
         let options = new FormOptions();
         options.resolve = { data: '代码创建组件数据传递' };
@@ -52,11 +53,11 @@ export class SaleQueryListComponent extends ComponentBase implements OnInit {
 
     if (factoryRef) {
       let compRef = factoryRef.createComponentRef(PurchaseOrderEditType);
-      // this.editCompRef = compRef;
       let options = new FormOptions();
       options.resolve = { data: '代码创建组件数据传递' };
       options.modal = false;
-      options.height = 600;
+      options.height = 500;
+      options.fullscreenBox = false;
       if (compRef) {
         let compIns = compRef.instance;
         compIns.pageModel.title = compIns.title;

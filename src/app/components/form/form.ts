@@ -470,7 +470,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             this.formModel.componentFactoryRef.setCurrentTreeNode(this.formModel);
     }
 
-    setupElStyles() {
+    configBodySelectStyles() {
         let styleHtml = ` 
         body {
           -webkit-user-select:none;
@@ -490,7 +490,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             this.dragging = true;
             this.lastPageX = event.pageX;
             this.lastPageY = event.pageY;
-            this.delCustomStyleFn = this.setupElStyles();
+            this.delCustomStyleFn = this.configBodySelectStyles();
         }
     }
 
@@ -545,13 +545,16 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
                 if (this.documentResizeListener && this.documentResizeEndListener) {
                     this.documentResizeListener();
                     this.documentResizeEndListener();
+                } if (this.documentResizeListener && this.documentResizeEndListener) {
+                    this.documentResizeListener();
+                    this.documentResizeEndListener();
                 }
 
             });
 
-            if (!this.delCustomStyleFn) {
-                this.delCustomStyleFn = this.setupElStyles();
-            }
+            // if (!this.delCustomStyleFn) {
+            this.delCustomStyleFn = this.configBodySelectStyles();
+            // }
             this.resizing = true;
             this.sizingPoint = selectPoint;
             this.lastPageX = event.pageX;
@@ -612,6 +615,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             }
             let containerWidth = this.domHandler.getOuterWidth(this.container);
             let containerHeight = this.domHandler.getOuterHeight(this.container);
+
             let contentHeight = this.domHandler.getOuterHeight(this.contentContainer);
             let newWidth = containerWidth + wdir;
             let newHeight = contentHeight + hdir;
@@ -626,8 +630,10 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             if (newHeight > this.minHeight) {
                 this.contentContainer.style.height = newHeight + 'px';
                 this.container.style.height = containerHeight + hdir + 'px';
+                this.height = containerHeight + hdir;
                 this.container.style.top = topPos + ydir + 'px';
             }
+            console.log(newWidth + ":" + newHeight);
             this.lastPageX = event.pageX;
             this.lastPageY = event.pageY;
         }

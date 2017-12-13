@@ -167,9 +167,9 @@ export class AppGlobalService {
         { title: "计划采购订单", favicon: "assets/img/home.png", path: "/pc/news", subsystem: "news" },
         { key: 'pur3', title: "采购订单", favicon: "/assets/img/save.png", path: "purOrder", outlet: "pur5", subsystem: "news" },
         { key: 'saleKey', title: "销售订单", favicon: "/assets/img/setting.png", path: "saleOrderPath", outlet: "saleOrder", subsystem: "news" },
-        { key: 'salesQuery12', title: "销售订单明细查询", favicon: "assets/img/home.png", path: "salesQuery1", outlet: 'salesQuery2', subsystem: "news" },
+        { key: 'salesQuery12', title: "销售订单明细查询", favicon: "assets/img/home.png", path: "salesQuery1", outlet: 'salesQuery', subsystem: "news" },
         { title: "外协订单", favicon: "assets/img/save.png", path: "/pc/d3", subsystem: "news" },
-        { key: 'purOrderQuery', title: "采购订单明细查询", favicon: "assets/img/setting.png", path: "purOrderQuery", outlet: 'purOrderQuery', subsystem: "news" },
+        { key: 'purOrderQuery', title: "采购订单明细查询", favicon: "assets/img/setting.png", path: "purOrderQuery", outlet: 'purchaseOrderQuery', subsystem: "news" },
         { title: "计划外协订单", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "news" },
         { title: "生产订单", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "news" },
         { title: "生产订单物料查询", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "news" },
@@ -197,10 +197,9 @@ export class AppGlobalService {
         { title: "产品资料", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "myapp" },
     ];
     private async createComponentFactory(factoryKey: string): Promise<IComponentFactoryContainer> {
-        console.log(factoryKey);
         let navItem = this.commandLinks.find(item => item.outlet === factoryKey);
         if (!navItem) return null;
-        if (navItem.key.length < 8) {
+        if (!navItem.key) {
             navItem.key = UUID.uuid(10, 10).toString();
         }
         let navTabModel: NavTabModel = {
