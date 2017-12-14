@@ -10,6 +10,7 @@ import { NavTreeViewModule } from '@framework-components/nav-tree-view/nav-tree-
 import { Routes, RouterModule } from '@angular/router';
 import { AbstractModuleBase } from '@framework-base/module/AbstractModuleBase';
 import { SaleOrderQueryModuleType } from '@framework-actions/sales-query-module/SalesQueryModuleType';
+import { SplitContainerModule } from '@framework-components/splitcontainer/SplitContainerModule';
 
 export const salesQueryRouteConfig: Routes = [
     { path: "", component: SaleQueryComponent, data: { title: '销售订单明细查询' } }
@@ -20,7 +21,8 @@ export const salesQueryRouteConfig: Routes = [
         CommonModule,
         CoreModule,
         RouterModule.forChild(salesQueryRouteConfig),
-        NavTreeViewModule
+        NavTreeViewModule,
+        SplitContainerModule
     ],
     declarations: [
         SaleQueryComponent,

@@ -58,6 +58,7 @@ export class SaleQueryListComponent extends ComponentBase implements OnInit {
       options.modal = false;
       options.height = 500;
       options.fullscreenBox = false;
+      options.enableFlex = true;
       if (compRef) {
         let compIns = compRef.instance;
         compIns.pageModel.title = compIns.title;

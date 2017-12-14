@@ -32,7 +32,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { MenuItem } from '../../components/common/api';
 import { ContextMenu } from '../../components/contextmenu/contextmenu';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { filter, map, switchMap, delay, delayWhen } from 'rxjs/operators';
+import { filter, map, switchMap, delay, delayWhen, debounceTime } from 'rxjs/operators';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { DoCheck } from '@angular/core/src/metadata/lifecycle_hooks';
 import { IPageModel } from '@framework-base/component/interface/IFormModel';
@@ -57,13 +57,14 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
         // this.isJustAdded = false;
     }
     private needConfigTab: boolean;
+    private configNavTab$: EventEmitter<any> = new EventEmitter<any>();
 
     ngAfterViewChecked(): void {
-        if (this.needConfigTab) {
-            this.layoutTabs();
-            this.setupDraggabilly();
-            this.needConfigTab = false;
-        }
+        // if (this.needConfigTab) {
+        //     this.layoutTabs();
+        //     this.setupDraggabilly();
+        //     this.needConfigTab = false;
+        // }
     }
 
     @ViewChild("tabs") navTabSetRef: ElementRef;
@@ -130,7 +131,13 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
         private renderer: Renderer2) {
         this.reducer();
         this.globalService.navTabManager = this;
-
+        this.configNavTab$.pipe(
+            debounceTime(150)
+        ).subscribe(r => {
+            this.layoutTabs();
+            this.setupDraggabilly();
+            this.needConfigTab = false;
+        });
 
     }
 
@@ -218,7 +225,9 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
 
     getNextVisibleTab(tabModel: NavTabModel) {
         let enabledModels = this.tabHeaders;
-        if (this.tabHeaders.length > 1) enabledModels = this.tabHeaders.filter(tab => tab != this.homeTab);
+        if (this.tabHeaders.length > 1)
+            enabledModels = this.tabHeaders.filter(tab => tab != this.homeTab);
+
         let idx = enabledModels.findIndex(value => value == tabModel);
         if (enabledModels[idx - 1]) {
             this.select(enabledModels[idx - 1]);
@@ -593,6 +602,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
         if (!tabModel.daemon) this.select(tabModel);
         this.getNavTabModelOrderList();
         this.needConfigTab = true;
+        this.configNavTab$.emit(true);
     }
 
     async onTabClick(event: Event, tab: NavTabModel) {
@@ -735,6 +745,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
                         await this.routerService.navigateToOutlet(r, null, this.activeRouter);
                         this.emit('tabRemove', { removeTabModel });
                         this.needConfigTab = true;
+                        this.configNavTab$.emit(true);
                     }
                 }
                 this.navTabClosingMap.delete(tabModel.key);

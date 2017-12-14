@@ -20,7 +20,7 @@
     <div #iFrameLayer [style.cursor]="frameLayerCursorStyle" *ngIf="dragging || resizing" [ngClass]="{'ui-dialog-mask':dragging || resizing}" style="z-index:9999;opacity:0">
 
     </div>
-    <div #content class="ui-dialog-content ui-widget-content" [ngStyle]="flexStyle">
+    <div #content class="ui-dialog-content ui-widget-content" [ngStyle]="flexStyle" style="overflow:auto">
         <ng-container *ngFor="let comp of componentOutlets | filter:enablePredicate">
             <ng-container *gxComponentOutlet="comp;context: compctx"></ng-container>
         </ng-container>

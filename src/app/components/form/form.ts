@@ -633,7 +633,6 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
                 this.height = containerHeight + hdir;
                 this.container.style.top = topPos + ydir + 'px';
             }
-            console.log(newWidth + ":" + newHeight);
             this.lastPageX = event.pageX;
             this.lastPageY = event.pageY;
         }

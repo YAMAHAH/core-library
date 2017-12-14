@@ -1,0 +1,41 @@
+.ui-split-container {
+    width: 100%;
+    position: relative;
+}
+
+.ui-split-container .aux-panel {
+    background-color: salmon;
+    display: block;
+    width: 300px;
+    height: 300px;
+    margin: 0px;
+}
+
+.ui-split-container .main-panel {
+    background-color: darkgray;
+    display: block;
+    width: 300px;
+    height: 300px;
+    position: relative;
+    margin: 0px;
+}
+
+.ui-split-container .horizonatal-split-panel {
+    z-index: 94;
+    background-color: blue;
+    cursor: w-resize;
+    width: 3px;
+    left: 0px;
+    bottom: 0px;
+    top: 0px;
+}
+
+.ui-split-container .vertical-split-panel {
+    z-index: 95;
+    background-color: blue;
+    cursor: n-resize;
+    height: 3px;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+}

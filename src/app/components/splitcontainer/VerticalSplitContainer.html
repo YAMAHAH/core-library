@@ -1,0 +1,9 @@
+<div #container>
+    <div #left></div>
+    <div #right>
+        <ng-container *ngIf="true">
+            <div class="ui-resizable-handle ui-resizable-left ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 94;cursor: w-resize;" (mousedown)="initResize($event,sizingPoint.leftCenter)"></div>
+            <div class="ui-resizable-handle ui-resizable-right ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 95;cursor: e-resize;" (mousedown)="initResize($event,sizingPoint.rightCenter)"></div>
+        </ng-container>
+    </div>
+</div>

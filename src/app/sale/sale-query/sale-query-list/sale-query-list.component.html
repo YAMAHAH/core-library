@@ -9,6 +9,12 @@
         <div #mainWrapper fxLayout='column' fxFill fxItem='fill'>
             <div #main fxItem='fill' fxItemStyle="overflow:auto;">
                 <div (click)="openPurchaseOrder()">SaleOrderQuery</div>
+
+                <gx-horizontal-split-container [direction]="'Vertical'">
+                    <gx-split-container-item panelType="aux">左边区域内容</gx-split-container-item>
+                    <gx-split-container-item panelType="main">右边区域内容</gx-split-container-item>
+                </gx-horizontal-split-container>
+
             </div>
         </div>
     </div>
