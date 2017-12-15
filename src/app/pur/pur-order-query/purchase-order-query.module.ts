@@ -11,6 +11,7 @@ import { SaleOrderQueryModuleType } from '@framework-actions/sales-query-module/
 import { PurchaseOrderQueryType, PurchaseOrderQueryModuleType } from '../../actions/purchase-order-query-module/PurchaseOrderQueryType';
 import { PurchaseOrderQueryComponent } from './pur-order-query.component';
 import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order-list.component';
+import { SplitContainerModule } from '@framework-components/splitcontainer/SplitContainerModule';
 
 export const purOrderQueryRouteConfig: Routes = [
     { path: "", component: PurchaseOrderQueryComponent, data: { title: '采购订单明细查询' } }
@@ -21,7 +22,8 @@ export const purOrderQueryRouteConfig: Routes = [
         CommonModule,
         CoreModule,
         RouterModule.forChild(purOrderQueryRouteConfig),
-        NavTreeViewModule
+        NavTreeViewModule,
+        SplitContainerModule
     ],
     declarations: [
         PurchaseOrderQueryComponent,

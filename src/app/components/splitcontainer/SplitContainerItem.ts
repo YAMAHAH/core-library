@@ -5,5 +5,5 @@ import { Directive, Input } from '@angular/core';
     selector: 'gx-split-container-item'
 })
 export class SplitContainerItem {
-    @Input() panelType: 'aux' | 'main' = 'main';
+    @Input() panelType: 'panel1' | 'panel2' = 'panel1';
 }

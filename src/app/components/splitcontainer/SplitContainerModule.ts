@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HorizontalSplitContainer } from '@framework-components/splitcontainer/HorizontalSplitContainer';
-import { VerticalSplitContainer } from '@framework-components/splitcontainer/VerticalSplitContainer';
+import { HorizontalSplitContainer } from '@framework-components/splitcontainer/SplitContainer';
 import { NgModule } from '@angular/core';
 import { SplitContainerItem } from '@framework-components/splitcontainer/SplitContainerItem';
 
@@ -8,12 +7,10 @@ import { SplitContainerItem } from '@framework-components/splitcontainer/SplitCo
     imports: [CommonModule],
     exports: [
         HorizontalSplitContainer,
-        VerticalSplitContainer,
         SplitContainerItem
     ],
     declarations: [
         HorizontalSplitContainer,
-        VerticalSplitContainer,
         SplitContainerItem
     ]
 })

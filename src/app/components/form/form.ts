@@ -545,11 +545,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
                 if (this.documentResizeListener && this.documentResizeEndListener) {
                     this.documentResizeListener();
                     this.documentResizeEndListener();
-                } if (this.documentResizeListener && this.documentResizeEndListener) {
-                    this.documentResizeListener();
-                    this.documentResizeEndListener();
-                }
-
+                } 
             });
 
             // if (!this.delCustomStyleFn) {
