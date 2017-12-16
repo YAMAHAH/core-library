@@ -638,8 +638,6 @@ export class NavTabsComponent implements OnInit, AfterViewInit, AfterViewChecked
             item.checked = false;
         });
         this.selectedItems = [];
-        console.log(this.navTabModelOrders);
-        console.log(this.navTabModels);
         this._popupMenuRef.toggle(event);
         // this.select(navTabModel);
         this.menuItemHandler();

@@ -18,7 +18,7 @@ import { AfterViewInit } from '@angular/core';
 })
 export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewInit {
 
-
+    @ViewChild('container', { read: ElementRef }) container: ElementRef;
     @ViewChild('panel1', { read: ElementRef }) panel1Container: ElementRef;
     @ViewChild('panel2', { read: ElementRef }) panel2Container: ElementRef;
     @ViewChild('splitter', { read: ElementRef }) splitterContainer: ElementRef;
@@ -27,32 +27,60 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
     }
     ngOnInit(): void {
     }
+    windowResizeListener;
     ngAfterViewInit(): void {
+        this.windowResizeListener = this.renderer.listen('window', 'resize', event => {
+            this.containerResizeHandler(event);
+        });
         //设置面板的初始值
+        this._updatePanel1Value();
     }
     ngOnDestroy() {
-
+        if (this.windowResizeListener) this.windowResizeListener();
     }
 
+    /** 容器样式 */
     @Input() style = {};
+    /**容器样式类 */
     @Input() styleClass = {};
+
+    /**面板1样式 */
+    @Input('panel1Style') _panel1Style = {};
+    /**面板1样式类 */
+    @Input() panel1StyleClass = {};
+    /** 面板2样式 */
+    @Input('panel2Style') _panel2Style = {};
+    /**面板2样式类 */
+    @Input() panel2StyleClass = {};
     /**容器宽度 */
     @Input() width;
     /**容器高度 */
     @Input() height;
+    @Input() borderStyle: 'none' | 'border';
 
     @Input() orientation: OrientationEnum = 1;
     @Input() panel1MinSize: number = 55;
     @Input() Panel2MinSize: number = 150;
-    /**移动拆分条固定面板的宽度或高度不变 */
+    /**PANEL1占比,用于等比缩放 */
+    private _panel1Proportion;
+    /**容器大小改变时固定面板的宽度或高度不变 */
     @Input() fixedPanel: 'none' | 'panel1' | 'panel2' = 'none';
 
     /**拆分条左或上边缘离容器的初始宽度 */
-    @Input() splitterDistance: number = 150;
+    private _splitterDistance: any = 150;
+    @Input() get splitterDistance() {
+        return this._splitterDistance;
+    }
+    set splitterDistance(value) {
+        if (this._splitterDistance != value) {
+            this._splitterDistance = value;
+            this._updatePanel1Value();
+        }
+    }
     /**拆分条移动的增量值 */
     @Input() splitterIncrement: number = 1;
     /**拆分条的宽度 */
-    @Input() splitterWidth: any = 5;
+    @Input() splitterWidth: any = 3;
     /**拆分条是否启用或禁用 */
     @Input() isSplitterFixed: boolean = false;
 
@@ -63,15 +91,30 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
     protected documentResizeEndListener
     protected maskLayerCursorStyle;
     protected delCustomStyleFn;
-    //  @Input() resizable: boolean = true;
     protected resizing: boolean;
     protected spEnum = SizingPointEnum;
     protected sizingPoint: SizingPointEnum = SizingPointEnum.none;
-    protected splitterMouseDown(event) {
+    protected splitterMouseDownHandler(event) {
         this.orientation == 1 ?
             this.initResize(event, this.spEnum.leftCenter) :
             this.initResize(event, this.spEnum.topCenter);
     }
+    protected containerResizeHandler(event) {
+        //重新计算面板的大小,考虑fixedPanel属性设置
+        //初初化时根据splitterDistance初始化面板大小
+        if (this.orientation == 1) {
+            if (this.fixedPanel == 'none') {
+                this.splitterDistance = Math.max(this.panel1MinSize, (this.container.nativeElement.offsetWidth - this.splitterWidth) * this._panel1Proportion);
+            } else if (this.fixedPanel == 'panel2')
+                this.splitterDistance = this.container.nativeElement.offsetWidth - this.panel2Container.nativeElement.offsetWidth - this.splitterWidth;
+        } else {
+            if (this.fixedPanel == 'none')
+                this.splitterDistance = Math.max(this.panel1MinSize, (this.container.nativeElement.offsetHeight - this.splitterWidth) * this._panel1Proportion);
+            else if (this.fixedPanel == 'panel2')
+                this.splitterDistance = this.container.nativeElement.offsetHeight - this.panel2Container.nativeElement.offsetHeight - this.splitterWidth;
+        }
+    }
+
 
     protected initResize(event, selectPoint: SizingPointEnum) {
         if (!this.isSplitterFixed) {
@@ -113,9 +156,11 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
     }
 
     get containerStyle() {
+        let widthValue = this.getStyleValue(this.width && this.width.toString() || undefined);
+        let heightValue = this.getStyleValue(this.height && this.height.toString() || undefined);
         let style = {
-            width: this.width + 'px',
-            height: this.height + 'px'
+            width: widthValue,
+            height: heightValue
         };
         Object.assign(style, this.style);
         return style;
@@ -123,33 +168,49 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
     get containerStyleClass() {
         let styleClass = {
             'horizonatal-split-container': this.orientation == 1,
-            'vertical-split-container': this.orientation == 2
+            'vertical-split-container': this.orientation == 2,
+            'ui-split-container-border': this.borderStyle == 'border'
         }
         Object.assign(styleClass, this.styleClass);
         return styleClass;
     }
+    private _panel1Size;
 
+    private _updatePanel1Value() {
+        this._panel1Size = this.getStyleValue(this.splitterDistance.toString());
+        this._calaPanel1Proportion();
+    }
+    private _calaPanel1Proportion() {
+        this._panel1Proportion = ((this.orientation == 1) ?
+            (this.splitterDistance / (this.container.nativeElement.offsetWidth - this.splitterWidth)) :
+            (this.splitterDistance / (this.container.nativeElement.offsetHeight - this.splitterWidth)));
+    }
     get panel1Style() {
-        let value = this.getStyleValue(this.splitterDistance.toString());
+        let value = this._panel1Size;
+        let style;
         if (this.orientation == 1)
-            return {
+            style = {
                 width: value,
                 flex: '0 0 ' + value,
                 height: '100%'
             };
         else
-            return {
+            style = {
                 height: value,
                 flex: '0 0 ' + value,
                 width: '100%'
             };
+        Object.assign(style, this._panel1Style || {});
+        return style;
     }
     get panel2Style() {
-        return {
+        let style = {
             height: '100%',
             flex: '1',
             width: '100%'
         };
+        Object.assign(style, this._panel2Style || {});
+        return style;
     }
 
     get panelStyleClass() {
@@ -257,9 +318,10 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
                 let panel2LeftPos = parseInt(this.panel2Container.nativeElement.style.left);
 
                 if (panel1NewWidth > this.panel1MinSize && panel2NewWidth > this.Panel2MinSize) {
-                    this.setElementWidth(this.panel1Container.nativeElement, panel1NewWidth);
-                    this.setElementWidth(this.panel2Container.nativeElement, panel2NewWidth);
-                    this.setElementLeft(this.panel2Container.nativeElement, panel2LeftPos + xdir);
+                    this.splitterDistance = panel1NewWidth;
+                    // this.setElementWidth(this.panel1Container.nativeElement, panel1NewWidth);
+                    // this.setElementWidth(this.panel2Container.nativeElement, panel2NewWidth);
+                    // this.setElementLeft(this.panel2Container.nativeElement, panel2LeftPos + xdir);
                 }
             } else {
                 //垂直处理
@@ -272,9 +334,10 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
                 let panel2TopPos = parseInt(this.panel2Container.nativeElement.style.top);
 
                 if (panel1NewHeight > this.panel1MinSize && panel2NewHeight > this.Panel2MinSize) {
-                    this.setElementHeight(this.panel1Container.nativeElement, panel1NewHeight);
-                    this.setElementHeight(this.panel2Container.nativeElement, panel2NewHeight);
-                    this.setElementTop(this.panel2Container.nativeElement, panel2TopPos + ydir);
+                    this.splitterDistance = panel1NewHeight;
+                    // this.setElementHeight(this.panel1Container.nativeElement, panel1NewHeight);
+                    // this.setElementHeight(this.panel2Container.nativeElement, panel2NewHeight);
+                    // this.setElementTop(this.panel2Container.nativeElement, panel2TopPos + ydir);
                 }
             }
 
@@ -283,18 +346,18 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
         }
     }
 
-    private setElementWidth(target, value) {
-        this.renderer.setStyle(target, 'width', value + 'px');
-    }
-    private setElementLeft(target, value) {
-        this.renderer.setStyle(target, 'left', value + 'px');
-    }
-    private setElementHeight(target, value) {
-        this.renderer.setStyle(target, 'height', value + 'px');
-    }
-    private setElementTop(target, value) {
-        this.renderer.setStyle(target, 'top', value + 'px');
-    }
+    // private setElementWidth(target, value) {
+    //     this.renderer.setStyle(target, 'width', value + 'px');
+    // }
+    // private setElementLeft(target, value) {
+    //     this.renderer.setStyle(target, 'left', value + 'px');
+    // }
+    // private setElementHeight(target, value) {
+    //     this.renderer.setStyle(target, 'height', value + 'px');
+    // }
+    // private setElementTop(target, value) {
+    //     this.renderer.setStyle(target, 'top', value + 'px');
+    // }
 }
 
 

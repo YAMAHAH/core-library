@@ -4,7 +4,7 @@ import { FlexDirection, FlexWrap, FlexJustifyContent, FlexAlignItems, FlexLayout
 import { Subscription } from 'rxjs/Subscription';
 import { MediaMonitor } from '@framework-services/mediaquery/media-monitor';
 import { AppGlobalService } from '@framework-services/AppGlobalService';
-import { filter, distinctUntilChanged } from 'rxjs/operators';
+import { filter, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { DomHandler } from '@framework-common/dom/domhandler';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FxStyle } from './fxstyle';
@@ -34,7 +34,8 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy, DoChec
         this.mediaMonitorSubscribtion = this.mediaMonitor.observe()
             .pipe(
             filter(c => c.matches),
-            distinctUntilChanged())
+            distinctUntilChanged(),
+            debounceTime(600))
             .subscribe(c => {
                 this.activeMedials = this.globalService
                     .activeBreakPoints.map(bp => bp.alias) || [];

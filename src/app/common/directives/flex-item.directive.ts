@@ -12,7 +12,7 @@ import { FxStyle } from './fxstyle';
 import { MediaMonitor } from '@framework-services/mediaquery/media-monitor';
 import { Subscription } from 'rxjs/Subscription';
 import { isNumber } from '../toasty/toasty.utils';
-import { filter, distinctUntilChanged } from 'rxjs/operators';
+import { filter, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { AppGlobalService } from '@framework-services/AppGlobalService';
 import { Injector } from '@angular/core';
 import { Renderer2Interceptor } from '@angular/core/src/render/api';
@@ -41,7 +41,10 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     private _inited: boolean = false;
     ngOnInit(): void {
         this.mediaMonitorSubscribtion = this.mediaMonitor.observe()
-            .pipe(filter(c => c.matches), distinctUntilChanged())
+            .pipe(
+            filter(c => c.matches),
+            distinctUntilChanged(),
+            debounceTime(600))
             .subscribe(c => {
                 this.activeMedials = this.globalService.activeBreakPoints.map(bp => bp.alias) || [];
                 if (!this.first) this._updateWithValue();

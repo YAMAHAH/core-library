@@ -7,12 +7,16 @@
     display: flex;
 }
 
+.ui-split-container-border {
+    border: 2px solid #c2c2c2;
+}
+
 .ui-split-container.horizonatal-split-container {
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
 }
 
 .ui-split-container.vertical-split-container {
-    flex-flow: column wrap;
+    flex-flow: column nowrap;
 }
 
 .ui-split-container .panel1.horizonatal-panel,
@@ -23,13 +27,11 @@
 }
 
 .ui-split-container .panel1 {
-    background-color: salmon;
     display: block;
     margin: 0px;
 }
 
 .ui-split-container .panel2 {
-    background-color: darkgray;
     display: block;
     position: relative;
     margin: 0px;
@@ -37,7 +39,8 @@
 
 .ui-split-container .horizonatal-splitter {
     z-index: 95;
-    background-color: blue;
+    // box-shadow: 1px 1px 2px #226;
+    background-color: #c2c2c2;
     cursor: w-resize;
     bottom: 0px;
     top: 0px;
@@ -45,7 +48,8 @@
 
 .ui-split-container .vertical-splitter {
     z-index: 95;
-    background-color: blue;
+    // box-shadow: 1px 1px 2px #226;
+    background-color: #c2c2c2;
     cursor: n-resize;
     left: 0px;
     right: 0px;

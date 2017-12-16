@@ -154,7 +154,7 @@ export class DynamicFormWidgetDirective implements OnInit, OnChanges, DoCheck, O
             this.componentRef.destroy();
         }
 
-        this.componentRef = this.container.createComponent(componentFactory,null,this.container.injector);
+        this.componentRef = this.container.createComponent(componentFactory, null, this.container.injector);
         this.componentRef.instance.config = this.config;
         this.componentRef.instance.group = this.group;
         /**创建权限绑定控制 */

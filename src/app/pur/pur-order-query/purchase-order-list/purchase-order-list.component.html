@@ -1,12 +1,12 @@
 <p>
     purchase-order-list works!
 </p>
-<gx-split-container orientation=1 height=350>
+<gx-split-container borderStyle='border' [panel1Style]="{ color: 'yellow' }" orientation=1 height=550>
     <gx-split-container-item panelType="panel1">Panel1内容</gx-split-container-item>
     <gx-split-container-item panelType="panel2">
         <gx-split-container orientation=2>
-            <gx-split-container-item panelType="panel1">Panel1内容</gx-split-container-item>
-            <gx-split-container-item panelType="panel2">Panel2内容
+            <gx-split-container-item panelType="panel1">Panel2内容</gx-split-container-item>
+            <gx-split-container-item panelType="panel2">Panel3内容
             </gx-split-container-item>
         </gx-split-container>
     </gx-split-container-item>

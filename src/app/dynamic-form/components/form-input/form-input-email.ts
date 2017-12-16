@@ -75,7 +75,7 @@ export class FormInputEmailComponent extends FormFieldControl implements Field, 
     get suffixTemps() {
         let suffixTemps = tryGetValue(() => this.config.suffixTempRefs).value;
         return suffixTemps || [];
-        
+
     }
     get prefixTemps() {
         let prefixTemps = tryGetValue(() => this.config.prefixTempRefs).value;
@@ -112,7 +112,6 @@ export class FormInputEmailComponent extends FormFieldControl implements Field, 
 
     constructor(public elementRef: ElementRef, private renderer: Renderer2) {
         super();
-        console.log(this.renderer);
     }
     @Input('placeholder') inputPlaceholder: string;
     @Output('onClick') inputClick: EventEmitter<any> = new EventEmitter<any>();

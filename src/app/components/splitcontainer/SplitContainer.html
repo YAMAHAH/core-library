@@ -4,7 +4,7 @@
     </div>
     <div #maskLayer [style.cursor]="maskLayerCursorStyle" *ngIf="resizing" [ngClass]="maskLayerStyleClass"></div>
 
-    <div #splitter *ngIf="!this.isSplitterFixed" [ngStyle]="splitterStyle" [ngClass]="splitterStyleClass" (mousedown)="splitterMouseDown($event) "></div>
+    <div #splitter *ngIf="!this.isSplitterFixed" [ngStyle]="splitterStyle" [ngClass]="splitterStyleClass" (mousedown)="splitterMouseDownHandler($event) "></div>
 
     <div #panel2 class="panel2" [ngStyle]="panel2Style" [ngClass]="panelStyleClass">
         <ng-content select="gx-split-container-item[panelType=panel2] "></ng-content>
