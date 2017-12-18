@@ -1,12 +1,14 @@
-<div #container class="ui-split-container" [ngClass]="containerStyleClass" [ngStyle]="containerStyle">
-    <div #panel1 class="panel1" [ngStyle]="panel1Style" [ngClass]="panelStyleClass">
+<div #container (keydown)="containerKeydownHandler($event)" class="ui-split-container" [ngClass]="containerStyleClass" [ngStyle]="containerStyle">
+    <div #panel1 tabindex="1" class="panel1" [ngStyle]="panel1Style" [ngClass]="panelStyleClass">
         <ng-content select="gx-split-container-item[panelType=panel1]"></ng-content>
     </div>
     <div #maskLayer [style.cursor]="maskLayerCursorStyle" *ngIf="resizing" [ngClass]="maskLayerStyleClass"></div>
 
-    <div #splitter *ngIf="!this.isSplitterFixed" [ngStyle]="splitterStyle" [ngClass]="splitterStyleClass" (mousedown)="splitterMouseDownHandler($event) "></div>
+    <div #splitter *ngIf="isShowSplitter" class="splitter" [ngStyle]="splitterStyle" [ngClass]="splitterStyleClass" (mousedown)="splitterMouseDownHandler($event) ">
+        <span (mousedown)="$event.stopPropagation();" (click)="collapse($event)" class="fa fa-fw" [ngClass]="collapseOrExpandStyleClass"></span>
+    </div>
 
-    <div #panel2 class="panel2" [ngStyle]="panel2Style" [ngClass]="panelStyleClass">
+    <div #panel2 class="panel2" tabIndex="2" [ngStyle]="panel2Style" [ngClass]="panelStyleClass">
         <ng-content select="gx-split-container-item[panelType=panel2] "></ng-content>
     </div>
 </div>

@@ -12,6 +12,7 @@ import { PurchaseOrderQueryType, PurchaseOrderQueryModuleType } from '../../acti
 import { PurchaseOrderQueryComponent } from './pur-order-query.component';
 import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order-list.component';
 import { SplitContainerModule } from '@framework-components/splitcontainer/SplitContainerModule';
+import { A11yModule } from '@angular/cdk/a11y';
 
 export const purOrderQueryRouteConfig: Routes = [
     { path: "", component: PurchaseOrderQueryComponent, data: { title: '采购订单明细查询' } }
@@ -23,7 +24,9 @@ export const purOrderQueryRouteConfig: Routes = [
         CoreModule,
         RouterModule.forChild(purOrderQueryRouteConfig),
         NavTreeViewModule,
-        SplitContainerModule
+        SplitContainerModule,
+        A11yModule
+
     ],
     declarations: [
         PurchaseOrderQueryComponent,

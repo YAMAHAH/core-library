@@ -1,3 +1,6 @@
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "../../custom-var";
 .ui-split-container {
     width: 100%;
     height: 100%;
@@ -23,11 +26,12 @@
 .ui-split-container .panel2.horizonatal-panel,
 .ui-split-container .panel1.vertical-panel,
 .ui-split-container .panel2.vertical-panel {
-    flex: 1;
+    flex: 1 0 0%;
 }
 
 .ui-split-container .panel1 {
     display: block;
+    position: relative;
     margin: 0px;
 }
 
@@ -37,28 +41,41 @@
     margin: 0px;
 }
 
-.ui-split-container .horizonatal-splitter {
+.ui-split-container .splitter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     z-index: 95;
-    // box-shadow: 1px 1px 2px #226;
     background-color: #c2c2c2;
+    // box-shadow: 1px 1px 2px #226;
+}
+
+.ui-split-container .horizonatal-splitter {
     cursor: w-resize;
     bottom: 0px;
     top: 0px;
+    flex-direction: column;
 }
 
 .ui-split-container .vertical-splitter {
-    z-index: 95;
-    // box-shadow: 1px 1px 2px #226;
-    background-color: #c2c2c2;
     cursor: n-resize;
     left: 0px;
     right: 0px;
+}
+
+.ui-split-container .splitter>span {
+    cursor: pointer;
+}
+
+.ui-split-container .splitter>span:hover {
+    color: theme-color("primary");
 }
 
 .ui-split-container .split-container-layer-mask {
     position: fixed;
     width: 100%;
     height: 100%;
-    z-index: 9999;
+    z-index: 2000;
+    background-color: transparent;
     opacity: 0;
 }
