@@ -77,7 +77,8 @@ export class AppGlobalService {
         };
     }
 
-    async observeModule(moduleType: string | Type<IModuleType>, subscribe?: (moduleRef: IModuleRef) => void, runOnce: boolean = true) {
+    async moduleReady(moduleType: string | Type<IModuleType>,
+        subscribe?: (moduleRef: IModuleRef) => void, runOnce: boolean = true) {
         let moduleLoad$ = typeof moduleType === 'string' ?
             this.getModuleObservable(moduleType) :
             this.getModuleObservable((new moduleType()).moduleKey);
@@ -134,7 +135,7 @@ export class AppGlobalService {
     registerComponentFactoryRef(factoryComponentType: IModuleType) {
         if (!!!factoryComponentType || this.componentFactories.has(factoryComponentType.factoryKey)) return;
         this.componentFactories.set(factoryComponentType.factoryKey, factoryComponentType);
-        this.observeModule(factoryComponentType.moduleKey, modRef => {
+        this.moduleReady(factoryComponentType.moduleKey, modRef => {
             modRef.componentFactoryContainerRef = factoryComponentType.componentFactoryRef;
         });
         return () => this.unRegisterComponentFactoryRef(factoryComponentType);

@@ -12,6 +12,7 @@ import { CarService } from './services/car/carService';
 import { DownloadManager } from './services/DownloadManager';
 import { HTMLElementExtendService } from './untils/html-element-extend';
 import { SelectivePreloadingStrategy } from './services/SelectivePreloadingStrategy';
+import { PageStatusMonitor } from '@framework-services/application/PageStatusMonitor';
 
 export const appRootProviders = [
     AuthGuard,
@@ -26,5 +27,6 @@ export const appRootProviders = [
     DownloadManager,
     CarService,
     HTMLElementExtendService,
-    SelectivePreloadingStrategy
+    SelectivePreloadingStrategy,
+    PageStatusMonitor
 ];

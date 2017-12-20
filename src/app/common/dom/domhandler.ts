@@ -345,7 +345,6 @@ export class DomHandler {
 
     public getOuterWidth(el: any, margin?: boolean) {
         let width = el.offsetWidth;
-
         if (margin) {
             let style = getComputedStyle(el);
             width += parseFloat(style.marginLeft) + parseFloat(style.marginRight);

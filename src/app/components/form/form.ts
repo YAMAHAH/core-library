@@ -503,7 +503,6 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
 
             this.container.style.left = leftPos + deltaX + 'px';
             this.container.style.top = topPos + deltaY + 'px';
-
             this.lastPageX = event.pageX;
             this.lastPageY = event.pageY;
         }
@@ -545,7 +544,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
                 if (this.documentResizeListener && this.documentResizeEndListener) {
                     this.documentResizeListener();
                     this.documentResizeEndListener();
-                } 
+                }
             });
 
             // if (!this.delCustomStyleFn) {

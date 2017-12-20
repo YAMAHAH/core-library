@@ -33,7 +33,7 @@ export class SaleQueryListComponent extends ComponentBase implements OnInit {
 
   async openPurchaseOrder() {
     let factoryRef = await this.globalService.GetOrCreateComponentFactory(PurchaseModuleType);
-    this.globalService.observeModule(PurchaseModuleType.staticModuleKey, async moduleRef => {
+    this.globalService.moduleReady(PurchaseModuleType.staticModuleKey, async moduleRef => {
       if (moduleRef) {
         let pageModel = tryGetValue(() => moduleRef.componentFactoryContainerRef.createDefaultPageModel()).value;
         let compRef = moduleRef.createComponentRef(this.viewContainerRef, PurchaseOrderEditType, pageModel);

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Injector, ViewEncapsulation } from '@angular/core';
 import { ComponentBase } from '@framework-base/component/ComponentBase';
+import { PageStatusMonitor } from '@framework-services/application/PageStatusMonitor';
 
 @Component({
   selector: 'gx-purchase-order-list',
@@ -14,12 +15,18 @@ import { ComponentBase } from '@framework-base/component/ComponentBase';
 })
 export class PurchaseOrderListComponent extends ComponentBase implements OnInit {
   @Input() title: string = "采购订单明细查询";
-  constructor(protected injector: Injector) {
+  constructor(protected injector: Injector, protected pageStatusMonitor: PageStatusMonitor) {
     super(injector);
   }
 
   ngOnInit() {
     super.ngOnInit();
+    this.pageStatusMonitor.idle(data => { console.log('application idle') });
+    this.pageStatusMonitor.onEvery(3, () => { console.log('30s') });
+    this.pageStatusMonitor.focus(() => { console.log('focus') });
+    this.pageStatusMonitor.blur(() => { console.log('blur') });
+    this.pageStatusMonitor.wakeup(() => { console.log('wakeup') });
+
   }
 
 }

@@ -481,7 +481,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         //     }
         // });
         let factoryRef = await this.globalService.GetOrCreateComponentFactory(PurchaseModuleType);
-        this.globalService.observeModule(PurchaseModuleType.staticModuleKey, moduleRef => {
+        this.globalService.moduleReady(PurchaseModuleType.staticModuleKey, moduleRef => {
             if (moduleRef) {
                 let pageModel = moduleRef.componentFactoryContainerRef && moduleRef.componentFactoryContainerRef.createDefaultPageModel();
                 let compRef = moduleRef.createComponentRef(this.viewContainerRef, PurchaseOrderEditType, pageModel);

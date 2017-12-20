@@ -59,7 +59,7 @@ export class SelectivePreloadingStrategy implements PreloadingStrategy {
         let moduleInfo = this.notLoadedModuleInfos.find(m => m.key === moduleId);
         moduleInfo && moduleInfo.loader().subscribe();
         if (subscribe) {
-            return this.appGlobalService.observeModule(moduleId, subscribe, runOnce);
+            return this.appGlobalService.moduleReady(moduleId, subscribe, runOnce);
         }
         return () => { };
     }
