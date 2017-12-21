@@ -4,6 +4,7 @@ import { PurchaseModuleType } from '@framework-actions/purchase-order-module/Pur
 import { PurchaseOrderEditType } from '@framework-actions/purchase-order-module/PurchaseComponentType';
 import { FormOptions } from '@framework-components/form/FormOptions';
 import { tryGetValue } from '@untils/type-checker';
+import { getMonthDays } from '../../../untils/dateHelper';
 
 @Component({
   selector: 'gx-sale-query-list',
@@ -30,6 +31,10 @@ export class SaleQueryListComponent extends ComponentBase implements OnInit {
   /**
    * 以下为业务逻辑部份
    */
+
+   getMonthDays(event){
+    getMonthDays(new Date(2017,11,1));
+   }
 
   async openPurchaseOrder() {
     let factoryRef = await this.globalService.GetOrCreateComponentFactory(PurchaseModuleType);
