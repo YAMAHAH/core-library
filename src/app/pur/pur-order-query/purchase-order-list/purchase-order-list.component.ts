@@ -1,6 +1,9 @@
-import { Component, OnInit, Input, Injector, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, Injector, ViewEncapsulation, AfterViewInit, ViewChild } from '@angular/core';
 import { ComponentBase } from '@framework-base/component/ComponentBase';
 import { PageStatusMonitor } from '@framework-services/application/PageStatusMonitor';
+import { MatTableDataSource, MatTable } from '@angular/material';
+import { getMonthDays } from '@untils/dateHelper';
+import { getDateRangeDays } from '../../../untils/dateHelper';
 
 @Component({
   selector: 'gx-purchase-order-list',
@@ -13,7 +16,8 @@ import { PageStatusMonitor } from '@framework-services/application/PageStatusMon
     '[class.el-flex-show]': 'visible'
   }
 })
-export class PurchaseOrderListComponent extends ComponentBase implements OnInit {
+export class PurchaseOrderListComponent extends ComponentBase implements OnInit, AfterViewInit {
+
   @Input() title: string = "采购订单明细查询";
   constructor(protected injector: Injector, protected pageStatusMonitor: PageStatusMonitor) {
     super(injector);
@@ -28,5 +32,47 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit 
     this.pageStatusMonitor.wakeup(() => { console.log('wakeup') });
 
   }
+  /**业务逻辑 */
+  displayedColumns = [];
+  @ViewChild('table') matTable: MatTable<IWeekDays[]>;
+  columns: ITableColumn[] = [
+    { name: 'monday', title: '一', order: 2 },
+    { name: 'tuesday', title: '二', order: 3 },
+    { name: 'wednesday', title: '三', order: 4 },
+    { name: 'thurday', title: '四', order: 5 },
+    { name: 'friday', title: '五', order: 6 },
+    { name: 'saturday', title: '六', order: 7 },
+    { name: 'sunday', title: '日', order: 1 },
+  ];
+  dataSource = new MatTableDataSource();
+  ngAfterViewInit(): void {
+    let mondayAsFirst: boolean = true;
 
+    if (mondayAsFirst) {
+      this.displayedColumns = ['monday', 'tuesday', 'wednesday', 'thurday', 'friday', 'saturday', 'sunday'];
+    } else
+      this.displayedColumns = ['sunday', 'monday', 'tuesday', 'wednesday', 'thurday', 'friday', 'saturday'];
+
+    this.changeDetectorRef.detectChanges();
+
+    let weekDays: IWeekDays[] = getDateRangeDays('2017-10-1', '2017-12-1', mondayAsFirst);//  getMonthDays(new Date(2017, 11, 22));
+
+    this.dataSource = new MatTableDataSource<IWeekDays>(weekDays);
+
+  }
+
+}
+export interface IWeekDays {
+  sunday;
+  monday;
+  tuesday;
+  wednesday;
+  thurday;
+  friday;
+  saturday;
+}
+export interface ITableColumn {
+  name: string;
+  title: string;
+  order: number;
 }

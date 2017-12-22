@@ -41,7 +41,7 @@ export class TimeoutDebouncer implements Debouncer {
         weekday[6] = "星期六";
         alert("本月第一天是 " + weekday[date.getDay()]);
         date.setMonth(date.getMonth() + 1);
-        var lastDate = new Date(date - 3600000 * 24);
+        var lastDate = new Date((date as any) - 3600000 * 24);
         alert("本月最后一天是 " + lastDate.getDate());
     }
 

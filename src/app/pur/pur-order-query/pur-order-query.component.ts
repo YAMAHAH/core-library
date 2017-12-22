@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Input, OnDestroy, AfterViewInit, Injector, ComponentRef, Type } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Input, OnDestroy, AfterViewInit, Injector, ComponentRef, Type, Renderer } from '@angular/core';
 import { IComponentBase } from '@framework-base/component/interface/IComponentBase';
 import { ShowTypeEnum } from '@framework-base/component/ShowTypeEnum';
 import { ComponentFactoryConatiner } from '@framework-base/component/ComponentFactoryConatiner';
@@ -56,7 +56,7 @@ export class PurchaseOrderQueryComponent extends ComponentFactoryConatiner
             }));
       }).unsubscribe();
   }
-  constructor(protected injector: Injector) {
+  constructor(protected injector: Injector,renderer:Renderer) {
     super(injector, PurchaseOrderQueryModuleType.staticFactoryKey);
     this.initContainer();
   }
