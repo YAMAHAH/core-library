@@ -1,8 +1,9 @@
+import { IOneDay, IWeekDays } from '../Models/IWeekDays';
 
 export function getDaysInMonth(year, month) {
     month = parseInt(month, 10);
-    var d = new Date(year, month + 1, 0);
-    return d.getDate();
+    let d = new Date(year, month + 1, 0);
+    return { days: d.getDate(), year: d.getFullYear(), month: d.getMonth() + 1 };
 }
 export function getMonthWeekday(date: Date) {
     date.setDate(1);
@@ -11,7 +12,7 @@ export function getMonthWeekday(date: Date) {
 
 export function getDateRangeDays(dateStart, dateEnd, mondayAsFrist: boolean = false, resultAsObjectArray: boolean = true) {
     let yearMonths = getYearAndMonth(dateStart, dateEnd);
-    let results = getMonthDays(new Date(yearMonths[0].year, yearMonths[0].month - 1), mondayAsFrist, resultAsObjectArray);
+    let results: any = getMonthDays(new Date(yearMonths[0].year, yearMonths[0].month - 1), mondayAsFrist, resultAsObjectArray);
     yearMonths.slice(1).forEach(item => {
         results = results.concat(getMonthDays(new Date(item.year, item.month - 1, 1), mondayAsFrist).slice(2));
     });
@@ -48,36 +49,104 @@ export function getYearAndMonth(start, end) {
 export function getMonthDays(date: Date, mondayAsFrist: boolean = false, resultAsObjectArray: boolean = true) {
     // 6*7的日历数组
     const daysArr = [[], [], [], [], [], []];
+    const daysArra2: IWeekDays[] = [];
     // 获取当月1日为星期几
     const currentWeekday = getMonthWeekday(date);
     // 获取上月天数
-    const lastMonthDays = getDaysInMonth(date.getFullYear(), date.getMonth() - 1);
+    const lastDateInfo = getDaysInMonth(date.getFullYear(), date.getMonth() - 1);
+    const lastMonthDays = lastDateInfo.days;
     // 获取当月天数
-    const currentMonthDays = getDaysInMonth(date.getFullYear(), date.getMonth());
+    const currentDateInfo = getDaysInMonth(date.getFullYear(), date.getMonth());
+    const currentMonthDays = currentDateInfo.days;
+    //获取下月天数
+    const nextDateInfo = getDaysInMonth(date.getFullYear(), date.getMonth() + 1);
     // 日期处理
-
-    const getDay = day => (day <= lastMonthDays ? day :
-        (day <= (lastMonthDays + currentMonthDays)) ?
-            day - lastMonthDays :
-            day - (lastMonthDays + currentMonthDays));
+    const weekDayNames = ['monday', 'tuesday', 'wednesday', 'thurday', 'friday', 'saturday', 'sunday'];
+    const getDay = day => {
+        if (day <= lastMonthDays) {
+            return day;
+        }
+        else if (day <= (lastMonthDays + currentMonthDays)) {
+            return day - lastMonthDays;
+        } else {
+            return day - (lastMonthDays + currentMonthDays);
+        }
+    }
+    const getDay2 = day => {
+        if (day <= lastMonthDays) {
+            return {
+                year: lastDateInfo.year,
+                month: lastDateInfo.month,
+                day: day,
+                week: getWeekNumber(lastDateInfo.year, lastDateInfo.month, day),
+                weekDay: -1,
+                rem: null
+            };
+        }
+        else if (day <= (lastMonthDays + currentMonthDays)) {
+            return {
+                year: currentDateInfo.year,
+                month: currentDateInfo.month,
+                day: day - lastMonthDays,
+                week: getWeekNumber(currentDateInfo.year, currentDateInfo.month, day - lastMonthDays),
+                weekDay: -1,
+                rem: null
+            };
+        } else {
+            return {
+                year: nextDateInfo.year,
+                month: nextDateInfo.month,
+                day: day - (lastMonthDays + currentMonthDays),
+                week: getWeekNumber(nextDateInfo.year, nextDateInfo.month, day - (lastMonthDays + currentMonthDays)),
+                weekDay: -1,
+                rem: null
+            };
+        }
+    }
+    if (resultAsObjectArray)
+        for (let index = 0; index < 6; index++) {
+            let weekData: IWeekDays = {
+                monday: { year: 0, month: 0, day: 0, week: -1, weekDay: 1 },
+                tuesday: { year: 0, month: 0, day: 0, week: -1, weekDay: 2 },
+                wednesday: { year: 0, month: 0, day: 0, week: -1, weekDay: 3 },
+                thurday: { year: 0, month: 0, day: 0, week: -1, weekDay: 4 },
+                friday: { year: 0, month: 0, day: 0, week: -1, weekDay: 5 },
+                saturday: { year: 0, month: 0, day: 0, week: -1, weekDay: 6 },
+                sunday: { year: 0, month: 0, day: 0, week: -1, weekDay: 0 }
+            };
+            daysArra2.push(weekData);
+        }
 
     if (mondayAsFrist) {
         for (let i = 1; i <= 7; i += 1) {
             let virtualDay = (lastMonthDays - (currentWeekday == 0 ? 7 : currentWeekday)) + i + 1;
             for (let j = 0; j < 6; j += 1) {
-                daysArr[j][i - 1] = getDay(virtualDay + (j * 7));
+                if (!resultAsObjectArray)
+                    daysArr[j][i - 1] = getDay(virtualDay + (j * 7));
+                else {
+                    let oneDay = getDay2(virtualDay + (j * 7));
+                    oneDay.weekDay = i == 7 ? 0 : i;
+                    daysArra2[j][weekDayNames[i - 1]] = oneDay;
+                }
             }
         }
     } else {
         for (let i = 0; i < 7; i += 1) {
             let virtualDay = (lastMonthDays - (currentWeekday == 0 ? 7 : currentWeekday)) + i + 1;
             for (let j = 0; j < 6; j += 1) {
-                daysArr[j][i] = getDay(virtualDay + (j * 7));
+                if (!resultAsObjectArray)
+                    daysArr[j][i] = getDay(virtualDay + (j * 7));
+                else {
+                    let index = (((i - 1) == -1) ? (i + 6) : (i - 1));
+                    let oneDay = getDay2(virtualDay + (j * 7));
+                    oneDay.weekDay = i;
+                    daysArra2[j][weekDayNames[index]] = oneDay;
+                }
             }
         }
     }
     if (resultAsObjectArray)
-        return convertToObject(date.getFullYear(), date.getMonth() + 1, daysArr, mondayAsFrist);
+        return daysArra2; // convertToObject(date.getFullYear(), date.getMonth() + 1, daysArr, mondayAsFrist);
     else
         return daysArr;
 }
@@ -100,4 +169,35 @@ function convertToObject(year, month, monthDays: number[][], mondayAsFirst: bool
         weekDays.push(data);
     });
     return weekDays;
+}
+
+/**
+ * 获取某年的某天是第几周
+ * @param {Number} y
+ * @param {Number} m
+ * @param {Number} d
+ * @returns {Number}
+ */
+export function getWeekNumber(y, m, d) {
+    let now = new Date(y, m - 1, d),
+        year = now.getFullYear(),
+        month = now.getMonth(),
+        days = now.getDate();
+    //那一天是那一年中的第多少天
+    for (let i = 0; i < month; i++) {
+        days += getDaysInMonth(year, i).days;
+    }
+
+    //那一年第一天是星期几
+    let yearFirstDay = new Date(year, 0, 1).getDay() || 7;
+
+    let week = null;
+    if (yearFirstDay == 1) {
+        week = Math.ceil(days / yearFirstDay);
+    } else {
+        days -= (7 - yearFirstDay + 1);
+        week = Math.ceil(days / 7) + 1;
+    }
+
+    return week;
 }

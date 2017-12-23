@@ -33,12 +33,6 @@ export class SaleQueryListComponent extends ComponentBase implements OnInit {
    */
 
   getMonthDays(event) {
-    console.table(
-      getMonthDays(new Date(2017, 9, 1)).concat(
-        getMonthDays(new Date(2017, 10, 1)).slice(2)).concat(
-        getMonthDays(new Date(2017, 11, 1)).slice(2)
-        ));
-
     console.table(getDateRangeDays('2016-10-1', '2017-12-1'));
   }
 

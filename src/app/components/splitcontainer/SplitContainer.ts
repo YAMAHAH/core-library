@@ -16,7 +16,7 @@ import { SplitterPanelEnum } from './SplitterPanelEnum';
     styleUrls: ['./splitContainer.scss'],
     providers: [DomHandler]
 })
-export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewInit {
+export class SplitContainer implements OnInit, OnDestroy, AfterViewInit {
 
     @ViewChild('container', { read: ElementRef }) container: ElementRef;
     @ViewChild('panel1', { read: ElementRef }) panel1Container: ElementRef;
@@ -86,7 +86,7 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
     /**拆分条的宽度 */
     @Input() splitterWidth: any = 10;
     /**拆分条是否显示或隐藏 */
-    @Input() isShowSplitter: boolean = true;
+    @Input() showSplitter: boolean = true;
     @Input() resizable: boolean = true;
 
     @Output() splitterMoved: EventEmitter<any> = new EventEmitter<any>();
@@ -305,6 +305,7 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
                 if (panel1NewWidth >= pane1MinSize &&
                     panel1NewWidth <= this.panel1MaxSize &&
                     panel2NewWidth >= pane2MinSize) {
+                    console.log(this.panel1MaxSize, panel1NewWidth, panel2NewWidth);
                     this.splitterDistance = panel1NewWidth;
                     this._collapsed = false;
                 }
@@ -398,7 +399,7 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
         } else {
             let style = {
                 height: '100%',
-                flex: '1',
+                flex: '1 0 100%',
                 width: '100%'
             };
             Object.assign(style, (this.collpasePanel == 1 ? this._panel1Style : this._panel2Style) || {});
@@ -415,10 +416,13 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
 
     get splitterStyleClass() {
         return {
-            'horizonatal-splitter': this.orientation == 1,
-            'vertical-splitter': this.orientation == 2
+            'horizonatal-splitter': this.showSplitter && this.orientation == 1,
+            'vertical-splitter': this.showSplitter && this.orientation == 2,
+            'splitter': this.showSplitter
         };
     }
+
+
     private getStyleValue(value: string) {
         if (!value) return undefined;
         value = value.trim();
@@ -453,22 +457,23 @@ export class HorizontalSplitContainer implements OnInit, OnDestroy, AfterViewIni
 
     get collapseOrExpandStyleClass() {
         return {
-            'fa-chevron-circle-left': (this.orientation == 1 && !this._collapsed) ||
-                (this.orientation == 1 && this._collapsed && this.collpasePanel == 2),
+            'fa-chevron-circle-left': this.showSplitter && ((this.orientation == 1 && !this._collapsed) ||
+                (this.orientation == 1 && this._collapsed && this.collpasePanel == 2)),
 
-            'fa-chevron-circle-right': (this._collapsed && this.orientation == 1 && this.collpasePanel == 1) ||
-                (this.orientation == 1 && !this._collapsed && this.collpasePanel == 2),
+            'fa-chevron-circle-right': this.showSplitter && ((this._collapsed && this.orientation == 1 && this.collpasePanel == 1) ||
+                (this.orientation == 1 && !this._collapsed && this.collpasePanel == 2)),
 
-            'fa-chevron-circle-up': (!this._collapsed && this.orientation == 2) ||
-                (this.orientation == 2 && this._collapsed && this.collpasePanel == 2),
+            'fa-chevron-circle-up': this.showSplitter && ((!this._collapsed && this.orientation == 2) ||
+                (this.orientation == 2 && this._collapsed && this.collpasePanel == 2)),
 
-            'fa-chevron-circle-down': (this._collapsed && this.orientation == 2 && this.collpasePanel == 1) ||
-                (this.orientation == 2 && !this._collapsed && this.collpasePanel == 2)
+            'fa-chevron-circle-down': this.showSplitter && ((this._collapsed && this.orientation == 2 && this.collpasePanel == 1) ||
+                (this.orientation == 2 && !this._collapsed && this.collpasePanel == 2))
         }
     }
     private _collapsed: boolean = false;
     private _expandSize;
     collapse(event: Event) {
+        console.log(this.showSplitter == false);
         event.stopPropagation();
         if (this._collapsed) {
             this.splitterDistance = this.getStyleValue(this._expandSize.toString());

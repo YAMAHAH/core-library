@@ -1,55 +1,23 @@
 <p>
     purchase-order-list works!
 </p>
-<gx-split-container cdkTrapFocus borderStyle='border' [panel1Style]="{ color: 'black' }" orientation=1 height=550>
-    <gx-split-container-item panelType="panel1">Panel1内容
-        <input type="text">
-        <input type="text">
+
+<gx-split-container [splitterDistance]="0" showSplitter panel1MinSize=0 collpasePanel=1 cdkTrapFocus borderStyle='border' [panel1Style]="{ color: 'black' }" height=550>
+    <gx-split-container-item panelType="panel1">
     </gx-split-container-item>
     <gx-split-container-item panelType="panel2">
         <gx-split-container orientation=2 collpasePanel='2'>
-            <gx-split-container-item panelType="panel1">Panel2内容
+            <gx-split-container-item panelType="panel1">
                 <div class="example-container mat-elevation-z8">
-                    <mat-table #table [dataSource]="dataSource">
-
-                        <!-- <ng-container matColumnDef="sunday">
-                            <mat-header-cell *matHeaderCellDef> 日 </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.sunday}} </mat-cell>
-                        </ng-container>
-                        <ng-container matColumnDef="monday">
-                            <mat-header-cell *matHeaderCellDef> 一 </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.monday}} </mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="tuesday">
-                            <mat-header-cell *matHeaderCellDef> 二 </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.tuesday}} </mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="wednesday">
-                            <mat-header-cell *matHeaderCellDef> 三 </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.wednesday}} </mat-cell>
-                        </ng-container>
-                        <ng-container matColumnDef="thurday">
-                            <mat-header-cell *matHeaderCellDef> 四 </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.thurday}} </mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="friday">
-                            <mat-header-cell *matHeaderCellDef> 五 </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.friday}} </mat-cell>
-                        </ng-container>
-
-                        <ng-container matColumnDef="saturday">
-                            <mat-header-cell *matHeaderCellDef> 六 </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.saturday}} </mat-cell>
-                        </ng-container> -->
-
+                    <mat-table #table [dataSource]="dataSource" matSort>
                         <ng-container *ngFor="let colDef of columns">
                             <ng-container [matColumnDef]="colDef.name">
-                                <mat-header-cell *matHeaderCellDef>{{colDef.title}}</mat-header-cell>
-                                <mat-cell *matCellDef="let element">
-                                    {{element['year']}}-{{element['month']}}-{{element[colDef.name]}}
+                                <mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <span style="flex:1;background-color:#d3d3d3">{{colDef.title}}</span>
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element;let idx = index;let even = even;let odd = odd;">
+                                    {{element[colDef.name].day}}
+                                    <!-- <div>{{element[colDef.name].year}}年{{element[colDef.name].month}}月{{element[colDef.name].rem}}</div> -->
                                 </mat-cell>
                             </ng-container>
                         </ng-container>

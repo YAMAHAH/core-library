@@ -9,3 +9,34 @@
     overflow: auto;
     max-height: 500px;
 }
+
+.mat-table .mat-header-row {
+    background-color: #b5cfd2;
+}
+
+.mat-table .mat-sort-header-container {
+    height: 48px;
+    justify-content: center;
+    border: 1px sloid blue;
+}
+
+.mat-table .mat-sort-header-arrow {
+    margin: auto 6px;
+}
+
+.mat-table .mat-row:hover {
+    background-color: rgb(169, 172, 216);
+}
+
+.mat-table .mat-cell {
+    display: flex;
+    justify-content: center;
+}
+
+.mat-table .mat-row:nth-of-type(odd) {
+    background-color: rgb(161, 152, 199);
+}
+
+.mat-table .mat-row:nth-of-type(even) {
+    background-color: rgb(202, 139, 204)
+}

@@ -1,9 +1,11 @@
 import { Component, OnInit, Input, Injector, ViewEncapsulation, AfterViewInit, ViewChild } from '@angular/core';
 import { ComponentBase } from '@framework-base/component/ComponentBase';
 import { PageStatusMonitor } from '@framework-services/application/PageStatusMonitor';
-import { MatTableDataSource, MatTable } from '@angular/material';
+import { MatTableDataSource, MatTable, MatSort } from '@angular/material';
 import { getMonthDays } from '@untils/dateHelper';
 import { getDateRangeDays } from '../../../untils/dateHelper';
+import { IWeekDays } from '@framework-models/IWeekDays';
+import { IOneDay } from '../../../Models/IWeekDays';
 
 @Component({
   selector: 'gx-purchase-order-list',
@@ -35,6 +37,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   /**业务逻辑 */
   displayedColumns = [];
   @ViewChild('table') matTable: MatTable<IWeekDays[]>;
+  @ViewChild(MatSort) sort: MatSort;
   columns: ITableColumn[] = [
     { name: 'monday', title: '一', order: 2 },
     { name: 'tuesday', title: '二', order: 3 },
@@ -55,21 +58,23 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
 
     this.changeDetectorRef.detectChanges();
 
-    let weekDays: IWeekDays[] = getDateRangeDays('2017-10-1', '2017-12-1', mondayAsFirst);//  getMonthDays(new Date(2017, 11, 22));
+    let weekDays: IWeekDays[] = getDateRangeDays('2017-12-1', '2017-12-1', mondayAsFirst);//  getMonthDays(new Date(2017, 11, 22));
 
     this.dataSource = new MatTableDataSource<IWeekDays>(weekDays);
+    this.dataSource.sortingDataAccessor = this.sortingDataAccessor;
+    this.dataSource.sort = this.sort;
 
   }
-
-}
-export interface IWeekDays {
-  sunday;
-  monday;
-  tuesday;
-  wednesday;
-  thurday;
-  friday;
-  saturday;
+  sortingDataAccessor: ((data: IWeekDays, sortHeaderId: string) => string | number) =
+    (data: IWeekDays, sortHeaderId: string): string | number => {
+      const value = data[sortHeaderId].day;
+      // If the value is a string and only whitespace, return the value.
+      // Otherwise +value will convert it to 0.
+      if (typeof value === 'string' && !value.trim()) {
+        return value;
+      }
+      return isNaN(+value) ? value : +value;
+    }
 }
 export interface ITableColumn {
   name: string;

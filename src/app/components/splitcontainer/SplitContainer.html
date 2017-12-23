@@ -4,7 +4,7 @@
     </div>
     <div #maskLayer [style.cursor]="maskLayerCursorStyle" *ngIf="resizing" [ngClass]="maskLayerStyleClass"></div>
 
-    <div #splitter *ngIf="isShowSplitter" class="splitter" [ngStyle]="splitterStyle" [ngClass]="splitterStyleClass" (mousedown)="splitterMouseDownHandler($event) ">
+    <div #splitter *ngIf="showSplitter" [ngStyle]="splitterStyle" [ngClass]="splitterStyleClass" (mousedown)="splitterMouseDownHandler($event) ">
         <span (mousedown)="$event.stopPropagation();" (click)="collapse($event)" class="fa fa-fw" [ngClass]="collapseOrExpandStyleClass"></span>
     </div>
 
