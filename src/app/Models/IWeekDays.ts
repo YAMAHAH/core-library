@@ -6,6 +6,7 @@ export interface IWeekDays {
     thurday: IOneDay;
     friday: IOneDay;
     saturday: IOneDay;
+    select: IOneDay;
 }
 
 export interface IOneDay {
@@ -15,4 +16,6 @@ export interface IOneDay {
     day?;
     weekDay?;
     rem?;
+    selected?;
+    isCurrentMonth?: boolean;
 }

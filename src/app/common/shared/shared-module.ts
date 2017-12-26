@@ -17,6 +17,7 @@ import { KeyBindingDirective } from '../directives/key-binding';
 import { UserService } from './user-service';
 import { BorderDirective } from '@framework-common/directives/css/BordersDirective';
 import { SizingDirective } from '@framework-common/directives/css/SizingDirective';
+import { AppMotationObserverDirective } from '@framework-common/directives/AppMotationObserver';
 
 @NgModule({
   imports: [CommonModule],
@@ -34,7 +35,8 @@ import { SizingDirective } from '@framework-common/directives/css/SizingDirectiv
     FlexItemDirective,
     FxStyle,
     BorderDirective,
-    SizingDirective
+    SizingDirective,
+    AppMotationObserverDirective
   ],
   exports: [
     AwesomePipe,
@@ -54,7 +56,8 @@ import { SizingDirective } from '@framework-common/directives/css/SizingDirectiv
     ImageLazyLoadDirective,
     FlexLayoutDirective,
     FlexItemDirective,
-    FxStyle
+    FxStyle,
+    AppMotationObserverDirective
   ]
 })
 export class CoreModule {

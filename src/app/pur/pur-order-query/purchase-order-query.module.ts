@@ -13,7 +13,7 @@ import { PurchaseOrderQueryComponent } from './pur-order-query.component';
 import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order-list.component';
 import { SplitContainerModule } from '@framework-components/splitcontainer/SplitContainerModule';
 import { A11yModule } from '@angular/cdk/a11y';
-import { MatTableModule, MatSortModule } from '@angular/material';
+import { MatTableModule, MatSortModule, MatCheckboxModule, MatFormFieldModule, MatInputModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 
 export const purOrderQueryRouteConfig: Routes = [
@@ -29,7 +29,10 @@ export const purOrderQueryRouteConfig: Routes = [
         SplitContainerModule,
         A11yModule,
         MatTableModule,
-        MatSortModule
+        MatSortModule,
+        MatCheckboxModule,
+        MatFormFieldModule,
+        MatInputModule
 
     ],
     declarations: [

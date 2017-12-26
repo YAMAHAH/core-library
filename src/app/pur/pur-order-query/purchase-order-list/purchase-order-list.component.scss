@@ -1,8 +1,18 @@
 .example-container {
     display: flex;
     flex-direction: column;
-    max-height: 500px;
+    max-height: 550px;
     min-width: 300px;
+}
+
+.example-header {
+    min-height: 64px;
+    padding: 8px 24px 0;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
 }
 
 .mat-table {
@@ -12,6 +22,11 @@
 
 .mat-table .mat-header-row {
     background-color: #b5cfd2;
+    padding: 8px;
+}
+
+.mat-table .mat-row {
+    padding: 8px;
 }
 
 .mat-table .mat-sort-header-container {
@@ -24,13 +39,21 @@
     margin: auto 6px;
 }
 
-.mat-table .mat-row:hover {
-    background-color: rgb(169, 172, 216);
+.mat-table mat-row.mat-row:hover {
+    background-color: rgba(84, 94, 233, 0.3) !important;
+}
+
+.mat-table mat-row.row-selected {
+    background-color: rgb(226, 221, 142) !important;
+}
+
+.mat-table mat-row mat-cell.cell-selected {
+    background-color: rgb(51, 31, 223) !important;
 }
 
 .mat-table .mat-cell {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .mat-table .mat-row:nth-of-type(odd) {
@@ -39,4 +62,8 @@
 
 .mat-table .mat-row:nth-of-type(even) {
     background-color: rgb(202, 139, 204)
+}
+
+.mat-column-select {
+    overflow: visible !important;
 }

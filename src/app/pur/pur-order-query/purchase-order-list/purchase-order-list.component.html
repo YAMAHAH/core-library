@@ -9,21 +9,56 @@
         <gx-split-container orientation=2 collpasePanel='2'>
             <gx-split-container-item panelType="panel1">
                 <div class="example-container mat-elevation-z8">
-                    <mat-table #table [dataSource]="dataSource" matSort>
+                    <div class="example-header">
+                        <mat-form-field>
+                            <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
+                        </mat-form-field>
+                    </div>
+                    <mat-table *ngIf="false" #table [dataSource]="dataSource" matSort>
+                        <ng-container matColumnDef="select">
+                            <mat-header-cell mat-sort-header *matHeaderCellDef>
+                                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+                                </mat-checkbox>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <mat-checkbox (click)="$event.stopPropagation()" (change)="checkBoxChange($event,row)" [checked]="row.select.selected">
+                                </mat-checkbox>
+                            </mat-cell>
+                        </ng-container>
                         <ng-container *ngFor="let colDef of columns">
                             <ng-container [matColumnDef]="colDef.name">
                                 <mat-header-cell mat-sort-header *matHeaderCellDef>
-                                    <span style="flex:1;background-color:#d3d3d3">{{colDef.title}}</span>
+                                    <span style="flex:1;">{{colDef.title}}</span>
                                 </mat-header-cell>
-                                <mat-cell *matCellDef="let element;let idx = index;let even = even;let odd = odd;">
-                                    {{element[colDef.name].day}}
+                                <mat-cell [ngStyle]="cellStyle(row[colDef.name])" [ngClass]="{'cell-selected': row[colDef.name].selected}" (click)="cellClick($event,row[colDef.name])" *matCellDef="let row;let idx = index;let even = even;let odd = odd;">
+                                    {{row[colDef.name].day}}
                                     <!-- <div>{{element[colDef.name].year}}年{{element[colDef.name].month}}月{{element[colDef.name].rem}}</div> -->
                                 </mat-cell>
                             </ng-container>
                         </ng-container>
 
                         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        <mat-row [ngClass]="{ 'row-selected': row.select.selected}" (click)="rowClick($event,row)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+
+                    <mat-table *ngIf="true" #treeTable [dataSource]="treeTableDataSource" matSort>
+                        <ng-container *ngFor="let colDef of treeTableColumns">
+                            <ng-container [matColumnDef]="colDef.name">
+                                <mat-header-cell mat-sort-header *matHeaderCellDef>
+                                    <span style="flex:1;">{{colDef.title}}</span>
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let row;">
+                                    <span *ngIf="firstColumn(colDef.name)" [style.width.px]="(row.level)*16">
+                                    </span>
+                                    <span *ngIf="firstColumn(colDef.name)" (click)="collapseClick($event,row)" [ngClass]="collapseStyleClass(row)" class="fa fa-fw"></span>
+                                    <span *ngIf="firstColumn(colDef.name)" [style.width.px]="16" class="fa fa-fw"></span>
+                                    <span>{{row[colDef.name]}}</span>
+                                </mat-cell>
+                            </ng-container>
+                        </ng-container>
+
+                        <mat-header-row *matHeaderRowDef="treeTableDisplayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: treeTableDisplayedColumns;when:rowWhen"></mat-row>
                     </mat-table>
                 </div>
 

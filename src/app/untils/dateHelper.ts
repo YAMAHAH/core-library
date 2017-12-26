@@ -13,10 +13,34 @@ export function getMonthWeekday(date: Date) {
 export function getDateRangeDays(dateStart, dateEnd, mondayAsFrist: boolean = false, resultAsObjectArray: boolean = true) {
     let yearMonths = getYearAndMonth(dateStart, dateEnd);
     let results: any = getMonthDays(new Date(yearMonths[0].year, yearMonths[0].month - 1), mondayAsFrist, resultAsObjectArray);
+    let lastMonths = results;
     yearMonths.slice(1).forEach(item => {
-        results = results.concat(getMonthDays(new Date(item.year, item.month - 1, 1), mondayAsFrist).slice(2));
+
+        if (resultAsObjectArray) {
+            let monthInDays: any[] = getMonthDays(new Date(item.year, item.month - 1, 1), mondayAsFrist, resultAsObjectArray);
+            let isContainsDay = lastRowContainsLastMonth(lastMonths[5], 1);
+            results = results.concat(monthInDays.slice((isContainsDay ? 1 : 2)));
+            lastMonths = monthInDays;
+        } else {
+            let monthInDays: any = getMonthDays(new Date(item.year, item.month - 1, 1), mondayAsFrist, resultAsObjectArray);
+            results = results.concat(monthInDays.slice(2));
+        }
     });
     return results;
+}
+/**
+ * 上个月的指定数据是否同时包含当前月和上个月的号
+ * @param lastMonthWeekDay 上个月的数据
+ * @param currentMonthDay  包含的天号数,比如1号,2号
+ */
+function lastRowContainsLastMonth(lastMonthWeekDay, currentMonthDay) {
+    let weekDays: IOneDay[] = [];
+    for (const key in lastMonthWeekDay) {
+        if (weekDayNames.contains(key)) weekDays.push(lastMonthWeekDay[key]);
+    }
+    let containsDay = weekDays.some(i => i.day == currentMonthDay && !i.isCurrentMonth) &&
+        weekDays.some(i => i.isCurrentMonth);
+    return containsDay;
 }
 export function getYearAndMonth(start, end) {
     let result: { year: number, month: number }[] = [];
@@ -45,7 +69,7 @@ export function getYearAndMonth(start, end) {
 
     return result;
 }
-
+const weekDayNames = ['monday', 'tuesday', 'wednesday', 'thurday', 'friday', 'saturday', 'sunday'];
 export function getMonthDays(date: Date, mondayAsFrist: boolean = false, resultAsObjectArray: boolean = true) {
     // 6*7的日历数组
     const daysArr = [[], [], [], [], [], []];
@@ -61,7 +85,7 @@ export function getMonthDays(date: Date, mondayAsFrist: boolean = false, resultA
     //获取下月天数
     const nextDateInfo = getDaysInMonth(date.getFullYear(), date.getMonth() + 1);
     // 日期处理
-    const weekDayNames = ['monday', 'tuesday', 'wednesday', 'thurday', 'friday', 'saturday', 'sunday'];
+    ;
     const getDay = day => {
         if (day <= lastMonthDays) {
             return day;
@@ -80,7 +104,9 @@ export function getMonthDays(date: Date, mondayAsFrist: boolean = false, resultA
                 day: day,
                 week: getWeekNumber(lastDateInfo.year, lastDateInfo.month, day),
                 weekDay: -1,
-                rem: null
+                rem: null,
+                selected: false,
+                isCurrentMonth: false
             };
         }
         else if (day <= (lastMonthDays + currentMonthDays)) {
@@ -90,7 +116,9 @@ export function getMonthDays(date: Date, mondayAsFrist: boolean = false, resultA
                 day: day - lastMonthDays,
                 week: getWeekNumber(currentDateInfo.year, currentDateInfo.month, day - lastMonthDays),
                 weekDay: -1,
-                rem: null
+                rem: null,
+                selected: false,
+                isCurrentMonth: true
             };
         } else {
             return {
@@ -99,20 +127,23 @@ export function getMonthDays(date: Date, mondayAsFrist: boolean = false, resultA
                 day: day - (lastMonthDays + currentMonthDays),
                 week: getWeekNumber(nextDateInfo.year, nextDateInfo.month, day - (lastMonthDays + currentMonthDays)),
                 weekDay: -1,
-                rem: null
+                rem: null,
+                selected: false,
+                isCurrentMonth: false
             };
         }
     }
     if (resultAsObjectArray)
         for (let index = 0; index < 6; index++) {
             let weekData: IWeekDays = {
-                monday: { year: 0, month: 0, day: 0, week: -1, weekDay: 1 },
-                tuesday: { year: 0, month: 0, day: 0, week: -1, weekDay: 2 },
-                wednesday: { year: 0, month: 0, day: 0, week: -1, weekDay: 3 },
-                thurday: { year: 0, month: 0, day: 0, week: -1, weekDay: 4 },
-                friday: { year: 0, month: 0, day: 0, week: -1, weekDay: 5 },
-                saturday: { year: 0, month: 0, day: 0, week: -1, weekDay: 6 },
-                sunday: { year: 0, month: 0, day: 0, week: -1, weekDay: 0 }
+                monday: { year: 0, month: 0, day: 0, week: -1, weekDay: 1, selected: false },
+                tuesday: { year: 0, month: 0, day: 0, week: -1, weekDay: 2, selected: false },
+                wednesday: { year: 0, month: 0, day: 0, week: -1, weekDay: 3, selected: false },
+                thurday: { year: 0, month: 0, day: 0, week: -1, weekDay: 4, selected: false },
+                friday: { year: 0, month: 0, day: 0, week: -1, weekDay: 5, selected: false },
+                saturday: { year: 0, month: 0, day: 0, week: -1, weekDay: 6, selected: false },
+                sunday: { year: 0, month: 0, day: 0, week: -1, weekDay: 0, selected: false },
+                select: { selected: false }
             };
             daysArra2.push(weekData);
         }
