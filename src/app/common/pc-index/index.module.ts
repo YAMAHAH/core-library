@@ -14,6 +14,7 @@ import { MainComponent } from './main.component';
 import { RouterOutletModule } from '../router-outlet/router-outlet.module';
 import { NavTabsModule } from '../nav-tabs/nav-tabs.module';
 import { SaleComponent } from './sale.component';
+import { TableDemoModule } from '../../table/table-demo-module';
 @NgModule({
     imports: [
         CoreModule.forRoot(),
@@ -22,7 +23,8 @@ import { SaleComponent } from './sale.component';
         RouterModule.forChild(pcRootRouterConfig),
         RouterOutletModule,
         NavTabsModule,
-        PageLoadingModule.forRoot()
+        PageLoadingModule.forRoot(),
+        TableDemoModule
     ],
     declarations: [
         IndexComponent, MainComponent, SaleComponent

@@ -3,6 +3,8 @@ import { IndexComponent } from './index.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { MainComponent } from './main.component';
 import { SaleComponent } from './sale.component';
+import { TABLE_DEMO_ROUTES } from '../../table/routes';
+import { TableDemoPage } from '../../table/table-demo-page';
 
 export const pcRootRouterConfig: Routes = [
     { path: "", redirectTo: "desktop", pathMatch: 'full' },
@@ -31,6 +33,7 @@ export const pcRootRouterConfig: Routes = [
         path: 'main',
         component: MainComponent
     },
+    { path: 'table', component: TableDemoPage, children: TABLE_DEMO_ROUTES },
     {
         path: 'saleOrderPath',
         component: IndexComponent,

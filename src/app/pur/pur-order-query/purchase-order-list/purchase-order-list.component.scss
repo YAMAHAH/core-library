@@ -18,15 +18,33 @@
 .mat-table {
     overflow: auto;
     max-height: 500px;
+    border: 1px solid gray;
 }
 
 .mat-table .mat-header-row {
-    background-color: #b5cfd2;
-    padding: 8px;
+    background-color: #f3f3f3;
 }
 
-.mat-table .mat-row {
-    padding: 8px;
+.mat-table .mat-header-cell {
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+}
+
+.mat-table .mat-row,
+.mat-table .mat-header-row {
+    padding: 0px 0px;
+    //  border-bottom-width: 0px;
+    //  border-bottom-style: none;
+    border-bottom-color: gray;
+    // margin: -1px 0px;
+}
+
+.mat-table .mat-cell {
+    border-right: 1px solid gray;
+    // border-bottom: 1px solid gray;
+    height: 48px;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .mat-table .mat-sort-header-container {
@@ -57,13 +75,18 @@
 }
 
 .mat-table .mat-row:nth-of-type(odd) {
-    background-color: rgb(161, 152, 199);
+    background-color: #fff;
 }
 
 .mat-table .mat-row:nth-of-type(even) {
-    background-color: rgb(202, 139, 204)
+    background-color: #d6d6d6;
 }
 
 .mat-column-select {
     overflow: visible !important;
+}
+
+.mat-table .mat-column-lineNo {
+    flex: 0 0 25px;
+    height: 48px;
 }
