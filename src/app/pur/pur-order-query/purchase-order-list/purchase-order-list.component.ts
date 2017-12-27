@@ -209,6 +209,8 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       //     }, []);
       //   })
       // }
+      if (this.treeTableDataSource.filter && this.collapsedDatas.length == 0)
+        this.collapsedDatas = this.treeTableDataSource.filteredData;
       row.collapsed = !row.collapsed;
       let visibleValue = row.collapsed ? false : true;
       this.expanedChildRow(row, childRow => {
@@ -217,14 +219,19 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       this.treeTableDataSource.filter = "true";
     }
   }
+  collapsedDatas: ITreeTableRow[] = [];
   expanedChildRow(childRow: ITreeTableRow, action: (child: ITreeTableRow) => void,
     excludeRows: ITreeTableRow[] = [], expanedLevel: number = -1) {
 
     if (!excludeRows.contains(childRow)) action(childRow);
-    let childRows = (this.treeTableDataSource.filter ?
-      this.treeTableDataSource.filteredData :
-      this.treeTableDataSource.data)
-      .filter(rowData => rowData.parentid == childRow.id);
+    let childRows;
+    if (this.collapsedDatas.length > 0)
+      childRows = this.collapsedDatas;
+    else if (this.treeTableDataSource.filter)
+      childRows = this.treeTableDataSource.filteredData;
+    else childRows = this.treeTableDataSource.data;
+
+    childRows = childRows.filter(rowData => rowData.parentid == childRow.id);
 
     childRows.forEach(child => {
       if (child.level <= expanedLevel || expanedLevel == -1)
@@ -268,7 +275,13 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
 
     return dataStr.indexOf(transformedFilter) != -1;
   };
+  resetCollapseState() {
+    this.treeTableDataSource.data.forEach(dataRow => {
+      dataRow.collapsed = false;
+    });
+  }
   treeTableGlobalFilter() {
+    this.resetCollapseState();
     let filterDatas = this.treeTableDataSource.data.filter(dataRow => {
       dataRow.visible = false;
       return this.treeFilterPredicate2(dataRow, this.globalFilterEl.nativeElement.value);
@@ -277,8 +290,9 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       this.serachParentRow(childRow, dataRow => {
         dataRow.visible = true;
       }, []);
-    })
+    });
     this.treeTableDataSource.filter = 'true';
+    setTimeout(() => this.collapsedDatas = this.treeTableDataSource.filteredData, 15);
   }
 
 }
