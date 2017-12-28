@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Injector, ViewEncapsulation, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, Injector, ViewEncapsulation, AfterViewInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { ComponentBase } from '@framework-base/component/ComponentBase';
 import { PageStatusMonitor } from '@framework-services/application/PageStatusMonitor';
 import { MatTableDataSource, MatTable, MatSort } from '@angular/material';
@@ -45,7 +45,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   allowMultiSelect = true;
   selection = new SelectionModel<IWeekDays>(true, []);;
 
-  columns: ITableColumn[] = [
+  columns: ITreeTableColumn[] = [
     { name: 'monday', title: '一', order: 2 },
     { name: 'tuesday', title: '二', order: 3 },
     { name: 'wednesday', title: '三', order: 4 },
@@ -74,8 +74,8 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     this.selection = new SelectionModel<IWeekDays>(this.allowMultiSelect, this.initialSelection);
     /**树型表格数据 */
 
-    this.treeTableDataSource = new MatTableDataSource<any>(this.treeTableData);
-    this.treeTableDataSource.filterPredicate = this.treeFilterPredicate;
+    this.treeTableDataSource = new MatTableDataSource<any>(this.dataToDataRow());
+    this.treeTableDataSource.filterPredicate = this.secondFilterPredicate;
     fromEvent(this.globalFilterEl.nativeElement, 'keyup')
       .pipe(
       debounceTime(150),
@@ -161,21 +161,28 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   }
   /**树型结构TABLE */
   @ViewChild('globalFilter', { read: ElementRef }) globalFilterEl: ElementRef;
-  treeTableDataSource = new MatTableDataSource<ITreeTableRow>();
-  treeTableData = [
-    { id: 1, collapsed: false, visible: true, ord: 1, level: 0, gono: 'B001-41AGAGF03', goname: '吊扇螺丝包', gg: 'A76彩+W44 环保蓝锌5F(PE袋不印字', dw: '包' },
-    { id: 2, collapsed: false, visible: true, ord: 2, level: 1, gono: 'R001A765FZCE', goname: '叶架螺丝包', gg: '大扁M5*7MM*15支+纸M5.环保蓝锌', dw: '包', parentid: 1 },
-    { id: 3, collapsed: false, visible: true, ord: 3, level: 2, gono: 'P010101053ZCE', goname: '大扁±(三价铬)', gg: 'M5-0.8*7MM蓝锌(环保).￠10', dw: 'PC', parentid: 2 },
-    { id: 8, collapsed: false, visible: true, ord: 4, level: 3, gono: 'P010101053', goname: '大扁±', gg: 'M5-0.8*7MM黑身.￠10', dw: 'PC', parentid: 3 },
-    { id: 4, collapsed: false, visible: true, ord: 5, level: 2, gono: 'P010300594SGE', goname: '圆纸华司', gg: '圆头M4*19MM*2￠5*14*1.5T 灰色(环保)', dw: 'PC', parentid: 2 },
-    { id: 5, collapsed: false, visible: true, ord: 6, level: 2, gono: 'P560140065GRE', goname: '塑胶袋(全新料)', gg: '60*60*0.04MM(环保)浅绿色', dw: 'PC', parentid: 2 },
-    { id: 6, collapsed: false, visible: true, ord: 7, level: 1, gono: 'R001W44ZCE', goname: '马达叶架螺丝包', gg: '圆头M4*19MM*2支.环保蓝锌', dw: '包', parentid: 1 },
-    { id: 7, collapsed: false, visible: true, ord: 8, level: 1, gono: 'P560140004GRE', goname: '塑胶袋(全新料)', gg: '100*100*0.04MM(环保)浅绿色', dw: 'PC', parentid: 1 }
+  idKey: string = "id";
+  parentIdKey: string = "parentid";
+  treeTableDataSource = new MatTableDataSource<ITreeTableRow<any>>();
+  treeTableData: ITreeTableData[] = [
+    { id: 1, ord: 1, level: 0, gono: 'B001-41AGAGF03', goname: '吊扇螺丝包', gg: 'A76彩+W44 环保蓝锌5F(PE袋不印字', dw: '包' },
+    { id: 2, ord: 2, level: 1, gono: 'R001A765FZCE', goname: '叶架螺丝包', gg: '大扁M5*7MM*15支+纸M5.环保蓝锌', dw: '包', parentid: 1 },
+    { id: 3, ord: 3, level: 2, gono: 'P010101053ZCE', goname: '大扁±(三价铬)', gg: 'M5-0.8*7MM蓝锌(环保).￠10', dw: 'PC', parentid: 2 },
+    { id: 11, ord: 4, level: 3, gono: 'P010101053', goname: '大扁±', gg: 'M5-0.8*7MM黑身.￠10', dw: 'PC', parentid: 3 },
+    { id: 4, ord: 5, level: 2, gono: 'P010300594SGE', goname: '圆纸华司', gg: '圆头M4*19MM*2￠5*14*1.5T 灰色(环保)', dw: 'PC', parentid: 2 },
+    { id: 5, ord: 6, level: 2, gono: 'P560140065GRE', goname: '塑胶袋(全新料)', gg: '60*60*0.04MM(环保)浅绿色', dw: 'PC', parentid: 2 },
+    { id: 6, ord: 7, level: 1, gono: 'R001W44ZCE', goname: '马达叶架螺丝包', gg: '圆头M4*19MM*2支.环保蓝锌', dw: '包', parentid: 1 },
+    { id: 7, ord: 8, level: 2, gono: 'P010102156ZCEH', goname: '圆头⊕-JIS铁板牙A热(三价铬)', gg: 'M4-16*19MM蓝锌(环保)尖尾加硬38-42度.￠6.6', dw: 'PC', parentid: 6 },
+    { id: 8, ord: 9, level: 3, gono: 'P010102156H', goname: '圆头⊕-JIS铁板牙A热', gg: 'M4-16*19MM黑身尖尾加硬38-42度.￠6.6', dw: 'PC', parentid: 7 },
+    { id: 9, ord: 10, level: 4, gono: 'P010102156', goname: '圆头⊕-JIS铁板牙A', gg: 'M4-16*19MM黑身尖尾.￠6.6', dw: 'PC', parentid: 8 },
+    { id: 10, ord: 11, level: 2, gono: 'P560140065GRE', goname: '塑胶袋(全新料)', gg: '60*60*0.04MM(环保)浅绿色', dw: 'PC', parentid: 6 },
+
+    { id: 11, ord: 8, level: 1, gono: 'P560140004GRE', goname: '塑胶袋(全新料)', gg: '100*100*0.04MM(环保)浅绿色', dw: 'PC', parentid: 1 }
   ];
-  treeTableColumns: ITableColumn[] = [
+  treeTableColumns: ITreeTableColumn[] = [
     { name: 'gono', title: '编码', width: 200 },
     { name: 'goname', title: '名称', width: 200 },
-    { name: 'gg', title: '规格', width: 300 },
+    { name: 'gg', title: '规格' },
     { name: 'dw', title: '单位', width: 30 },
     { name: 'level', title: '层次', width: 30 },
     { name: 'ord', title: '序号', width: 30 },
@@ -191,37 +198,47 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       'fa-plus-square-o': !this.isLeaf(row) && row.collapsed //fa-chevron-up
     }
   }
+  private getStyleValue(value) {
+    if (!value) return undefined;
+    value = value.toString().trim();
+    if (value.endsWith('px') ||
+      value.endsWith('em') ||
+      value.endsWith('rem') ||
+      value.endsWith('%'))
+      return value;
+    else return value + 'px';
+  }
+  rowCellStyle(dataRow: ITreeTableRow<any>, dataColumn: ITreeTableColumn) {
+    let style = {};
+    let colWidth = this.getStyleValue(dataColumn.width);
+    if (dataColumn.width)
+      style['flex'] = '0 0 ' + colWidth;
+    return style;
+  }
   isLeaf(rowData) {
-    let leaf = this.treeTableDataSource.data.some(row => row.parentid == rowData.id);
+    let leaf = this.treeTableDataSource.data.some(row => row.data.parentid == rowData.data.id);
     return !leaf;
   }
-  collapseClick(event, row: ITreeTableRow) {
-    if (!this.isLeaf(row)) {
-      // let filter = this.globalFilterEl.nativeElement.value;
-      // if (filter) {
-      //   let filterDatas = this.treeTableDataSource.data.filter(dataRow => {
-      //     dataRow.visible = false;
-      //     return this.treeFilterPredicate2(dataRow, this.globalFilterEl.nativeElement.value);
-      //   });
-      //   filterDatas.forEach(childRow => {
-      //     this.serachParentRow(childRow, dataRow => {
-      //       dataRow.visible = true;
-      //     }, []);
-      //   })
-      // }
-      if (this.treeTableDataSource.filter && this.collapsedDatas.length == 0)
-        this.collapsedDatas = this.treeTableDataSource.filteredData;
-      row.collapsed = !row.collapsed;
-      let visibleValue = row.collapsed ? false : true;
-      this.expanedChildRow(row, childRow => {
+  collapseClick(event, dataRow: ITreeTableRow<any>) {
+    if (!this.isLeaf(dataRow)) {
+      if (this.collapsedDatas.length == 0) {
+        if (this.treeTableDataSource.filter)
+          this.collapsedDatas = this.treeTableDataSource.filteredData;
+        else
+          this.collapsedDatas = this.treeTableDataSource.data;
+      }
+
+      dataRow.collapsed = !dataRow.collapsed;
+      let visibleValue = dataRow.collapsed ? false : true;
+      this.expanedChildRow(dataRow, childRow => {
         childRow.visible = visibleValue;
-      }, [row]);
+      }, [dataRow]);
       this.treeTableDataSource.filter = "true";
     }
   }
-  collapsedDatas: ITreeTableRow[] = [];
-  expanedChildRow(childRow: ITreeTableRow, action: (child: ITreeTableRow) => void,
-    excludeRows: ITreeTableRow[] = [], expanedLevel: number = -1) {
+  collapsedDatas: ITreeTableRow<any>[] = [];
+  expanedChildRow(childRow: ITreeTableRow<any>, action: (child: ITreeTableRow<any>) => void,
+    excludeRows: ITreeTableRow<any>[] = [], expanedLevel: number = -1) {
 
     if (!excludeRows.contains(childRow)) action(childRow);
     let childRows;
@@ -231,24 +248,30 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       childRows = this.treeTableDataSource.filteredData;
     else childRows = this.treeTableDataSource.data;
 
-    childRows = childRows.filter(rowData => rowData.parentid == childRow.id);
+    childRows = childRows.filter(rowData => rowData.data[this.parentIdKey] == childRow.data[this.idKey]);
 
     childRows.forEach(child => {
-      if (child.level <= expanedLevel || expanedLevel == -1)
+      if (child.data.level <= expanedLevel || expanedLevel == -1)
         if (excludeRows.contains(childRow) || !childRow.collapsed) {
           this.expanedChildRow(child, action);
         }
     });
   }
-  serachParentRow(row: ITreeTableRow, action: (child: ITreeTableRow) => void,
-    excludeRows: ITreeTableRow[] = []) {
+  serachParentRow(row: ITreeTableRow<any>, action: (child: ITreeTableRow<any>) => void,
+    excludeRows: ITreeTableRow<any>[] = []) {
 
-    if (!excludeRows.contains(row)) action(row);
+    if (excludeRows.notContains(row)) {
+      action(row);
+      excludeRows.push(row);
+    }
     let parentRow = this.treeTableDataSource.data
-      .filter(rowData => rowData.id == row.parentid)[0];
-    if (parentRow) this.serachParentRow(parentRow, action, excludeRows);
+      .find(rowData => rowData.data[this.idKey] == row.data[this.parentIdKey]);
+    if (parentRow) {
+      if (excludeRows.notContains(parentRow))
+        this.serachParentRow(parentRow, action, excludeRows);
+    }
   }
-  rowWhen(index: number, rowData: ITreeTableRow): boolean {
+  rowWhen(index: number, rowData: ITreeTableRow<any>): boolean {
     return rowData.visible == undefined || rowData.visible;
   }
   globalFilter() {
@@ -257,22 +280,27 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   columnFilter(columnFilters) {
 
   }
-  treeFilterPredicate(data: ITreeTableRow, filter: string): boolean {
-    const accumulator = (currentTerm, key) => {
-      return currentTerm + ((key == 'visible' || key == 'collapsed') ? data[key].toString() : data[key].toString());
-    };
-    const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
-    const transformedFilter = filter.trim().toLowerCase();
-
-    return dataStr.indexOf(transformedFilter) != -1 && (data.visible || data.visible == undefined);
+  dataToDataRow() {
+    let dataRows: ITreeTableRow<ITreeTableData>[] = [];
+    this.treeTableData.forEach(data => {
+      dataRows.push({
+        collapsed: false,
+        visible: true,
+        data: data,
+        table: null
+      });
+    });
+    return dataRows;
+  }
+  secondFilterPredicate(dataRow: ITreeTableRow<any>, filter: string): boolean {
+    return dataRow.visible;
   };
-  treeFilterPredicate2(data: ITreeTableRow, filter: string): boolean {
+  firstFilterPredicate(dataRow: ITreeTableRow<any>, filter: string): boolean {
     const accumulator = (currentTerm, key) => {
-      return currentTerm + data[key].toString();
+      return currentTerm + dataRow.data[key].toString();
     };
-    const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
+    const dataStr = Object.keys(dataRow.data).reduce(accumulator, '').toLowerCase();
     const transformedFilter = filter.trim().toLowerCase();
-
     return dataStr.indexOf(transformedFilter) != -1;
   };
   resetCollapseState() {
@@ -284,25 +312,102 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     this.resetCollapseState();
     let filterDatas = this.treeTableDataSource.data.filter(dataRow => {
       dataRow.visible = false;
-      return this.treeFilterPredicate2(dataRow, this.globalFilterEl.nativeElement.value);
+      return this.firstFilterPredicate(dataRow, this.globalFilterEl.nativeElement.value);
     });
     filterDatas.forEach(childRow => {
       this.serachParentRow(childRow, dataRow => {
         dataRow.visible = true;
       }, []);
     });
-    this.treeTableDataSource.filter = 'true';
+    this.treeTableDataSource.filter = "true";
     setTimeout(() => this.collapsedDatas = this.treeTableDataSource.filteredData, 15);
   }
+  /** 表结构 */
+  rows: ITreeTableRow<any>[] = []; //表格行
+  dataColumns: ITreeTableColumn[] = [];
+  currentCell: ITreeTableRowCell;        //获取当前单元格
+  currentRow;        //获取包含当前单元格的行
+  selectedRows;     // 获取用户选定行的集合
+  dataSources; //数据源   
+  @Output() currentCellChanged: EventEmitter<any> = new EventEmitter<any>(); //当选择单元格时发生
+  @Output() cellContentClick: EventEmitter<any> = new EventEmitter<any>();   //当点击某个单元格时发生 
+  @Output() cellBeginEdit: EventEmitter<any> = new EventEmitter<any>();   //当某个单元格开始编辑时发生
+  //创建列
+  createColumn() {
+
+  }
+  removeColumn() {
+
+  }
+  /**创建行*/
+  createRow() {
+
+  }
+  /**删除行 */
+  removeRow() {
+
+  }
+  //筛选行
+  select() {
+
+  }
+  //排序
+  tableSort() {
+
+  }
+
 
 }
-export interface ITableColumn {
+export interface ITreeTableColumn {
   name: string;
-  type?: string;
+  dataType?: string;
   title: string;
+  defaultValue?: any;
+  readOnly?: boolean;
+  visible?: boolean;
+  resizable?: boolean;
+  selected?: boolean;
+  allowNull?: boolean;
   order?: number;
   width?;
   algin?; // 水平 垂直
+  defaultCellStyle?;
+  headerCell?;
+  headerText?;
+}
+
+interface ITreeTableRow<T> {
+  collapsed?: boolean;
+  visible?: boolean;
+  level?: number;
+  data?: T;
+  table?;
+}
+interface ITreeTableRowCell {
+  columnIndex?: number;
+  rowIndex?: number;
+  readOnly?: boolean;
+  value?;
+  valueType?;
+  style?;
+  contentBounds?;
+  formattedValue?;
+  selected?: boolean;
+  visible?: boolean;
+  toolTipText?: string;
+  tag?;
+}
+
+interface ITreeTableData {
+  ord?;
+  level?;
+  gono?;
+  goname?;
+  gg?;
+  dw?;
+  parent?;
+  id?;
+  parentid?;
 }
 
 // function padLeft() {  
@@ -324,17 +429,5 @@ function padLeft(num, n) {
   return num.toString();
 }
 
-interface ITreeTableRow {
-  id?;
-  ord?;
-  level?;
-  gono?;
-  goname?;
-  gg?;
-  dw?;
-  parentid?;
-  parent?;
-  collapsed?;
-  visible?;
-}
+
 

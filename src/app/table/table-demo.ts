@@ -161,6 +161,12 @@ export class TableDemo {
     this.displayedColumns = [];
   }
 
+
+  showDetailRow(event, row) {
+    this.expandedPerson = row;
+    this.wasExpanded.add(row);
+    console.log(this.wasExpanded);
+  }
   getOpacity(progress: number) {
     let distanceFromMiddle = Math.abs(50 - progress);
     return distanceFromMiddle / 50 + .3;

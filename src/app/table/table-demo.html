@@ -178,7 +178,7 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="['userId', 'userName']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['userId', 'userName'];" matRipple class="user-row" [style.borderBottomColor]="expandedPerson == row ? 'transparent' : ''" (click)="expandedPerson = row; wasExpanded.add(row)"></mat-row>
+        <mat-row *matRowDef="let row; columns: ['userId', 'userName'];" matRipple class="user-row" [style.borderBottomColor]="expandedPerson == row ? 'transparent' : ''" (click)="showDetailRow($event,row)"></mat-row>
         <mat-row *matRowDef="let row; columns: ['details']; when: isDetailRow" [@detailExpand]="row.data == expandedPerson ? 'expanded' : 'collapsed'" style="overflow: hidden">
         </mat-row>
     </mat-table>

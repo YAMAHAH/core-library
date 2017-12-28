@@ -41,7 +41,7 @@
                         <mat-row [ngClass]="{ 'row-selected': row.select.selected}" (click)="rowClick($event,row)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
                     </mat-table>
 
-                    <mat-table *ngIf="true" #treeTable [dataSource]="treeTableDataSource" matSort>
+                    <mat-table *ngIf="true" #treeTable [dataSource]="treeTableDataSource" matSort matSortDisableClear>
                         <ng-container matColumnDef="lineNo">
                             <mat-header-cell style="height:49px" *matHeaderCellDef>
                             </mat-header-cell>
@@ -51,21 +51,21 @@
                         </ng-container>
                         <ng-container *ngFor="let colDef of treeTableColumns">
                             <ng-container [matColumnDef]="colDef.name">
-                                <mat-header-cell [ngStyle]="{flex: '0 0 ' + colDef.width + 'px' }" mat-sort-header *matHeaderCellDef>
+                                <mat-header-cell [ngStyle]="rowCellStyle(row,colDef)" mat-sort-header *matHeaderCellDef>
                                     <span style="flex:1;">{{colDef.title}}</span>
                                 </mat-header-cell>
-                                <mat-cell [ngStyle]="{flex: '0 0 ' + (colDef.width) + 'px'}" *matCellDef="let row;">
-                                    <span *ngIf="firstColumn(colDef.name)" [style.width.px]="(row.level)*16">
+                                <mat-cell [ngStyle]="rowCellStyle(row,colDef)" *matCellDef="let row;">
+                                    <span *ngIf="firstColumn(colDef.name)" [style.width.px]="(row.data.level)*16">
                                     </span>
                                     <span *ngIf="firstColumn(colDef.name)" (click)="collapseClick($event,row)" [ngClass]="collapseStyleClass(row)" class="fa fa-fw"></span>
                                     <span *ngIf="firstColumn(colDef.name)" [style.width.px]="16" class="fa fa-fw"></span>
-                                    <span>{{row[colDef.name]}}</span>
+                                    <span>{{row.data[colDef.name]}}</span>
                                 </mat-cell>
                             </ng-container>
                         </ng-container>
 
                         <mat-header-row *matHeaderRowDef="treeTableDisplayedColumns"></mat-header-row>
-                        <mat-row *matRowDef="let row; columns: treeTableDisplayedColumns;when:rowWhen"></mat-row>
+                        <mat-row *matRowDef="let row; columns: treeTableDisplayedColumns;"></mat-row>
                     </mat-table>
                 </div>
 
