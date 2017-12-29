@@ -419,7 +419,7 @@ export class DomHandler {
         return { width: w, height: h };
     }
 
-    public getOffset(el: any) {
+    public getOffset(el) {
         let x = el.offsetLeft;
         let y = el.offsetTop;
 

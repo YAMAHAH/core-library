@@ -32,7 +32,6 @@
                                 </mat-header-cell>
                                 <mat-cell [ngStyle]="cellStyle(row[colDef.name])" [ngClass]="{'cell-selected': row[colDef.name].selected}" (click)="cellClick($event,row[colDef.name])" *matCellDef="let row;let idx = index;let even = even;let odd = odd;">
                                     {{row[colDef.name].day}}
-                                    <!-- <div>{{element[colDef.name].year}}年{{element[colDef.name].month}}月{{element[colDef.name].rem}}</div> -->
                                 </mat-cell>
                             </ng-container>
                         </ng-container>
@@ -42,24 +41,29 @@
                     </mat-table>
 
                     <mat-table *ngIf="true" #treeTable [dataSource]="treeTableDataSource" matSort matSortDisableClear>
-                        <ng-container matColumnDef="lineNo">
-                            <mat-header-cell style="height:49px" *matHeaderCellDef>
+                        <!-- <ng-container matColumnDef="lineNo">
+                             <mat-header-cell style="height:49px" *matHeaderCellDef>
                             </mat-header-cell>
                             <mat-cell *matCellDef="let row;let lineno = index;">
                                 <span>{{lineno + 1}}</span>
                             </mat-cell>
-                        </ng-container>
+                        </ng-container> -->
                         <ng-container *ngFor="let colDef of treeTableColumns">
                             <ng-container [matColumnDef]="colDef.name">
-                                <mat-header-cell [ngStyle]="rowCellStyle(row,colDef)" mat-sort-header *matHeaderCellDef>
+                                <mat-header-cell mat-sort-header [ngStyle]="rowCellStyle(row,colDef)" *matHeaderCellDef="let row;" (dragstart)="onColumnDragStart($event,colDef)" (dragover)="onColumnDragover($event,colDef)" (dragleave)="onColumnDragleave($event,colDef)" (drop)="onColumnDrop($event,colDef)"
+                                    (mousedown)="onHeaderMousedown($event,colDef)" [attr.draggable]="colDef.draggable" [attr.tabindex]="colDef.sortable ? tabindex : null" (keydown)="onHeaderKeydown($event,colDef)">
                                     <span style="flex:1;">{{colDef.title}}</span>
+                                    <span class="ui-column-resizer" *ngIf="resizableColumns && colDef.resizable !=false" (click)="$event.stopPropagation()" (mousedown)="initColumnResize($event,colDef)"></span>
                                 </mat-header-cell>
-                                <mat-cell [ngStyle]="rowCellStyle(row,colDef)" *matCellDef="let row;">
-                                    <span *ngIf="firstColumn(colDef.name)" [style.width.px]="(row.data.level)*16">
+                                <mat-cell [ngStyle]="rowCellStyle(row,colDef)" *matCellDef="let row;let index = index;">
+                                    <span *ngIf="firstColumn(colDef.name)" [style.width.px]="(row.dataBoundItem.level)*16">
                                     </span>
                                     <span *ngIf="firstColumn(colDef.name)" (click)="collapseClick($event,row)" [ngClass]="collapseStyleClass(row)" class="fa fa-fw"></span>
                                     <span *ngIf="firstColumn(colDef.name)" [style.width.px]="16" class="fa fa-fw"></span>
-                                    <span>{{row.data[colDef.name]}}</span>
+                                    <span *ngIf="!colDef.expressionFunc;else elseBlock;">{{row.dataBoundItem[colDef.name]}}</span>
+                                    <ng-template #elseBlock>
+                                        <span>{{colDef.expressionFunc(row,index)}}</span>
+                                    </ng-template>
                                 </mat-cell>
                             </ng-container>
                         </ng-container>
@@ -67,6 +71,9 @@
                         <mat-header-row *matHeaderRowDef="treeTableDisplayedColumns"></mat-header-row>
                         <mat-row *matRowDef="let row; columns: treeTableDisplayedColumns;"></mat-row>
                     </mat-table>
+                    <div #resizerHelper class="ui-column-resizer-helper ui-state-highlight" style="display:none"></div>
+                    <span #reorderIndicatorUp class="fa fa-arrow-up ui-datatable-reorder-indicator-up" style="position: absolute; display: none;"></span>
+                    <span #reorderIndicatorDown class="fa fa-arrow-down ui-datatable-reorder-indicator-down" style="position: absolute; display: none;"></span>
                 </div>
 
             </gx-split-container-item>

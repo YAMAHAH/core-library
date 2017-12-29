@@ -28,6 +28,7 @@
 .mat-table .mat-header-cell {
     border-right: 1px solid gray;
     border-bottom: 1px solid gray;
+    position: relative;
 }
 
 .mat-table .mat-row,
@@ -51,6 +52,7 @@
     height: 48px;
     justify-content: center;
     border: 1px sloid blue;
+    position: relative;
 }
 
 .mat-table .mat-sort-header-arrow {
@@ -89,4 +91,52 @@
 .mat-table .mat-column-lineNo {
     flex: 0 0 25px;
     height: 48px;
+}
+
+
+/* Resizable */
+
+.mat-table .ui-column-resizer {
+    display: block;
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    margin: 0;
+    width: .5em;
+    height: 100%;
+    padding: 0px;
+    cursor: col-resize;
+    border: 1px solid transparent;
+}
+
+.ui-column-resizer-helper {
+    width: 1px;
+    position: absolute;
+    z-index: 10;
+    display: none;
+}
+
+.ui-datatable-resizable {
+    padding-bottom: 1px;
+    /*fix for webkit overlow*/
+    overflow: auto;
+}
+
+.mat-table .ui-state-highlight {
+    background-color: #0275d8;
+    color: #ffffff;
+}
+
+.ui-unselectable-text {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.ui-datatable-reorder-indicator-up,
+.ui-datatable-reorder-indicator-down {
+    color: darkgreen;
+    font-weight: bold;
 }

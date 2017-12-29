@@ -165,7 +165,7 @@ export class TableBody {
                 <table [class]="dt.tableStyleClass" [ngStyle]="dt.tableStyle">
                     <tfoot class="ui-datatable-tfoot">
                         <tr *ngIf="!footerColumnGroup" [jyColumnFooters]="columns" class="ui-state-default"></tr>
-                        <ng-template [ngIf]="footerColumnGroup">
+                        <ng-template *ngIf="footerColumnGroup">
                             <tr *ngFor="let footerRow of footerColumnGroup.rows" [jyColumnFooters]="footerRow.columns"></tr>
                         </ng-template>
                     </tfoot>
