@@ -36,7 +36,7 @@ import { AppMotationObserverDirective } from '@framework-common/directives/AppMo
     FxStyle,
     BorderDirective,
     SizingDirective,
-    AppMotationObserverDirective
+    AppMotationObserverDirective,
   ],
   exports: [
     AwesomePipe,
@@ -57,7 +57,7 @@ import { AppMotationObserverDirective } from '@framework-common/directives/AppMo
     FlexLayoutDirective,
     FlexItemDirective,
     FxStyle,
-    AppMotationObserverDirective
+    AppMotationObserverDirective,
   ]
 })
 export class CoreModule {

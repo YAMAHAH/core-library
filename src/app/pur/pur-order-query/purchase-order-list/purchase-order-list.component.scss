@@ -21,23 +21,39 @@
     border: 1px solid gray;
 }
 
-.mat-table .mat-header-row {
+.mat-fixed-header {
+    border-left: 1px solid gray;
+    border-top: 1px solid gray;
+    position: absolute;
+}
+
+.mat-table .mat-header-row,
+.mat-fixed-header .mat-header-row {
     background-color: #f3f3f3;
 }
 
-.mat-table .mat-header-cell {
+.mat-table .mat-header-cell,
+.mat-fixed-header .mat-header-cell {
     border-right: 1px solid gray;
     border-bottom: 1px solid gray;
     position: relative;
 }
 
 .mat-table .mat-row,
-.mat-table .mat-header-row {
+.mat-table .mat-header-row,
+.mat-fixed-header .mat-header-row {
     padding: 0px 0px;
     //  border-bottom-width: 0px;
     //  border-bottom-style: none;
     border-bottom-color: gray;
     // margin: -1px 0px;
+}
+
+.mat-header-row {
+    top: 0;
+    position: sticky;
+    z-index: 1;
+    background-color: inherit;
 }
 
 .mat-table .mat-cell {
@@ -48,15 +64,16 @@
     align-items: center;
 }
 
-.mat-table .mat-sort-header-container {
+.mat-table .mat-sort-header-container,
+.mat-fixed-header .mat-sort-header-container {
     height: 48px;
     justify-content: center;
-    border: 1px sloid blue;
     position: relative;
 }
 
-.mat-table .mat-sort-header-arrow {
-    margin: auto 6px;
+.mat-table .mat-sort-header-arrow,
+.mat-fixed-header .mat-sort-header-arrow {
+    margin: auto 6px auto 3px;
 }
 
 .mat-table mat-row.mat-row:hover {
@@ -88,15 +105,11 @@
     overflow: visible !important;
 }
 
-.mat-table .mat-column-lineNo {
-    flex: 0 0 25px;
-    height: 48px;
-}
-
 
 /* Resizable */
 
-.mat-table .ui-column-resizer {
+.mat-table .ui-column-resizer,
+.mat-fixed-header .ui-column-resizer {
     display: block;
     position: absolute !important;
     top: 0;
@@ -112,7 +125,7 @@
 .ui-column-resizer-helper {
     width: 1px;
     position: absolute;
-    z-index: 10;
+    z-index: 101;
     display: none;
 }
 
@@ -122,7 +135,8 @@
     overflow: auto;
 }
 
-.mat-table .ui-state-highlight {
+.mat-table .ui-state-highlight,
+.mat-fixed-header .ui-state-highlight {
     background-color: #0275d8;
     color: #ffffff;
 }

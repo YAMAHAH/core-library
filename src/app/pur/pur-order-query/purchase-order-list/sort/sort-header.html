@@ -1,0 +1,20 @@
+<div class="mat-sort-header-container" [class.mat-sort-header-position-before]="arrowPosition == 'before'">
+    <button class="mat-sort-header-button" type="button" [attr.aria-label]="_intl.sortButtonLabel(id)" [attr.disabled]="_isDisabled() || null">
+    <ng-content></ng-content>
+  </button>
+    <div class="adk-sort-header-order" *ngIf="_isSorted() && _sort.isMutliFieldSort">
+        <div>{{_sort.getSortOrder(id)}}</div>
+    </div>
+    <div *ngIf="_isSorted()" class="mat-sort-header-arrow" [@indicatorToggle]="_sort.getSortDirection(id)">
+        <div class="mat-sort-header-stem"></div>
+        <div class="mat-sort-header-indicator" [@indicator]="_sort.getSortDirection(id)">
+            <div class="mat-sort-header-pointer-left" [@leftPointer]="_sort.getSortDirection(id)"></div>
+            <div class="mat-sort-header-pointer-right" [@rightPointer]="_sort.getSortDirection(id)"></div>
+            <div class="mat-sort-header-pointer-middle"></div>
+        </div>
+    </div>
+</div>
+
+<span class="cdk-visually-hidden" *ngIf="_isSorted()">
+  &nbsp;{{_intl.sortDescriptionLabel(id, _sort.getSortDirection(id))}}
+</span>

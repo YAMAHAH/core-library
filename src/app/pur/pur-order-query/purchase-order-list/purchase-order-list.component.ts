@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Injector, ViewEncapsulation, AfterViewInit, ViewChild, ElementRef, Output, EventEmitter, Renderer2, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, Input, Injector, ViewEncapsulation, AfterViewInit, ViewChild, ElementRef, Output, EventEmitter, Renderer2, ViewChildren, QueryList, AfterViewChecked, DoCheck, AfterContentChecked } from '@angular/core';
 import { ComponentBase } from '@framework-base/component/ComponentBase';
 import { PageStatusMonitor } from '@framework-services/application/PageStatusMonitor';
 import { MatTableDataSource, MatTable, MatSort, MatHeaderCell } from '@angular/material';
@@ -8,8 +8,15 @@ import { IWeekDays } from '@framework-models/IWeekDays';
 import { IOneDay } from '../../../Models/IWeekDays';
 import { SelectionModel } from '@angular/cdk/collections';
 import { fromEvent } from 'rxjs/observable/fromEvent';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { bindCallback } from 'rxjs/observable/bindCallback';
+import { debounceTime, distinctUntilChanged, delay } from 'rxjs/operators';
 import { defer } from 'rxjs/observable/defer';
+import { AdkDataSource } from './AdkDataSource';
+import { AdkSort } from './sort/sort';
+import { startWith, catchError, switchMap, map } from 'rxjs/operators';
+import { merge } from 'rxjs/observable/merge';
+import { of as observableOf } from 'rxjs/observable/of';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'gx-purchase-order-list',
@@ -75,9 +82,11 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     // this.dataSource.filterPredicate = this.filterPredicate;
     // this.dataSource.sort = this.sort;
     this.selection = new SelectionModel<IWeekDays>(this.allowMultiSelect, this.initialSelection);
-    /**树型表格数据 */
+    /**树型表格数据 */ //MatTableDataSource
+    this.treeTableDataSource = new AdkDataSource<any>(this.dataToDataRow());
+    this.treeTableDataSource.sortingDataAccessor = this.treeTableSortingDataAccessor;
+    this.treeTableDataSource.sort = this.adkSort;
 
-    this.treeTableDataSource = new MatTableDataSource<any>(this.dataToDataRow());
     this.treeTableDataSource.filterPredicate = this.secondFilterPredicate;
     fromEvent(this.globalFilterEl.nativeElement, 'keyup')
       .pipe(
@@ -86,21 +95,24 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       ).subscribe(() => {
         this.treeTableGlobalFilter();
       });
+
+    this.fixedTableHeaderRow();
   }
+
   activeDay: IOneDay;
   sortingDataAccessor: ((data: IWeekDays, sortHeaderId: string) => string | number) =
-    (data: IWeekDays, sortHeaderId: string): string | number => {
-      const target = data[sortHeaderId];
-      const value = sortHeaderId == 'select' ? target.selected :
-        padLeft(target.year, 4) + padLeft(target.month, 2) + padLeft(target.day, 2)
-      console.log(value);
-      // If the value is a string and only whitespace, return the value.
-      // Otherwise +value will convert it to 0.
-      if (typeof value === 'string' && !value.trim()) {
-        return value;
-      }
-      return isNaN(+value) ? value : +value;
+  (data: IWeekDays, sortHeaderId: string): string | number => {
+    const target = data[sortHeaderId];
+    const value = sortHeaderId == 'select' ? target.selected :
+      padLeft(target.year, 4) + padLeft(target.month, 2) + padLeft(target.day, 2)
+    console.log(value);
+    // If the value is a string and only whitespace, return the value.
+    // Otherwise +value will convert it to 0.
+    if (typeof value === 'string' && !value.trim()) {
+      return value;
     }
+    return isNaN(+value) ? value : +value;
+  }
 
   masterToggle(event) {
     if (this.isAllSelected()) {
@@ -148,15 +160,15 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     this.dataSource.filter = filterValue;
   }
   filterPredicate: ((data: IWeekDays, filter: string) => boolean) =
-    (data: IWeekDays, filter: string): boolean => {
-      const accumulator = (currentTerm, key) => {
-        return currentTerm + (key == 'select' ? data[key].selected.toString() : data[key].day.toString());
-      };
-      const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
-      const transformedFilter = filter.trim().toLowerCase();
-
-      return dataStr.indexOf(transformedFilter) != -1;
+  (data: IWeekDays, filter: string): boolean => {
+    const accumulator = (currentTerm, key) => {
+      return currentTerm + (key == 'select' ? data[key].selected.toString() : data[key].day.toString());
     };
+    const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
+    const transformedFilter = filter.trim().toLowerCase();
+
+    return dataStr.indexOf(transformedFilter) != -1;
+  };
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
@@ -166,7 +178,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   @ViewChild('globalFilter', { read: ElementRef }) globalFilterEl: ElementRef;
   idKey: string = "id";
   parentIdKey: string = "parentid";
-  treeTableDataSource = new MatTableDataSource<ITreeTableRow>();
+  treeTableDataSource = new AdkDataSource<ITreeTableRow>();
   treeTableData: ITreeTableData[] = [
     { id: 1, ord: 1, level: 0, gono: 'B001-41AGAGF03', goname: '吊扇螺丝包', gg: 'A76彩+W44 环保蓝锌5F(PE袋不印字', dw: '包' },
     { id: 2, ord: 2, level: 1, gono: 'R001A765FZCE', goname: '叶架螺丝包', gg: '大扁M5*7MM*15支+纸M5.环保蓝锌', dw: '包', parentid: 1 },
@@ -182,15 +194,24 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     { id: 11, ord: 8, level: 1, gono: 'P560140004GRE', goname: '塑胶袋(全新料)', gg: '100*100*0.04MM(环保)浅绿色', dw: 'PC', parentid: 1 }
   ];
   treeTableColumns: ITreeTableColumn[] = [
-    { name: 'lineno', title: '', width: 25, resizable: false, expressionFunc: (row, index) => index + 1 },
+    {
+      name: 'rowHeader', title: '', width: 25,
+      resizable: false,
+      expressionFunc: (row, index) => index + 1,
+      defaultCellStyle: {
+        'justify-content': 'center',
+        'background-color': '#f3f3f3'
+
+      }
+    },
     { name: 'gono', title: '编码', width: 200 },
     { name: 'goname', title: '名称', width: 200 },
     { name: 'gg', title: '规格' },
-    { name: 'dw', title: '单位', width: 30 },
-    { name: 'level', title: '层次', width: 30 },
-    { name: 'ord', title: '序号', width: 30 },
+    { name: 'dw', title: '单位', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
+    { name: 'level', title: '层次', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
+    { name: 'ord', title: '序号', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
   ];
-  treeTableDisplayedColumns = ['lineno', 'gono', 'goname', 'gg', 'dw', 'ord', 'level'];
+  treeTableDisplayedColumns = ['rowHeader', 'gono', 'goname', 'gg', 'dw', 'ord', 'level'];
   /**是否第一列 */
   firstColumn(columnName) {
     return this.treeTableDisplayedColumns[1] == columnName;
@@ -211,11 +232,56 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       return value;
     else return value + 'px';
   }
+  private copyStyleValue(target, source) {
+    for (const key in source) {
+      if (source.hasOwnProperty(key)) {
+        target[key] = source[key];
+      }
+    }
+  }
   rowCellStyle(dataRow: ITreeTableRow, dataColumn: ITreeTableColumn) {
     let style = {};
     let colWidth = this.getStyleValue(dataColumn.width);
+    if (dataColumn) this.copyStyleValue(style, dataColumn.defaultCellStyle);
+    //获取单元格
+    let cell = this.getRowCell(dataRow, dataColumn);
+    if (cell) this.copyStyleValue(style, cell.style);
     if (dataColumn.width)
       style['flex'] = '0 0 ' + colWidth;
+
+    return style;
+  }
+  rowHeaderCellStyle(dataRow: ITreeTableRow, dataColumn: ITreeTableColumn) {
+    let style = {};
+    let colWidth = this.getStyleValue(dataColumn.width);
+    if (dataColumn) this.copyStyleValue(style, dataColumn.headerCellStyle);
+
+    if (dataColumn.width)
+      style['flex'] = '0 0 ' + colWidth;
+
+    return style;
+  }
+  get fixedHeaderStyle() {
+    let style = {};
+    if (this.fixHeaderRow && this.treeTableContainer) {
+      let containerEl: HTMLElement = this.treeTableContainer.nativeElement;
+      style['width'] = this.getStyleValue(containerEl.clientWidth);
+      style['height'] = this.getStyleValue(this.matHeaderRowElRef.offsetHeight);
+      style['left'] = this.getStyleValue(containerEl.offsetLeft);
+      style['top'] = this.getStyleValue(containerEl.offsetTop);
+      style['z-index'] = 100;
+    }
+    return style;
+  }
+
+  get headerRowStyle() {
+    let style = {};
+    if (this.columnHeadersVisible == false) {
+      style['display'] = 'none';
+    }
+    if (this.fixHeaderRow) {
+      style['width'] = this.getStyleValue(this.fixHeaderContainerElRef.offsetWidth);
+    }
     return style;
   }
   isLeaf(rowData) {
@@ -238,6 +304,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       }, [dataRow]);
       this.treeTableDataSource.filter = "true";
     }
+    console.log(dataRow);
   }
   collapsedDatas: ITreeTableRow[] = [];
   expanedChildRow(childRow: ITreeTableRow, action: (child: ITreeTableRow) => void,
@@ -277,24 +344,53 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   rowWhen(index: number, rowData: ITreeTableRow): boolean {
     return rowData.visible == undefined || rowData.visible;
   }
-  globalFilter() {
 
+  private getCellRowIndex(row) {
+    return this.rows.findIndex(r => r == row);
   }
-  columnFilter(columnFilters) {
-
+  private getCellColumnIndex(columnName) {
+    return this.treeTableDisplayedColumns.indexOf(columnName);
   }
   dataToDataRow() {
-    let dataRows: ITreeTableRow[] = [];
+    this.rows = [];
+    let self = this;
     this.treeTableData.forEach(data => {
-      dataRows.push({
+
+      let row: ITreeTableRow = {
+        get rowNo() { return self.rows.findIndex(r => r == row) + 1; },
         collapsed: false,
         visible: true,
         dataBoundItem: data,
         cells: [],
         table: null
-      });
+      };
+
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const cellValue = data[key];
+
+          let rowCell: ITreeTableRowCell = {
+            get columnIndex() { return self.getCellColumnIndex(key); },
+            get rowIndex() { return self.rows.findIndex(r => r == row) },
+            columnName: key,
+            visible: true,
+            selected: false,
+            value: cellValue,
+            readOnly: false,
+            valueType: 'string',
+            toolTipText: 'cell',
+            tag: {},
+            style: {},
+            formattedValue: cellValue,
+            contentBounds: null
+          };
+          row.cells.push(rowCell);
+        };
+      }
+
+      this.rows.push(row);
     });
-    return dataRows;
+    return this.rows;
   }
   secondFilterPredicate(dataRow: ITreeTableRow, filter: string): boolean {
     return dataRow.visible;
@@ -305,7 +401,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     };
     const dataStr = Object.keys(dataRow.dataBoundItem).reduce(accumulator, '').toLowerCase();
     const transformedFilter = filter.trim().toLowerCase();
-    return dataStr.indexOf(transformedFilter) != -1;
+    return dataStr.indexOf(transformedFilter) != -1 && this._filterPredicate(dataRow, filter);
   };
   resetCollapseState() {
     this.treeTableDataSource.data.forEach(dataRow => {
@@ -411,9 +507,17 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     this.resizerHelper.nativeElement.style.display = 'block';
   }
 
+  private getColumnElementRef(columnName: string) {
+    let headerColumnName = 'mat-column-' + columnName;
+    let headerColumnElRef: HTMLElement = this.headerCells
+      .find(cell => cell.nativeElement.classList.contains(headerColumnName))
+      .nativeElement;
+    return headerColumnElRef;
+
+  }
   onColumnResizeEnd(event) {
     let delta = this.resizerHelper.nativeElement.offsetLeft - this.lastResizerHelperX;
-    let columnWidth = this.resizeColumn.width;
+    let columnWidth = this.getColumnElementRef(this.resizeColumn.name).offsetWidth;
     let newColumnWidth = columnWidth + delta;
     let minWidth = this.resizeColumn.minWidth && this.resizeColumn.minWidth || 15;
     if (columnWidth + delta > parseInt(minWidth)) {
@@ -422,7 +526,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
         // let nextColumnWidth = nextColumn.offsetWidth - delta;
 
         if (newColumnWidth > 15) { //&& nextColumnWidth > 15
-          this.resizeColumn.width = newColumnWidth + 'px';
+          this.resizeColumn.width = newColumnWidth;
           // if (nextColumn) {
           //   nextColumn.style.width = nextColumnWidth + 'px';
           // }
@@ -518,13 +622,13 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       let iconWidth = this.getHiddenElementOuterWidth(this.reorderIndicatorUp.nativeElement);
       let iconHeight = this.getHiddenElementOuterHeight(this.reorderIndicatorUp.nativeElement);
 
-      let dropColumnName = 'mat-column-' + column.name;
-      let dropHeader: HTMLElement = this.headerCells.find(cell => cell.nativeElement.classList.contains(dropColumnName)).nativeElement;
+      let dropHeader: HTMLElement = this.getColumnElementRef(column.name);
+
 
       let container = this.treeTableContainer.nativeElement;
       let containerOffset = this.getOffset(container);
       let dropHeaderOffset = this.getOffset(dropHeader);
-      console.log(containerOffset, dropHeaderOffset);
+
       if (this.draggedColumn != column) {
         let targetLeft = dropHeaderOffset.left - containerOffset.left;
         let targetTop = containerOffset.top - dropHeaderOffset.top;
@@ -584,17 +688,15 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     event.preventDefault();
     if (this.draggedColumn) {
       let dragIndex = this.treeTableDisplayedColumns.findIndex(col => col == this.draggedColumn.name);
-      // this.headerCells.map(cell => cell.nativeElement as HTMLElement)
-      //   .findIndex(cell => cell.classList.contains('mat-column-' + this.draggedColumn.name));
       let dropIndex = this.treeTableDisplayedColumns.findIndex(col => col == column.name);
-      //  this.headerCells.map(cell => cell.nativeElement as HTMLElement)
-      //   .findIndex(e => e.classList.contains('mat-column-' + column.name));
+
       let allowDrop = (dragIndex != dropIndex);
       if (allowDrop && ((dropIndex - dragIndex == 1 && this.dropPosition === -1) || (dragIndex - dropIndex == 1 && this.dropPosition === 1))) {
         allowDrop = false;
       }
 
-      if (allowDrop) {
+      if (allowDrop && (!this.rowHeadersVisible || (this.rowHeadersVisible && dropIndex != 0))) {
+
         this.reorderArray(this.treeTableDisplayedColumns, dragIndex, dropIndex);
         //this.treeTableDisplayedColumns.splice(dropIndex, 0, this.treeTableDisplayedColumns.splice(dragIndex, 1)[0]));
 
@@ -610,7 +712,6 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       this.draggedColumn.draggable = false;
       this.draggedColumn = null;
       this.dropPosition = null;
-      console.log(this.treeTableColumns);
 
     }
   }
@@ -626,188 +727,183 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       value.splice(to, 0, value.splice(from, 1)[0]);
     }
   }
-  /**排序 */
-  // sort(event, column: Column) {
-  //   if (!column.sortable) {
-  //     return;
-  //   }
-  //   let targetNode = event.target;
-  //   if (this.domHandler.hasClass(targetNode, 'ui-sortable-column') || this.domHandler.hasClass(targetNode, 'ui-column-title') || this.domHandler.hasClass(targetNode, 'ui-sortable-column-icon')) {
-  //     if (!this.immutable) {
-  //       this.preventSortPropagation = true;
-  //     }
 
-  //     let columnSortField = column.sortField || column.field;
-  //     this._sortOrder = (this.sortField === columnSortField) ? this.sortOrder * -1 : this.defaultSortOrder;
-  //     this._sortField = columnSortField;
-  //     this.sortColumn = column;
-  //     let metaKey = event.metaKey || event.ctrlKey;
+  /**过滤 */
 
-  //     if (this.sortMode == 'multiple') {
-  //       if (!this.multiSortMeta || !metaKey) {
-  //         this._multiSortMeta = [];
-  //       }
-
-  //       this.addSortMeta({ field: this.sortField, order: this.sortOrder });
-  //     }
-
-  //     if (this.lazy) {
-  //       this._first = 0;
-  //       this.onLazyLoad.emit(this.createLazyLoadMetadata());
-  //     }
-  //     else {
-  //       if (this.sortMode == 'multiple')
-  //         this.sortMultiple();
-  //       else
-  //         this.sortSingle();
-  //     }
-
-  //     this.onSort.emit({
-  //       field: this.sortField,
-  //       order: this.sortOrder,
-  //       multisortmeta: this.multiSortMeta
-  //     });
-  //   }
-
-  //   this.updateDataToRender(this.filteredValue || this.value);
-  // }
-
-  // sortSingle() {
-  //   if (this.value) {
-  //     if (this.sortColumn && this.sortColumn.sortable === 'custom') {
-  //       this.preventSortPropagation = true;
-  //       this.sortColumn.sortFunction.emit({
-  //         field: this.sortField,
-  //         order: this.sortOrder
-  //       });
-  //     }
-  //     else {
-  //       this.value.sort((data1, data2) => {
-  //         let value1 = this.resolveFieldData(data1, this.sortField);
-  //         let value2 = this.resolveFieldData(data2, this.sortField);
-  //         let result = null;
-
-  //         if (value1 == null && value2 != null)
-  //           result = -1;
-  //         else if (value1 != null && value2 == null)
-  //           result = 1;
-  //         else if (value1 == null && value2 == null)
-  //           result = 0;
-  //         else if (typeof value1 === 'string' && typeof value2 === 'string')
-  //           result = value1.localeCompare(value2);
-  //         else
-  //           result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
-
-  //         return (this.sortOrder * result);
-  //       });
-  //     }
-
-  //     this._first = 0;
-
-  //     if (this.hasFilter()) {
-  //       this._filter();
-  //     }
-  //   }
-  // }
-  multiSortMeta;
-  sortMultiple() {
-    // if (this.value) {
-    //   this.value.sort((data1, data2) => {
-    //     return this.multisortField(data1, data2, this.multiSortMeta, 0);
-    //   });
-
-    // if (this.hasFilter()) {
-    //   this._filter();
+  onFilterKeyup(value: any, field: any, matchMode: any) {
+    // if (this.filterTimeout) {
+    //   clearTimeout(this.filterTimeout);
     // }
-    //   }
+
+    // this.filterTimeout = setTimeout(() => {
+    //   this.filter(value, field, matchMode);
+    //   this.filterTimeout = null;
+    // }, this.filterDelay);
   }
 
-  multisortField(data1, data2, multiSortMeta, index) {
-    let value1 = this.resolveFieldData(data1, multiSortMeta[index].field);
-    let value2 = this.resolveFieldData(data2, multiSortMeta[index].field);
-    let result = null;
+  filter(value, field, matchMode) {
+    if (!this.isFilterBlank(value))
+      this.filters[field] = { field: field, value: value, matchMode: matchMode };
+    else if (this.filters[field])
+      delete this.filters[field];
 
-    if (typeof value1 == 'string' || value1 instanceof String) {
-      if (value1.localeCompare && (value1 != value2)) {
-        return (multiSortMeta[index].order * value1.localeCompare(value2));
+    //this._filter();
+  }
+
+  isFilterBlank(filter): boolean {
+    if (filter !== null && filter !== undefined) {
+      if ((typeof filter === 'string' && filter.trim().length == 0) || (filter instanceof Array && filter.length == 0))
+        return true;
+      else
+        return false;
+    }
+    return true;
+  }
+  @Input() lazy: boolean;
+  @Input() filters: { [s: string]: FilterMetadata; } = { 'gono': { field: 'gono', value: 'p010102', matchMode: 'contains' } };
+  @Input() globalFilter;
+  @Output() onFilter: EventEmitter<any> = new EventEmitter<any>();
+  _filterPredicate(dataRow: ITreeTableRow, filter: string): boolean {
+
+    let localMatch = true;
+    let globalMatch = false;
+
+    for (let j = 0; j < this.treeTableColumns.length; j++) {
+      let col = this.treeTableColumns[j],
+        filterMeta = this.filters[col.name];
+
+      //local
+      if (filterMeta) {
+        let filterValue = filterMeta.value,
+          filterField = col.name,
+          filterMatchMode = filterMeta.matchMode || 'startsWith',
+          dataFieldValue = this.resolveFieldData(dataRow.dataBoundItem, filterField);
+        let filterConstraint = this.filterConstraints[filterMatchMode];
+
+        if (!filterConstraint(dataFieldValue, filterValue)) {
+          localMatch = false;
+        }
+
+        if (!localMatch) {
+          break;
+        }
+      }
+
+      //global
+      if (filter && !globalMatch) {
+        globalMatch = this.filterConstraints['contains'](this.resolveFieldData(dataRow.dataBoundItem, col.name), filter);
       }
     }
-    else {
-      result = (value1 < value2) ? -1 : 1;
-    }
 
-    if (value1 == value2) {
-      return (multiSortMeta.length - 1) > (index) ? (this.multisortField(data1, data2, multiSortMeta, index + 1)) : 0;
+    let matches = localMatch;
+    if (filter) {
+      matches = localMatch && globalMatch;
     }
-
-    return (multiSortMeta[index].order * result);
+    return matches;
   }
 
-  addSortMeta(meta) {
-    let index = -1;
-    for (var i = 0; i < this.multiSortMeta.length; i++) {
-      if (this.multiSortMeta[i].field === meta.field) {
-        index = i;
+  hasFilter() {
+    let empty = true;
+    for (let prop in this.filters) {
+      if (this.filters.hasOwnProperty(prop)) {
+        empty = false;
         break;
       }
     }
 
-    if (index >= 0)
-      this.multiSortMeta[index] = meta;
-    else
-      this.multiSortMeta.push(meta);
-    //  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    return !empty || (this.globalFilter && this.globalFilter.value && this.globalFilter.value.trim().length);
   }
 
-  isSorted(column: ITreeTableColumn) {
-    if (!column.sortable) {
+  onFilterInputClick(event: any) {
+    event.stopPropagation();
+  }
+
+  filterConstraints = {
+
+    startsWith(value, filter): boolean {
+      if (filter === undefined || filter === null || filter.trim() === '') {
+        return true;
+      }
+
+      if (value === undefined || value === null) {
+        return false;
+      }
+
+      let filterValue = filter.toLowerCase();
+      return value.toString().toLowerCase().slice(0, filterValue.length) === filterValue;
+    },
+
+    contains(value, filter): boolean {
+      if (filter === undefined || filter === null || (typeof filter === 'string' && filter.trim() === '')) {
+        return true;
+      }
+
+      if (value === undefined || value === null) {
+        return false;
+      }
+
+      return value.toString().toLowerCase().indexOf(filter.toLowerCase()) !== -1;
+    },
+
+    endsWith(value, filter): boolean {
+      if (filter === undefined || filter === null || filter.trim() === '') {
+        return true;
+      }
+
+      if (value === undefined || value === null) {
+        return false;
+      }
+
+      let filterValue = filter.toString().toLowerCase();
+      return value.toString().toLowerCase().indexOf(filterValue, value.toString().length - filterValue.length) !== -1;
+    },
+
+    equals(value, filter): boolean {
+      if (filter === undefined || filter === null || (typeof filter === 'string' && filter.trim() === '')) {
+        return true;
+      }
+
+      if (value === undefined || value === null) {
+        return false;
+      }
+
+      return value.toString().toLowerCase() == filter.toString().toLowerCase();
+    },
+
+    in(value, filter: any[]): boolean {
+      if (filter === undefined || filter === null || filter.length === 0) {
+        return true;
+      }
+
+      if (value === undefined || value === null) {
+        return false;
+      }
+
+      for (let i = 0; i < filter.length; i++) {
+        if (filter[i] === value)
+          return true;
+      }
+
       return false;
     }
-
-    let columnSortField = column.name;
-
-    if (this.sortMode === 'single') {
-      return (this.sortField && columnSortField === this.sortField);
-    }
-    else if (this.sortMode === 'multiple') {
-      let sorted = false;
-      if (this.multiSortMeta) {
-        for (let i = 0; i < this.multiSortMeta.length; i++) {
-          if (this.multiSortMeta[i].field == columnSortField) {
-            sorted = true;
-            break;
-          }
-        }
-      }
-      return sorted;
-    }
   }
-  sortMode: 'single' | 'multiple';
-  sortOrder: number = 1;
-  sortField;
-  getSortOrder(column: ITreeTableColumn) {
-    let order = 0;
-    let columnSortField = column.name;
 
-    if (this.sortMode === 'single') {
-      if (this.sortField && columnSortField === this.sortField) {
-        order = this.sortOrder;
-      }
-    }
-    else if (this.sortMode === 'multiple') {
-      if (this.multiSortMeta) {
-        for (let i = 0; i < this.multiSortMeta.length; i++) {
-          if (this.multiSortMeta[i].field == columnSortField) {
-            order = this.multiSortMeta[i].order;
-            break;
-          }
-        }
-      }
-    }
-    return order;
-  }
   /** 表结构 */
+  @ViewChild(AdkSort) adkSort: AdkSort;
+  @ViewChild('fixHeaderContainer', { read: ElementRef }) fixHeaderContainer: ElementRef;
+  get fixHeaderContainerElRef() {
+    return this.fixHeaderContainer.nativeElement as HTMLElement;
+  }
+  @ViewChildren('matHeaderRow', { read: ElementRef }) headerRowElementRefs: QueryList<ElementRef>;
+  get matHeaderRowElRef() {
+    return this.headerRowElementRefs.first.nativeElement as HTMLElement;
+  }
+
   @Input() tabindex: number = 1;
+  @Input() columnHeadersVisible: boolean = true;
+  @Input() rowHeadersVisible: boolean = true;
+  @Input() fixHeaderRow: boolean = false;
+  @Input() sortExpression: string = "goname desc,gg asc";
   rows: ITreeTableRow[] = []; //表格行
   dataColumns: ITreeTableColumn[] = [];
   currentCell: ITreeTableRowCell;        //获取当前单元格
@@ -817,6 +913,88 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   @Output() currentCellChanged: EventEmitter<any> = new EventEmitter<any>(); //当选择单元格时发生
   @Output() cellContentClick: EventEmitter<any> = new EventEmitter<any>();   //当点击某个单元格时发生 
   @Output() cellBeginEdit: EventEmitter<any> = new EventEmitter<any>();   //当某个单元格开始编辑时发生
+  @Output() cellStyleRenderer: EventEmitter<any> = new EventEmitter<any>(); //当某个单元格样式重新渲染时发生
+
+  private getRowCell(row: ITreeTableRow, col: ITreeTableColumn) {
+    if (row && col) {
+      let rowIdx = this.getCellRowIndex(row);
+      let colIdx = this.getCellColumnIndex(col.name);
+      return row.cells.find(cell => cell.columnName == col.name ||
+        (cell.rowIndex == rowIdx && cell.columnIndex == colIdx));
+    } else return null;
+
+  }
+  rowCellClick(event, row: ITreeTableRow, col: ITreeTableColumn) {
+    let cell = this.getRowCell(row, col);
+    if (this.currentCell != cell) {
+      this.currentCell = cell;
+      this.currentCellChanged.emit({ row, col, cell });
+    }
+    if (this.currentRow != row) {
+      this.currentRow = row;
+    }
+    this.cellContentClick.emit({ row, col, cell });
+  }
+  private cloneHeaderRow;
+  private parentNode;
+  private fixedTableHeaderRow() {
+    if (this.fixHeaderRow && this.fixHeaderContainer) {
+      if (!this.cloneHeaderRow)
+        this.cloneHeaderRow = this.matHeaderRowElRef.cloneNode(true);
+      if (!this.parentNode) {
+        this.parentNode = this.matHeaderRowElRef.parentNode;
+        this.parentNode.insertBefore(this.cloneHeaderRow, this.parentNode.childNodes[0]);
+      }
+      this.headerRowElementRefs
+        .changes
+        .subscribe(headerRowRef => {
+          this.fixHeaderContainerElRef.appendChild(headerRowRef.first.nativeElement);
+        });
+    }
+  }
+  treeTableSortingDataAccessor(data: ITreeTableRow, sortHeaderId: string): string | number {
+
+    const value: any = data.dataBoundItem[sortHeaderId];
+
+    // If the value is a string and only whitespace, return the value.
+    // Otherwise +value will convert it to 0.
+    if (typeof value === 'string' && !value.trim()) {
+      return value;
+    }
+
+    return isNaN(+value) ? value : +value;
+  }
+  paginator: MatPaginator;
+  @Output() onLazyLoad: EventEmitter<any> = new EventEmitter();
+  lazyLoad() {
+    // If the user changes the sort order, reset back to the first page.
+    this.adkSort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+    let isLoadingResults = false, isRateLimitReached = false;
+    merge(this.adkSort.sortChange, this.paginator.page)
+      .pipe(
+      startWith({}),
+      switchMap(() => {
+        isLoadingResults = true;
+        return observableOf({})
+        // this.exampleDatabase!.getRepoIssues(
+        //   this.adkSort.active, this.adkSort.direction, this.paginator.pageIndex);
+      }),
+      map(data => {
+        // Flip flag to show that loading has finished.
+        isLoadingResults = false;
+        //.isRateLimitReached = false;
+        // this.resultsLength = data.total_count;
+
+        return data;
+      }),
+      catchError(() => {
+        isLoadingResults = false;
+        // Catch if the GitHub API has reached its rate limit. Return empty data.
+        isRateLimitReached = true;
+        return observableOf([]);
+      })
+      ).subscribe(data => { });
+  }
   //创建列
   createColumn() {
 
@@ -860,13 +1038,14 @@ export interface ITreeTableColumn {
   minWidth?;
   algin?; // 水平 垂直
   defaultCellStyle?;
-  headerCell?;
+  headerCellStyle?;
   headerText?;
   expressionFunc?: (row, index) => any;
 
 }
 
 interface ITreeTableRow {
+  rowNo?: number;
   collapsed?: boolean;
   visible?: boolean;
   level?: number;
@@ -876,6 +1055,8 @@ interface ITreeTableRow {
 
 }
 interface ITreeTableRowCell {
+
+  columnName?: string;
   columnIndex?: number;
   rowIndex?: number;
   readOnly?: boolean;
@@ -924,4 +1105,10 @@ function padLeft(num, n) {
 interface SortMeta {
   field: string;
   order: 'asc' | 'desc';
+}
+
+export interface FilterMetadata {
+  field?;
+  matchMode?: string;
+  value?;
 }

@@ -15,6 +15,7 @@ import { SplitContainerModule } from '@framework-components/splitcontainer/Split
 import { A11yModule } from '@angular/cdk/a11y';
 import { MatTableModule, MatSortModule, MatCheckboxModule, MatFormFieldModule, MatInputModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
+import { AdkSortModule } from './purchase-order-list/sort/sort-module';
 
 export const purOrderQueryRouteConfig: Routes = [
     { path: "", component: PurchaseOrderQueryComponent, data: { title: '采购订单明细查询' } }
@@ -32,8 +33,8 @@ export const purOrderQueryRouteConfig: Routes = [
         MatSortModule,
         MatCheckboxModule,
         MatFormFieldModule,
-        MatInputModule
-
+        MatInputModule,
+        AdkSortModule
     ],
     declarations: [
         PurchaseOrderQueryComponent,
