@@ -17,6 +17,7 @@ import { startWith, catchError, switchMap, map } from 'rxjs/operators';
 import { merge } from 'rxjs/observable/merge';
 import { of as observableOf } from 'rxjs/observable/of';
 import { MatPaginator } from '@angular/material/paginator';
+import { empty } from 'rxjs/observable/empty';
 
 @Component({
   selector: 'gx-purchase-order-list',
@@ -95,7 +96,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       ).subscribe(() => {
         this.treeTableGlobalFilter();
       });
-
+    if (this.filters && this.filters.length > 0) this.treeTableGlobalFilter();
     this.fixedTableHeaderRow();
   }
 
@@ -409,9 +410,11 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     });
   }
   treeTableGlobalFilter() {
+
     this.resetCollapseState();
     let filterDatas = this.treeTableDataSource.data.filter(dataRow => {
       dataRow.visible = false;
+      console.log(this.genFilterExpression(dataRow, this.globalFilterEl.nativeElement.value));
       return this.firstFilterPredicate(dataRow, this.globalFilterEl.nativeElement.value);
     });
     filterDatas.forEach(childRow => {
@@ -743,9 +746,13 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
 
   filter(value, field, matchMode) {
     if (!this.isFilterBlank(value))
-      this.filters[field] = { field: field, value: value, matchMode: matchMode };
-    else if (this.filters[field])
-      delete this.filters[field];
+      this.filters.push({ field: field, value: value, operators: matchMode });
+    else {
+      let filterIdx = this.filters.findIndex(f => f.field == field);
+      if (filterIdx != -1) this.filters.splice(filterIdx, 1);
+      //delete this.filters[field];
+    }
+
 
     //this._filter();
   }
@@ -760,23 +767,119 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     return true;
   }
   @Input() lazy: boolean;
-  @Input() filters: { [s: string]: FilterMetadata; } = { 'gono': { field: 'gono', value: 'p010102', matchMode: 'contains' } };
+  @Input() filters: FilterMetadata[] = [
+    { field: 'gono', value: 'p010102', operators: 'contains' },
+    { field: 'goname', value: '铁板牙', operators: 'contains', concat: 'and' }
+  ];
+  filters2: FilterMetadata[] = [
+    { field: 'gono', value: 'P010102156H', operators: 'contains' },
+    {
+      field: "group1", value: "", operators: "none", concat: 'and', IsChildExpress: true, childs: [
+        { field: 'goname', value: '铁板牙', operators: 'contains', concat: 'none' },
+        { field: 'goname', value: '圆头十字', operators: 'contains', concat: 'or' }
+      ]
+    },
+    { field: 'goname', value: '铁板牙', operators: 'contains', concat: 'and' }
+  ];
+  @Input() filterExpression: string = "gono contains 'p010102',goname contains '铁板牙' and";
   @Input() globalFilter;
   @Output() onFilter: EventEmitter<any> = new EventEmitter<any>();
+
+  keywordFilter(dataRow: ITreeTableRow, filter) {
+
+    let globalMatch = false;
+
+    for (let j = 0; j < this.treeTableColumns.length; j++) {
+      let col = this.treeTableColumns[j];
+      if (filter && !globalMatch) {
+        globalMatch = this.filterConstraints['contains'](this.resolveFieldData(dataRow.dataBoundItem, col.name), filter);
+      }
+    }
+    if (filter) {
+      return globalMatch;
+    }
+    return true;
+  }
+  genFilterExpression(value, filter) {
+    let root: FilterMetadata = { IsChildExpress: true };
+    root.childs = this.filters2;
+    this.RecursionGenerateExpression(value, root);
+    return root.Expression && this.keywordFilter(value, filter);
+  }
+  private RecursionGenerateExpression(value, root: FilterMetadata) {
+    //生成相应的表达式树
+    if (!root.IsChildExpress) {
+      if (root.IsSetNode && !root.IsCustomColumnFilter)
+        this.RecursionGenerateListExpression(root);
+      else
+        this.GenerateExpression(value, root);
+    }
+    root.childs && root.childs.forEach(child => {
+      if (!(child.IsSetNode && root.IsProcessDone)) {
+        this.RecursionGenerateExpression(value, child);
+        //拼接表达式树
+        this.ConcatExpression(root, child, root.childs[0] == child);
+      }
+    });
+  }
+  RecursionGenerateListExpression(c) {
+
+  }
+  GenerateExpression(dataRow: ITreeTableRow, filterRequest: FilterMetadata) {
+    let expr = null;
+    if (filterRequest.IsCustomColumnFilter || filterRequest.IsSetOperation) {
+      // var leftParamExpr = this.Parameters[0];
+      // var rightParamExpr = filterRequest.SrcExpression.Parameters[0];
+      // var visitor = new ReplaceExpressionVisitor(rightParamExpr, leftParamExpr);
+      // var rightBodyExpr = visitor.Visit(filterRequest.SrcExpression.Body);
+      // filterRequest.Expression = rightBodyExpr;
+      return;
+    }
+    //if (filterRequest.PropClassify == PropClassify.List)
+    //{
+    //    return;
+    //}
+    //根据操作符生成相应的表达式
+    let filterValue = filterRequest.value,
+      filterField = filterRequest.field,
+      filterMatchMode = filterRequest.operators || 'startsWith',
+      dataFieldValue = this.resolveFieldData(dataRow.dataBoundItem, filterField);
+    let filterConstraint = this.filterConstraints[filterMatchMode];
+
+    filterRequest.Expression = filterConstraint && filterConstraint(dataFieldValue, filterValue);
+  }
+  ConcatExpression(root: FilterMetadata, child: FilterMetadata, first: boolean) {
+    if (first) {
+      root.Expression = child.Expression;
+    }
+    else if (child.concat == 'and' || child.concat == 'none' || !child.concat) {
+      root.Expression = (root.Expression && child.Expression);
+    }
+    else if (child.concat == 'or') {
+      root.Expression = (root.Expression || child.Expression);
+    }
+    else if (child.concat == 'not') {
+      root.Expression = !root.Expression;
+    }
+  }
+
   _filterPredicate(dataRow: ITreeTableRow, filter: string): boolean {
+    /**
+     * 
+     */
 
     let localMatch = true;
     let globalMatch = false;
 
     for (let j = 0; j < this.treeTableColumns.length; j++) {
       let col = this.treeTableColumns[j],
-        filterMeta = this.filters[col.name];
+        filterMeta = this.filters.find(f => f.field == col.name);
 
       //local
       if (filterMeta) {
         let filterValue = filterMeta.value,
           filterField = col.name,
-          filterMatchMode = filterMeta.matchMode || 'startsWith',
+          filterMatchMode = filterMeta.operators || 'startsWith',
           dataFieldValue = this.resolveFieldData(dataRow.dataBoundItem, filterField);
         let filterConstraint = this.filterConstraints[filterMatchMode];
 
@@ -804,18 +907,24 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
 
   hasFilter() {
     let empty = true;
-    for (let prop in this.filters) {
-      if (this.filters.hasOwnProperty(prop)) {
-        empty = false;
-        break;
-      }
-    }
-
+    if (this.filters && this.filters.length > 0)
+      empty = false;
+    // for (let prop in this.filters) {
+    //   if (this.filters.hasOwnProperty(prop)) {
+    //     empty = false;
+    //     break;
+    //   }
+    // }
+    let regExp = /\s+/g;
+    "abc  abc   ad wdd".replace(regExp, " ");
     return !empty || (this.globalFilter && this.globalFilter.value && this.globalFilter.value.trim().length);
   }
 
   onFilterInputClick(event: any) {
     event.stopPropagation();
+  }
+  makeFilterExpression(funBody, args: string[] = []) {
+    return new Function(...args, funBody);
   }
 
   filterConstraints = {
@@ -903,7 +1012,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   @Input() columnHeadersVisible: boolean = true;
   @Input() rowHeadersVisible: boolean = true;
   @Input() fixHeaderRow: boolean = false;
-  @Input() sortExpression: string = "goname desc,gg asc";
+  @Input() sortExpression: string = "ord asc,goname desc,gg asc";
   rows: ITreeTableRow[] = []; //表格行
   dataColumns: ITreeTableColumn[] = [];
   currentCell: ITreeTableRowCell;        //获取当前单元格
@@ -1108,7 +1217,19 @@ interface SortMeta {
 }
 
 export interface FilterMetadata {
-  field?;
-  matchMode?: string;
+  id?: number;
+  parentId?: number;
+  field?: string;
+  operators?: string;
   value?;
+  concat?: string;
+  isGroup?: boolean;
+  childs?: FilterMetadata[];
+  IsChildExpress?: boolean;
+  IsCustomColumnFilter?: boolean;
+  IsSetNode?: boolean;
+  IsProcessDone?: boolean;
+  IsSetOperation?: boolean;
+  Expression?;
+  regExp?: RegExp
 }
