@@ -18,6 +18,11 @@ import { merge } from 'rxjs/observable/merge';
 import { of as observableOf } from 'rxjs/observable/of';
 import { MatPaginator } from '@angular/material/paginator';
 import { empty } from 'rxjs/observable/empty';
+import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { ColumnFilterComponent } from './columnFilter/column-filter';
+import { Subscription } from 'rxjs/Subscription';
+import { DomHandler } from '@framework-common/dom/domhandler';
 
 @Component({
   selector: 'gx-purchase-order-list',
@@ -35,6 +40,8 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   @Input() title: string = "采购订单明细查询";
   constructor(protected injector: Injector,
     private renderer: Renderer2,
+    private overlay: Overlay,
+    private domHandler: DomHandler,
     protected pageStatusMonitor: PageStatusMonitor) {
     super(injector);
   }
@@ -197,7 +204,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   treeTableColumns: ITreeTableColumn[] = [
     {
       name: 'rowHeader', title: '', width: 25,
-      resizable: false,
+      resizable: false, columnFilter: false,
       expressionFunc: (row, index) => index + 1,
       defaultCellStyle: {
         'justify-content': 'center',
@@ -205,12 +212,12 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
 
       }
     },
-    { name: 'gono', title: '编码', width: 200 },
-    { name: 'goname', title: '名称', width: 200 },
-    { name: 'gg', title: '规格' },
-    { name: 'dw', title: '单位', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
-    { name: 'level', title: '层次', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
-    { name: 'ord', title: '序号', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
+    { name: 'gono', columnFilter: true, title: '编码', width: 200 },
+    { name: 'goname', columnFilter: true, title: '名称', width: 200 },
+    { name: 'gg', columnFilter: true, title: '规格' },
+    { name: 'dw', columnFilter: true, title: '单位', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
+    { name: 'level', columnFilter: true, title: '层次', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
+    { name: 'ord', columnFilter: true, title: '序号', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
   ];
   treeTableDisplayedColumns = ['rowHeader', 'gono', 'goname', 'gg', 'dw', 'ord', 'level'];
   /**是否第一列 */
@@ -1104,6 +1111,48 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       })
       ).subscribe(data => { });
   }
+  filterOverlayRef: OverlayRef;
+  close() {
+    if (this.filterOverlayRef) {
+      this.filterOverlayRef.detach();
+      this.filterOverlayRef = null;
+      if (this.closeOverlayRef) {
+        this.closeOverlayRef.unsubscribe();
+        this.closeOverlayRef = null;
+      }
+    }
+  }
+  closeOverlayRef: Subscription;
+  columeFilterIconClick(event, colDef: ITreeTableColumn) {
+    event.stopPropagation();
+    if (this.filterOverlayRef) {
+      this.close();
+    }
+    else {
+      let config = new OverlayConfig({
+        width: 320,
+        height: 320
+      });
+
+      let curTarget = event.target;
+      let absPos = this.domHandler.getOffset(curTarget);
+      let absLeft = absPos.left,
+        absTop = absPos.top + curTarget.offsetHeight;
+      config.positionStrategy = this.overlay
+        .position()
+        .global()
+        .width('320')
+        .height('320')
+        .left(`${absLeft}px`)
+        .top(`${absTop}px`);
+
+      this.filterOverlayRef = this.overlay.create(config);
+      const compPortal = new ComponentPortal(ColumnFilterComponent);
+      this.filterOverlayRef.attach(compPortal);
+      this.closeOverlayRef = fromEvent(document, 'click')
+        .subscribe(e => this.close());
+    }
+  }
   //创建列
   createColumn() {
 
@@ -1131,12 +1180,14 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
 
 }
 export interface ITreeTableColumn {
+  key?: string;
   name: string;
   dataType?: string;
   title: string;
   defaultValue?: any;
   readOnly?: boolean;
   visible?: boolean;
+  columnFilter?: boolean;
   resizable?: boolean;
   sortable?: boolean;
   draggable?: boolean;

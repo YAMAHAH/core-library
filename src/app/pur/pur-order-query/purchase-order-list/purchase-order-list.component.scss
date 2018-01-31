@@ -56,12 +56,27 @@
     background-color: inherit;
 }
 
+.mat-icon {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: 10px;
+}
+
 .mat-table .mat-cell {
     border-right: 1px solid gray;
     // border-bottom: 1px solid gray;
     height: 48px;
     justify-content: flex-start;
     align-items: center;
+}
+
+.down_menu_btn {
+    position: absolute;
+    right: 10px;
+    width: 24px;
+    height: 40px;
 }
 
 .mat-table .mat-sort-header-container,

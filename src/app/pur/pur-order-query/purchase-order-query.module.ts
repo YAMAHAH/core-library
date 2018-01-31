@@ -13,9 +13,15 @@ import { PurchaseOrderQueryComponent } from './pur-order-query.component';
 import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order-list.component';
 import { SplitContainerModule } from '@framework-components/splitcontainer/SplitContainerModule';
 import { A11yModule } from '@angular/cdk/a11y';
-import { MatTableModule, MatSortModule, MatCheckboxModule, MatFormFieldModule, MatInputModule } from '@angular/material';
+import {
+    MatTableModule, MatSortModule, MatCheckboxModule,
+    MatFormFieldModule, MatInputModule, MatButtonModule,
+    MatIconModule, MatButtonToggleModule, MatTabsModule
+} from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { AdkSortModule } from './purchase-order-list/sort/sort-module';
+import { OverlayModule } from "@angular/cdk/overlay";
+import { ColumnFilterComponent } from './purchase-order-list/columnFilter/column-filter';
 
 export const purOrderQueryRouteConfig: Routes = [
     { path: "", component: PurchaseOrderQueryComponent, data: { title: '采购订单明细查询' } }
@@ -34,17 +40,24 @@ export const purOrderQueryRouteConfig: Routes = [
         MatCheckboxModule,
         MatFormFieldModule,
         MatInputModule,
-        AdkSortModule
+        MatButtonModule,
+        MatIconModule,
+        MatButtonToggleModule,
+        AdkSortModule,
+        OverlayModule,
+        MatTabsModule
     ],
     declarations: [
         PurchaseOrderQueryComponent,
-        PurchaseOrderListComponent
+        PurchaseOrderListComponent,
+        ColumnFilterComponent
     ],
     exports: [
 
     ],
     entryComponents: [
-        PurchaseOrderListComponent
+        PurchaseOrderListComponent,
+        ColumnFilterComponent
     ]
 })
 export class PurchaseOrderQueryModule extends AbstractModuleBase {

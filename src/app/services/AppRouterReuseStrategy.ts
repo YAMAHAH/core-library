@@ -11,7 +11,7 @@ export class AppRouterReuseStrategy implements RouteReuseStrategy {
      * @param route 
      */
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
-        console.log(route.routeConfig.path);
+        //console.log(route.routeConfig.path);
         // 对所有路由允许复用
         return true;
     }
