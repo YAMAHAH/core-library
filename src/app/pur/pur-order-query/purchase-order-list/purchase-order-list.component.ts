@@ -19,10 +19,12 @@ import { of as observableOf } from 'rxjs/observable/of';
 import { MatPaginator } from '@angular/material/paginator';
 import { empty } from 'rxjs/observable/empty';
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
-import { ComponentPortal } from '@angular/cdk/portal';
+import { ComponentPortal, PortalInjector } from '@angular/cdk/portal';
 import { ColumnFilterComponent } from './columnFilter/column-filter';
 import { Subscription } from 'rxjs/Subscription';
 import { DomHandler } from '@framework-common/dom/domhandler';
+import { ITreeTableColumn } from './table-column';
+import { COLUMN_FILTER_DATATOKEN } from './columnFilter/column-filter-data-token';
 
 @Component({
   selector: 'gx-purchase-order-list',
@@ -204,7 +206,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   treeTableColumns: ITreeTableColumn[] = [
     {
       name: 'rowHeader', title: '', width: 25,
-      resizable: false, columnFilter: false,
+      resizable: false, allowColumnFilter: false,
       expressionFunc: (row, index) => index + 1,
       defaultCellStyle: {
         'justify-content': 'center',
@@ -212,12 +214,12 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
 
       }
     },
-    { name: 'gono', columnFilter: true, title: '编码', width: 200 },
-    { name: 'goname', columnFilter: true, title: '名称', width: 200 },
-    { name: 'gg', columnFilter: true, title: '规格' },
-    { name: 'dw', columnFilter: true, title: '单位', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
-    { name: 'level', columnFilter: true, title: '层次', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
-    { name: 'ord', columnFilter: true, title: '序号', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
+    { name: 'gono', allowColumnFilter: true, title: '编码', width: 200 },
+    { name: 'goname', allowColumnFilter: true, title: '名称', width: 200 },
+    { name: 'gg', allowColumnFilter: true, title: '规格' },
+    { name: 'dw', allowColumnFilter: true, title: '单位', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
+    { name: 'level', allowColumnFilter: true, title: '层次', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
+    { name: 'ord', allowColumnFilter: true, title: '序号', width: 65, defaultCellStyle: { 'justify-content': 'center' } },
   ];
   treeTableDisplayedColumns = ['rowHeader', 'gono', 'goname', 'gg', 'dw', 'ord', 'level'];
   /**是否第一列 */
@@ -1115,6 +1117,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
   close() {
     if (this.filterOverlayRef) {
       this.filterOverlayRef.detach();
+      this.filterOverlayRef.dispose();
       this.filterOverlayRef = null;
       if (this.closeOverlayRef) {
         this.closeOverlayRef.unsubscribe();
@@ -1130,9 +1133,15 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     }
     else {
       let config = new OverlayConfig({
-        width: 320,
-        height: 320
+        minWidth: 322,
+        width: 322,
+        height: 322
       });
+
+      let customTokens = new WeakMap<any, any>();
+      let parentInjector = this.injector;
+      customTokens.set(COLUMN_FILTER_DATATOKEN, colDef);
+      let injector = new PortalInjector(parentInjector, customTokens);
 
       let curTarget = event.target;
       let absPos = this.domHandler.getOffset(curTarget);
@@ -1141,14 +1150,15 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       config.positionStrategy = this.overlay
         .position()
         .global()
-        .width('320')
-        .height('320')
+        .width('322')
+        .height('322')
         .left(`${absLeft}px`)
         .top(`${absTop}px`);
 
       this.filterOverlayRef = this.overlay.create(config);
-      const compPortal = new ComponentPortal(ColumnFilterComponent);
+      const compPortal = new ComponentPortal(ColumnFilterComponent, null, injector);
       this.filterOverlayRef.attach(compPortal);
+      console.log(this.filterOverlayRef.overlayElement);
       this.closeOverlayRef = fromEvent(document, 'click')
         .subscribe(e => this.close());
     }
@@ -1179,30 +1189,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
 
 
 }
-export interface ITreeTableColumn {
-  key?: string;
-  name: string;
-  dataType?: string;
-  title: string;
-  defaultValue?: any;
-  readOnly?: boolean;
-  visible?: boolean;
-  columnFilter?: boolean;
-  resizable?: boolean;
-  sortable?: boolean;
-  draggable?: boolean;
-  selected?: boolean;
-  allowNull?: boolean;
-  order?: number;
-  width?;
-  minWidth?;
-  algin?; // 水平 垂直
-  defaultCellStyle?;
-  headerCellStyle?;
-  headerText?;
-  expressionFunc?: (row, index) => any;
 
-}
 
 interface ITreeTableRow {
   rowNo?: number;

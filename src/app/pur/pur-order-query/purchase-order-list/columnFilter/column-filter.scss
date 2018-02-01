@@ -5,3 +5,20 @@
 .mat-tab-body-wrapper {
     height: 22px;
 }
+
+.columnFilter-applyPanel {
+    border-top: 1px solid darkgrey;
+}
+
+.columnFilter-selectPanel {
+    border-top: 1px solid darkgrey;
+}
+
+.columnFilter-selectionListPanel {
+    border-top: 1px solid darkgrey;
+    margin-top: 3px;
+}
+
+.example-panel-red .mat-select-content {
+    background: rgba(255, 0, 0, 0.5);
+}

@@ -14,14 +14,15 @@ import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order
 import { SplitContainerModule } from '@framework-components/splitcontainer/SplitContainerModule';
 import { A11yModule } from '@angular/cdk/a11y';
 import {
-    MatTableModule, MatSortModule, MatCheckboxModule,
-    MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatIconModule, MatButtonToggleModule, MatTabsModule
+    MatTableModule, MatSortModule, MatCheckboxModule, MatDividerModule,
+    MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule,
+    MatIconModule, MatButtonToggleModule, MatTabsModule, MatListModule
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { AdkSortModule } from './purchase-order-list/sort/sort-module';
 import { OverlayModule } from "@angular/cdk/overlay";
 import { ColumnFilterComponent } from './purchase-order-list/columnFilter/column-filter';
+import { FormsModule } from '@angular/forms';
 
 export const purOrderQueryRouteConfig: Routes = [
     { path: "", component: PurchaseOrderQueryComponent, data: { title: '采购订单明细查询' } }
@@ -30,7 +31,7 @@ export const purOrderQueryRouteConfig: Routes = [
 @NgModule({
     imports: [
         CommonModule,
-        CoreModule,
+        CoreModule, FormsModule,
         RouterModule.forChild(purOrderQueryRouteConfig),
         NavTreeViewModule,
         SplitContainerModule,
@@ -45,7 +46,9 @@ export const purOrderQueryRouteConfig: Routes = [
         MatButtonToggleModule,
         AdkSortModule,
         OverlayModule,
-        MatTabsModule
+        MatTabsModule,
+        MatListModule,
+        MatSelectModule
     ],
     declarations: [
         PurchaseOrderQueryComponent,
