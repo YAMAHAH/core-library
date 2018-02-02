@@ -2,10 +2,11 @@
     <div>
         <mat-tab-group>
             <mat-tab label="content filter">
-                <div>
+                <div style="height:285px;">
                     <div #searchPanel class="filter-search-panel">
                         <mat-form-field>
-                            <input #search matInput (keyup)="applyFilter($event)" placeholder="Search">
+                            <input #search matInput [(ngModel)]="searchValue" placeholder="Search">
+                            <!-- (keyup)="applyFilter($event)" -->
                         </mat-form-field>
                     </div>
                     <div #selectPanel class="columnFilter-selectPanel">
@@ -22,55 +23,55 @@
                 <div>
                     <div style="height:285px;">
                         <mat-form-field>
-                            <mat-select #operatorSelect [(ngModel)]="item.operator" placeholder="Select Operator" panelClass="example-panel-red">
-                                <mat-option *ngFor="let operator of operators" [value]="operator">
+                            <mat-select #operatorSelect [(ngModel)]="filterRule.operator" placeholder="Select Operator" panelClass="example-panel-red">
+                                <mat-option *ngFor="let operator of getOperators(filterRule.key)" [value]="operator">
                                     {{ operator }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        <ng-container [ngSwitch]="getInputType(item.key, item.operator)">
+                        <ng-container [ngSwitch]="getInputType(filterRule.key, filterRule.operator)">
                             <mat-form-field *ngSwitchCase="'text'">
-                                <input matInput [(ngModel)]="item.value" type="text" placeholder="String">
+                                <input matInput [(ngModel)]="filterRule.value" type="text" placeholder="String">
                             </mat-form-field>
                             <ng-container *ngIf="showValueControl2">
                                 <mat-form-field *ngSwitchCase="'text'">
-                                    <input matInput [(ngModel)]="item.value2" type="text" placeholder="String">
+                                    <input matInput [(ngModel)]="filterRule.value2" type="text" placeholder="String">
                                 </mat-form-field>
                             </ng-container>
 
                             <mat-form-field *ngSwitchCase="'date'">
-                                <input matInput [(ngModel)]="item.value" type="date" placeholder="DateTime">
+                                <input matInput [(ngModel)]="filterRule.value" type="date" placeholder="DateTime">
                             </mat-form-field>
                             <ng-container *ngIf="showValueControl2">
                                 <mat-form-field *ngSwitchCase="'date'">
-                                    <input matInput [(ngModel)]="item.value2" type="date" placeholder="DateTime">
+                                    <input matInput [(ngModel)]="filterRule.value2" type="date" placeholder="DateTime">
                                 </mat-form-field>
                             </ng-container>
 
                             <mat-form-field *ngSwitchCase="'number'">
-                                <input matInput [(ngModel)]="item.value" type="number" placeholder="Number">
+                                <input matInput [(ngModel)]="filterRule.value" type="number" placeholder="Number">
                             </mat-form-field>
                             <ng-container *ngIf="showValueControl2">
                                 <mat-form-field *ngSwitchCase="'number'">
-                                    <input matInput [(ngModel)]="item.value2" type="number" placeholder="Number">
+                                    <input matInput [(ngModel)]="filterRule.value2" type="number" placeholder="Number">
                                 </mat-form-field>
                             </ng-container>
 
                             <mat-form-field *ngSwitchCase="'select'">
-                                <mat-select [(ngModel)]="item.value" placeholder="Select Value">
-                                    <mat-option *ngFor="let opt of getOptions(item.key)" [value]="opt.value">
+                                <mat-select [(ngModel)]="filterRule.value" placeholder="Select Value">
+                                    <mat-option *ngFor="let opt of getOptions" [value]="opt.value">
                                         {{ opt.name }}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
 
                             <mat-form-field *ngSwitchCase="'multiselect'">
-                                <mat-select placeholder="Multiselect" [(ngModel)]="item.value" multiple>
-                                    <mat-option *ngFor="let opt of getOptions(item.key)" [value]="opt.value">{{opt.name}}</mat-option>
+                                <mat-select placeholder="Multiselect" [(ngModel)]="filterRule.value" multiple>
+                                    <mat-option *ngFor="let opt of getOptions" [value]="opt.value">{{opt.name}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
 
-                            <mat-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="item.value"></mat-checkbox>
+                            <mat-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="filterRule.value"></mat-checkbox>
                         </ng-container>
                     </div>
                 </div>

@@ -1,5 +1,4 @@
 import { InjectionToken } from '@angular/core';
-import { ITreeTableColumn } from '../table-column';
+import { ColumnFilterItem } from './column-filter-item';
 
-
-export const COLUMN_FILTER_DATATOKEN = new InjectionToken<ITreeTableColumn>('TableColumnFilterDataToken');
+export const COLUMN_FILTER_ITEMTOKEN = new InjectionToken<ColumnFilterItem>('TableColumnFilterItemToken');

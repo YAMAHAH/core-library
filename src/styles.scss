@@ -104,6 +104,41 @@
         font-feature-settings: 'liga';
     }
     
+     ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+     ::-webkit-scrollbar,
+     ::-webkit-scrollbar-thumb {
+        opacity: 0;
+        filter: "alpha(opacity=0)";
+        -ms-filter: "alpha(opacity=0)";
+    }
+    
+     ::-webkit-scrollbar-thumb {
+        background: transparent;
+        border-radius: 4px;
+    }
+    
+     :not(body):hover::-webkit-scrollbar-thumb {
+        background-color: #635d5d !important;
+    }
+    
+     :hover::-webkit-scrollbar,
+     :hover::-webkit-scrollbar-thumb {
+        opacity: 1;
+        filter: "alpha(opacity=100)";
+        -ms-filter: "alpha(opacity=100)";
+    }
+    
+    body::-webkit-scrollbar,
+    body::-webkit-scrollbar-thumb {
+        opacity: 1;
+        filter: "alpha(opacity=100)";
+        -ms-filter: "alpha(opacity=100)";
+    }
+    
     @import "~@angular/material/prebuilt-themes/indigo-pink.css";
     @import "/assets/css/font-awesome-4.7.0/css/font-awesome.min.css";
     @import "/assets/css/primeng/resources/primeng.min.css";
