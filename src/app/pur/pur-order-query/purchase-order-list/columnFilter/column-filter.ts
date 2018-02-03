@@ -75,7 +75,6 @@ export class ColumnFilterComponent implements AfterViewInit, OnInit {
     return this._dataOptions;
   }
   selectedOptions: string[] = [];
-  changeEventCount: Number;
   onSelectedOptionsChange(values: string[]) {
     this.selectedOptions = values;
   }
@@ -97,9 +96,28 @@ export class ColumnFilterComponent implements AfterViewInit, OnInit {
   get table() {
     return this.columnFilterItem.table;
   }
-  private updateFilter() {
-    let filterMeta = { field: this.columnDef.name, value: this.selectedOptions, operators: 'in', concat: 'and' };
+  onFilterUpdate: EventEmitter<any> = new EventEmitter<any>();
+  private updateFilter(contentFilter: boolean = true) {
+    let filterMeta;
+    if (contentFilter) {
+      filterMeta = {
+        field: this.columnDef.name,
+        value: this.selectedOptions,
+        operators: 'in',
+        concat: 'and'
+      };
+    } else {
+      filterMeta = {
+        field: this.columnDef.name,
+        value: (this.isMultipleValue ? [this.filterRule.value, this.filterRule.value2] : this.filterRule.value),
+        operators: this.filterRule.operator,
+        concat: 'and'
+      };
+    }
     this.table.filter(filterMeta);
+  }
+  get isMultipleValue() {
+    return ['between', 'notbetween'].some(it => it === this.filterRule.operator);
   }
   updateSelectAllState() {
     if (this.selectedOptions.length == 0) {
@@ -125,6 +143,9 @@ export class ColumnFilterComponent implements AfterViewInit, OnInit {
       this.selectAllChecked = true;
     }
     this.updateFilter();
+  }
+  onFilterValueChange(event) {
+    setTimeout(() => this.updateFilter(false), 15);
   }
   clearFilter(event) {
     console.log(this.selectedOptions, this.filterRule);
@@ -152,10 +173,6 @@ export class ColumnFilterComponent implements AfterViewInit, OnInit {
 
   private defaultEmptyList: any[] = [];
   private operatorsCache: { [key: string]: string[] } = {};
-
-  get showValueControl2() {
-    return ['between', 'notBetween'].some(it => it == this.filterRule.operator);
-  }
 
   get columnDef() {
     return this.columnFilterItem.columnDef;
@@ -186,7 +203,7 @@ export class ColumnFilterComponent implements AfterViewInit, OnInit {
     if (this.columnDef.getInputType) {
       return this.columnDef.getInputType(this.columnDef, operator);
     }
-    const type = this.columnDef.dataType;  //'multiselect';   //'category';  //this.config.fields[field].type;
+    const type = this.columnDef.dataType;
     switch (operator) {
       case 'isNull':
       case 'isNotNull':
@@ -202,10 +219,9 @@ export class ColumnFilterComponent implements AfterViewInit, OnInit {
     if (this.columnDef.getOptions) {
       return this.columnDef.getOptions(this.columnDef);
     }
-    return this.test || this.defaultEmptyList; //this.config.fields[field].options || this.defaultEmptyList;
+    return this.columnDef.options || this.defaultEmptyList;
   }
-  test = [{ name: 'abc', value: '123' }, { name: 'def', value: '456' }];
-  _filterRule = { key: 'gono', field: 'gono', operator: 'in', value: [], value2: 'value2' };
+
   get filterRule(): IRule {
     if (this.columnFilterItem)
       return this.columnFilterItem.filterRule;

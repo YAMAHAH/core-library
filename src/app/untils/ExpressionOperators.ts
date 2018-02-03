@@ -114,6 +114,8 @@ export class ExpressionOperators {
             return (value >= left) && (value <= right);
         }
         let filterValue = value.toString().toLowerCase();
+        if (left) left = left.toString().toLowerCase();
+        if (right) right = right.toString().toLowerCase();
         if (!right)
             return (filterValue >= left);
         else

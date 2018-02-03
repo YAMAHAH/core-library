@@ -11,7 +11,7 @@
                 <div class="example-container mat-elevation-z8">
                     <div class="example-header">
                         <mat-form-field>
-                            <input #globalFilter matInput (keyup)="applyFilter($event)" placeholder="Filter">
+                            <input #globalFilter matInput [(ngModel)]="keywordExpression" (keyup)="applyFilter($event)" placeholder="Filter">
                         </mat-form-field>
                     </div>
                     <mat-table *ngIf="false" #table [dataSource]="dataSource" matSort>

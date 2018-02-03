@@ -9,7 +9,7 @@ import { IOneDay } from '../../../Models/IWeekDays';
 import { SelectionModel } from '@angular/cdk/collections';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { bindCallback } from 'rxjs/observable/bindCallback';
-import { debounceTime, distinctUntilChanged, delay } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, delay, filter } from 'rxjs/operators';
 import { defer } from 'rxjs/observable/defer';
 import { AdkDataSource } from './AdkDataSource';
 import { AdkSort } from './sort/sort';
@@ -29,6 +29,8 @@ import { ColumnFilterItem } from './columnFilter/column-filter-item';
 import { IRule } from './columnFilter/column-filter-interface';
 import { ExpressionOperators } from "@untils/ExpressionOperators";
 import { Expression } from "@untils/ExpressionBuilder";
+import { LazyLoadEventArgs, columnSortMeta } from './LazyLoadEventArgs';
+import { Subscribable } from 'rxjs/Observable';
 
 @Component({
   selector: 'gx-purchase-order-list',
@@ -100,16 +102,10 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     this.treeTableDataSource = new AdkDataSource<any>(this.dataToDataRow());
     this.treeTableDataSource.sortingDataAccessor = this.treeTableSortingDataAccessor;
     this.treeTableDataSource.sort = this.adkSort;
-
+    this.treeTableDataSource.paginator = this.paginator;
     this.treeTableDataSource.filterPredicate = this.secondFilterPredicate;
-    fromEvent(this.globalFilterEl.nativeElement, 'keyup')
-      .pipe(
-      debounceTime(150),
-      distinctUntilChanged()
-      ).subscribe(() => {
-        this.treeTableGlobalFilter();
-      });
-    if (this.filters && this.filters.length > 0) this.treeTableGlobalFilter();
+    this.listenLazyLoad();
+
     this.fixedTableHeaderRow();
   }
 
@@ -752,7 +748,6 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     for (let j = 0; j < this.treeTableColumns.length; j++) {
       let col = this.treeTableColumns[j];
       if (filter && !globalMatch) {
-        console.log(this.resolveFieldData(value, col.name), filter)
         globalMatch = ExpressionOperators['contains'](this.resolveFieldData(value, col.name), filter);
       }
     }
@@ -905,21 +900,21 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     gte: ExpressionOperators.greaterThanOrEquals,
     ngte: ExpressionOperators.notGreaterThanOrEquals,
     like: ExpressionOperators.like,
-    notlike: ExpressionOperators.notLike,
+    notLike: ExpressionOperators.notLike,
     contains: ExpressionOperators.contains,
-    notcontains: ExpressionOperators.notContains,
+    notContains: ExpressionOperators.notContains,
     between: ExpressionOperators.between,
-    notbetween: ExpressionOperators.notBetween,
+    notBetween: ExpressionOperators.notBetween,
     in: ExpressionOperators.in,
-    notin: ExpressionOperators.notIn,
-    startswith: ExpressionOperators.startsWith,
-    notstartswith: ExpressionOperators.notStartsWith,
-    endswith: ExpressionOperators.endsWith,
-    notendswith: ExpressionOperators.notEndsWith,
-    isnull: ExpressionOperators.isNull,
-    isnotnull: ExpressionOperators.isNotNull,
+    notIn: ExpressionOperators.notIn,
+    startsWith: ExpressionOperators.startsWith,
+    notStartsWith: ExpressionOperators.notStartsWith,
+    endsWith: ExpressionOperators.endsWith,
+    notEndsWith: ExpressionOperators.notEndsWith,
+    isNull: ExpressionOperators.isNull,
+    isNotNull: ExpressionOperators.isNotNull,
     fuzzy: ExpressionOperators.fuzzy,
-    notfuzzy: ExpressionOperators.notFuzzy
+    notFuzzy: ExpressionOperators.notFuzzy
   }
   GenerateExpression(filterMeta: FilterMetadata) {
     let expr = null;
@@ -938,12 +933,12 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     //根据操作符生成相应的表达式
     let filterValue = filterMeta.value,
       filterField = filterMeta.field,
-      filterMatchMode = filterMeta.operators || 'startsWith';
-    let filterConstraint = this.operators[filterMatchMode];  //ExpressionOperators[filterMatchMode];
+      filterOperator = filterMeta.operators || 'startsWith';
+    let filterFunc = this.operators[filterOperator];  //ExpressionOperators[filterMatchMode];
     filterMeta.Expression = it => {
       let dataFieldValue = filterMeta.customValue ? filterMeta.customValue(it) :
         this.resolveFieldData(it, filterField);
-      return filterConstraint && filterConstraint(dataFieldValue, filterValue);
+      return filterFunc && filterFunc(dataFieldValue, filterValue);
     }
   }
   combineFilter<T>(rootFilter: FilterMetadata, childFilters: FilterMetadata[]) {
@@ -1017,8 +1012,9 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
 
   contentFilters = {};
   filter(meta: FilterMetadata) {
-    let filterIdx = this.filters.findIndex(f => f.field == meta.field);
-    if (filterIdx != -1) this.filters.splice(filterIdx, 1);
+    // let filterIdx = this.filters.findIndex(f => f.field == meta.field);
+    // if (filterIdx != -1) this.filters.splice(filterIdx, 1);
+    this.filters = this.filters.filter(it => it.field != meta.field);
     if (!this.isFilterBlank(meta.value)) {
       this.filters.push(meta);
       if (['in', 'notIn'].some(it => it == meta.operators)) {
@@ -1026,11 +1022,89 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       }
     }
     else {
-      // let filterIdx = this.filters.findIndex(f => f.field == meta.field);
-      // if (filterIdx != -1) this.filters.splice(filterIdx, 1);
       delete this.contentFilters[meta.field];
     }
-    this.treeTableGlobalFilter();
+    // if (!this.lazy)
+    //   this.treeTableGlobalFilter();
+    this.onColumnFilter.emit({
+      filters: this.filters
+    });
+  }
+  lazyloadSub: Subscription;
+
+  private _lastKeywordInput = '';
+  listenLazyLoad() {
+    // If the user changes the sort order, reset back to the first page.
+    if (this.adkSort)
+      this.adkSort.sortChange.subscribe(() => {
+        if (this.lazy && this.paginator)
+          this.paginator.pageIndex = 0;
+        this.sortExpression = this.adkSort.active;
+      });
+
+    if (!this.lazy) {
+      this.onColumnFilter.pipe(
+        debounceTime(150),
+        distinctUntilChanged()
+      ).subscribe(res => {
+        this.treeTableGlobalFilter();
+      });
+    } else {
+      let listenStreams = [this.onColumnFilter];
+      if (this.adkSort) listenStreams.push(this.adkSort.sortChange);
+      if (this.paginator) listenStreams.push(this.paginator.page);
+      this.lazyloadSub = merge(...listenStreams)
+        .pipe(
+        filter(it => this.lazy),
+        debounceTime(150),
+        distinctUntilChanged()
+        ).subscribe(res => {
+          if (this.lazy)
+            this.onLazyLoad.emit(this.createLazyLoadMetadata());
+        });
+    }
+    fromEvent<Event>(this.globalFilterEl.nativeElement, 'keyup')
+      .pipe(
+      debounceTime(150),
+      distinctUntilChanged()
+      ).subscribe((e: any) => {
+        if (e.target.value != this._lastKeywordInput)
+          this.onColumnFilter.emit({ keyword: e.target.value });
+        this.lastColumnDef = e.target.value;
+      });
+    if (this.filters && this.filters.length > 0)
+      this.onColumnFilter.emit({ filters: this.filters });
+  }
+  createLazyLoadMetadata(): LazyLoadEventArgs {
+    return {
+      firstRowOffset: this.paginator ? this.paginator.pageSize * (this.paginator.pageIndex + 1) : 0,
+      page: this.paginator ? this.paginator.pageIndex + 1 : 0,
+      pageSize: this.paginator ? this.paginator.pageSize : 0,
+      columnSortMeta: this._sortExprToSortMeta(),
+      columnFilters: this.filters,
+      filterKeyword: this.keywordExpression ? this.keywordExpression : null,
+    };
+  }
+
+  private _sortExprToSortMeta() {
+    let activeSorts: columnSortMeta[] = [];
+    if (!this.sortExpression) return activeSorts;
+    let sortFields = this.sortExpression.split(',');
+    sortFields.forEach(field => {
+      let sortInfos = field.split(' ');
+      if (sortInfos.length == 1)
+        activeSorts.push({
+          field: sortInfos[0],
+          asc: true
+        });
+
+      if (sortInfos.length == 2)
+        activeSorts.push({
+          field: sortInfos[0],
+          asc: sortInfos[1].toLowerCase() == 'asc' ? true : false
+        });
+    });
+    return activeSorts;
   }
 
   isFilterBlank(filter): boolean {
@@ -1058,9 +1132,20 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     { field: 'goname', value: '铁板牙', operators: 'contains', concat: 'and' }
   ];
   // @Input() filterExpression3: string = "gono contains 'p010102',goname contains '铁板牙' and";
-  @Input() filterExpression: string = " true"; // || it.gono.startsWith('P010102156') || it.gono.startsWith('R001W44ZCE')";
-  @Input() globalFilter;
-  @Output() onFilter: EventEmitter<any> = new EventEmitter<any>();
+  @Input() filterExpression: string = "true"; // || it.gono.startsWith('P010102156') || it.gono.startsWith('R001W44ZCE')";
+  private _keywordExpression: string = '';
+  @Input() get keywordExpression() {
+    return this._keywordExpression;
+  }
+  private _keywordInput: boolean;
+  set keywordExpression(newValue) {
+    if (this._keywordExpression != newValue) {
+      this._keywordExpression = newValue;
+      this._lastKeywordInput = newValue;
+      this.onColumnFilter.emit({ keyword: newValue });
+    }
+  }
+  @Output() onColumnFilter: EventEmitter<any> = new EventEmitter<any>();
 
   // keywordFilter(dataRow: ITreeTableRow, filter) {
 
@@ -1120,7 +1205,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     let empty = true;
     if (this.filters && this.filters.length > 0)
       empty = false;
-    return !empty || (this.globalFilter && this.globalFilter.value && this.globalFilter.value.trim().length);
+    return !empty || this.keywordExpression;
   }
 
   onFilterInputClick(event: any) {
@@ -1277,36 +1362,9 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     return isNaN(+value) ? value : +value;
   }
   paginator: MatPaginator;
-  @Output() onLazyLoad: EventEmitter<any> = new EventEmitter();
-  lazyLoad() {
-    // If the user changes the sort order, reset back to the first page.
-    this.adkSort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-    let isLoadingResults = false, isRateLimitReached = false;
-    merge(this.adkSort.sortChange, this.paginator.page)
-      .pipe(
-      startWith({}),
-      switchMap(() => {
-        isLoadingResults = true;
-        return observableOf({})
-        // this.exampleDatabase!.getRepoIssues(
-        //   this.adkSort.active, this.adkSort.direction, this.paginator.pageIndex);
-      }),
-      map(data => {
-        // Flip flag to show that loading has finished.
-        isLoadingResults = false;
-        //.isRateLimitReached = false;
-        // this.resultsLength = data.total_count;
+  @Output() onLazyLoad: EventEmitter<LazyLoadEventArgs> = new EventEmitter<LazyLoadEventArgs>();
 
-        return data;
-      }),
-      catchError(() => {
-        isLoadingResults = false;
-        // Catch if the GitHub API has reached its rate limit. Return empty data.
-        isRateLimitReached = true;
-        return observableOf([]);
-      })
-      ).subscribe(data => { });
-  }
+
   filterOverlayRef: OverlayRef;
   close() {
     if (this.filterOverlayRef) {
@@ -1333,12 +1391,15 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
     return this.treeTableData.map(it => it[colDef.name]).uniquelizeWith() || [];
   }
   closeOverlayRef: Subscription;
+  lastColumnDef: ITreeTableColumn;
   columeFilterIconClick(event, colDef: ITreeTableColumn) {
     event.stopPropagation();
+    let createNew = this.lastColumnDef != colDef || !this.filterOverlayRef;
     if (this.filterOverlayRef) {
       this.close();
+      if (this.lastColumnDef == colDef) createNew = false;
     }
-    else {
+    if (createNew) {
       let config = new OverlayConfig({
         minWidth: 322,
         width: 322,
@@ -1370,6 +1431,7 @@ export class PurchaseOrderListComponent extends ComponentBase implements OnInit,
       this.closeOverlayRef = fromEvent(document, 'click')
         .subscribe(e => this.close());
     }
+    this.lastColumnDef = colDef;
   }
   //创建列
   createColumn() {
