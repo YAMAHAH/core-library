@@ -104,6 +104,7 @@ export class ExpressionOperators {
             return false;
         }
         let [left, right] = filter;
+        if (left == undefined && right == undefined) return true;
         if (!(typeof value == 'string' && typeof left == 'string')) {
             value = +value;
             left = +left;
